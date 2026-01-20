@@ -137,6 +137,7 @@ If you find this plugin helpful, consider:
 💡 Suggesting features
 
 ☕ Buy me a coffee
+https://buymeacoffee.com/yagi.toshinori
 
 ## 🙏 Acknowledgments
 Inspired by ClickUp's modern UI
