@@ -1,0 +1,11 @@
+{
+  "id": "kanban-pro",
+  "name": "Kanban Pro",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Advanced Kanban board for Obsidian with multiple views, swim lanes, time tracking, and powerful automation features.",
+  "author": "Your Name",
+  "authorUrl": "https://github.com/yourusername",
+  "fundingUrl": "https://buymeacoffee.com/yourname",
+  "isDesktopOnly": false
+}
