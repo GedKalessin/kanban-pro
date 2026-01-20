@@ -3933,3 +3933,245 @@
     width: 100%;
   }
 }
+/* ============================================
+   CHECKLIST STYLES
+   ============================================ */
+
+/* Checklist Container */
+.checklist-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.checklist-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.checklist-item input[type="checkbox"] {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.checklist-item input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-normal);
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.checklist-item input[type="text"].completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.checklist-item input[type="text"]:focus {
+  background: var(--background-primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.icon-btn-small {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.checklist-item:hover .icon-btn-small {
+  opacity: 1;
+}
+
+.icon-btn-small:hover {
+  background: var(--background-modifier-error);
+  color: var(--text-error);
+}
+
+/* Section Header for Checklist */
+.card-section .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card-section .section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-section .section-header .icon-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: var(--interactive-accent);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.card-section .section-header .icon-btn:hover {
+  background: var(--interactive-accent-hover);
+  transform: scale(1.05);
+}
+
+
+/* ============================================
+   Linked Notes Section
+   ============================================ */
+
+.linked-notes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.linked-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
+  transition: all 0.2s;
+}
+
+.linked-note:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--interactive-accent);
+}
+
+.linked-note .note-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.linked-note .internal-link {
+  flex: 1;
+  color: var(--text-accent);
+  text-decoration: none;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linked-note .internal-link:hover {
+  text-decoration: underline;
+}
+
+.linked-note .icon-btn-small {
+  opacity: 0;
+}
+
+.linked-note:hover .icon-btn-small {
+  opacity: 1;
+}
+
+.empty-state-text {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+  padding: 12px;
+  text-align: center;
+}
+
+.add-note-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 2px dashed var(--background-modifier-border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+  width: 100%;
+  justify-content: center;
+}
+
+.add-note-btn:hover {
+  border-color: var(--interactive-accent);
+  color: var(--interactive-accent);
+  background: var(--background-modifier-hover);
+}
+
+/* ============================================
+   Error States
+   ============================================ */
+
+.view-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.view-error .error-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--text-error);
+  margin-bottom: 16px;
+}
+
+.view-error h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: var(--text-normal);
+}
+
+.view-error p {
+  margin: 0 0 24px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.view-error .retry-btn {
+  padding: 10px 24px;
+  background: var(--interactive-accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.view-error .retry-btn:hover {
+  background: var(--interactive-accent-hover);
+  transform: translateY(-1px);
+}

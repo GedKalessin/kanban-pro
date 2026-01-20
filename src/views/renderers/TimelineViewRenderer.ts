@@ -19,22 +19,27 @@ export class TimelineViewRenderer implements IViewRenderer {
   };
 
   render(container: HTMLElement, context: ViewRendererContext): void {
-    container.addClass('kanban-timeline-view', 'horizontal');
+    try {
+      container.addClass('kanban-timeline-view', 'horizontal');
 
-    const toolbar = this.renderToolbar(context);
-    container.appendChild(toolbar);
+      const toolbar = this.renderToolbar(context);
+      container.appendChild(toolbar);
 
-    const filteredCards = context.boardService.getFilteredCards()
-      .filter(c => c.dueDate || (c as any).startDate);
+      const filteredCards = context.boardService.getFilteredCards()
+        .filter(c => c.dueDate || (c as any).startDate);
 
-    if (filteredCards.length === 0) {
-      container.appendChild(this.renderEmptyState());
-      return;
+      if (filteredCards.length === 0) {
+        container.appendChild(this.renderEmptyState());
+        return;
+      }
+
+      const { dates, startDate } = this.calculateTimelineDates(filteredCards);
+      const timelineContainer = this.renderTimelineContainer(dates, filteredCards, startDate, context);
+      container.appendChild(timelineContainer);
+    } catch (error) {
+      console.error('Timeline View Error:', error);
+      this.renderError(container, 'Failed to render Timeline view');
     }
-
-    const { dates, startDate } = this.calculateTimelineDates(filteredCards);
-    const timelineContainer = this.renderTimelineContainer(dates, filteredCards, startDate, context);
-    container.appendChild(timelineContainer);
   }
 
   private renderToolbar(context: ViewRendererContext): HTMLElement {
@@ -315,5 +320,25 @@ export class TimelineViewRenderer implements IViewRenderer {
     });
 
     return groups;
+  }
+
+  private renderError(container: HTMLElement, message: string): void {
+    container.empty();
+    const errorDiv = container.createDiv({ cls: 'view-error' });
+
+    const errorIcon = errorDiv.createDiv({ cls: 'error-icon' });
+    setIcon(errorIcon, 'alert-triangle');
+
+    errorDiv.createEl('h3', { text: '⚠️ View Error' });
+    errorDiv.createEl('p', { text: message });
+
+    const retryBtn = errorDiv.createEl('button', {
+      text: 'Try Again',
+      cls: 'retry-btn'
+    });
+    retryBtn.addEventListener('click', () => {
+      container.empty();
+      // Re-render will be triggered by parent
+    });
   }
 }

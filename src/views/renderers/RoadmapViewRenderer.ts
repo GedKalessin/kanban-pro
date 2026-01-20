@@ -1,11 +1,15 @@
 import { Menu, Notice, setIcon } from 'obsidian';
 import { Milestone, KanbanCard } from '../../models/types';
-import { createElement, formatDisplayDate, calculatePercentage } from '../../utils/helpers';
+import { createElement, formatDisplayDate } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 
 export class RoadmapViewRenderer implements IViewRenderer {
+  private draggedCard: HTMLElement | null = null;
+  private currentContext: ViewRendererContext | null = null;
+
   render(container: HTMLElement, context: ViewRendererContext): void {
     container.addClass('kanban-roadmap-view');
+    this.currentContext = context;
 
     const toolbar = this.renderToolbar(context);
     container.appendChild(toolbar);
@@ -20,6 +24,9 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
     const roadmapContent = this.renderRoadmapContent(milestones, context);
     container.appendChild(roadmapContent);
+
+    // Setup drag and drop per le milestone
+    this.setupMilestoneDragDrop(container, context);
   }
 
   private renderToolbar(context: ViewRendererContext): HTMLElement {
@@ -64,35 +71,59 @@ export class RoadmapViewRenderer implements IViewRenderer {
     const board = context.boardService.getBoard();
     const milestoneCards = board.cards.filter(c => milestone.cardIds.includes(c.id));
     const completedCards = milestoneCards.filter(c => c.completedAt).length;
-    const progress = calculatePercentage(completedCards, milestoneCards.length);
+    const progress = milestoneCards.length > 0
+      ? (completedCards / milestoneCards.length) * 100
+      : 0;
 
     const milestoneEl = createElement('div', {
       className: `roadmap-milestone ${milestone.completed ? 'completed' : ''}`,
       'data-milestone-id': milestone.id
     });
-    milestoneEl.style.borderLeftColor = milestone.color;
 
-    // Header
+    // FIX: Applicare il colore correttamente
+    milestoneEl.style.setProperty('--milestone-color', milestone.color);
+    milestoneEl.style.borderLeftColor = milestone.color;
+    milestoneEl.style.borderLeftWidth = '4px';
+    milestoneEl.style.borderLeftStyle = 'solid';
+
+    // Header con design migliorato
     const header = createElement('div', { className: 'milestone-header' });
+    header.style.backgroundColor = `${milestone.color}15`; // 15 = 8% opacity
 
     const headerLeft = createElement('div', { className: 'header-left' });
-    const icon = createElement('span', { className: 'milestone-icon' });
-    setIcon(icon, milestone.completed ? 'check-circle' : 'circle');
-    headerLeft.appendChild(icon);
 
+    const iconWrapper = createElement('div', { className: 'milestone-icon-wrapper' });
+    iconWrapper.style.backgroundColor = milestone.color;
+    const icon = createElement('span', { className: 'milestone-icon' });
+    setIcon(icon, milestone.completed ? 'check-circle' : 'target');
+    iconWrapper.appendChild(icon);
+    headerLeft.appendChild(iconWrapper);
+
+    const titleSection = createElement('div', { className: 'title-section' });
     const title = createElement('h3', { className: 'milestone-title' }, [milestone.name]);
-    headerLeft.appendChild(title);
+    titleSection.appendChild(title);
 
     if (milestone.dueDate) {
-      const dueDate = createElement('span', { className: 'milestone-due-date' }, [
-        formatDisplayDate(milestone.dueDate)
-      ]);
-      headerLeft.appendChild(dueDate);
+      const dueDate = createElement('span', { className: 'milestone-due-date' });
+      const calIcon = createElement('span', { className: 'cal-icon' });
+      setIcon(calIcon, 'calendar');
+      dueDate.appendChild(calIcon);
+      dueDate.appendChild(document.createTextNode(formatDisplayDate(milestone.dueDate)));
+      titleSection.appendChild(dueDate);
     }
 
+    headerLeft.appendChild(titleSection);
     header.appendChild(headerLeft);
 
     const headerRight = createElement('div', { className: 'header-right' });
+
+    // Progress badge
+    const progressBadge = createElement('span', { className: 'progress-badge' });
+    progressBadge.textContent = `${completedCards}/${milestoneCards.length}`;
+    progressBadge.style.backgroundColor = milestone.color;
+    progressBadge.style.color = 'white';
+    headerRight.appendChild(progressBadge);
+
     const menuBtn = createElement('button', { className: 'milestone-menu-btn clickable-icon' });
     setIcon(menuBtn, 'more-horizontal');
     menuBtn.addEventListener('click', (e) => this.showMilestoneMenu(milestone, e, context));
@@ -107,9 +138,9 @@ export class RoadmapViewRenderer implements IViewRenderer {
       milestoneEl.appendChild(description);
     }
 
-    // Progress
+    // Progress bar
     const progressSection = createElement('div', { className: 'milestone-progress' });
-    const progressBar = createElement('div', { className: 'progress-bar' });
+    const progressBar = createElement('div', { className: 'progress-bar-container' });
     const progressFill = createElement('div', { className: 'progress-fill' });
     progressFill.style.width = `${progress}%`;
     progressFill.style.backgroundColor = milestone.color;
@@ -117,13 +148,17 @@ export class RoadmapViewRenderer implements IViewRenderer {
     progressSection.appendChild(progressBar);
 
     const progressText = createElement('span', { className: 'progress-text' }, [
-      `${completedCards}/${milestoneCards.length} cards completed (${Math.round(Number(progress))}%)`
+      `${Math.round(progress)}% complete`
     ]);
     progressSection.appendChild(progressText);
     milestoneEl.appendChild(progressSection);
 
-    // Cards
-    const cardsSection = createElement('div', { className: 'milestone-cards' });
+    // Cards drop zone
+    const cardsSection = createElement('div', {
+      className: 'milestone-cards',
+      'data-milestone-id': milestone.id
+    });
+
     milestoneCards.forEach(card => {
       const cardEl = this.renderMilestoneCard(card, context);
       cardsSection.appendChild(cardEl);
@@ -146,10 +181,15 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
     const cardEl = createElement('div', {
       className: `milestone-card ${card.completedAt ? 'completed' : ''}`,
-      'data-card-id': card.id
+      'data-card-id': card.id,
+      draggable: 'true'
     });
 
     const cardContent = createElement('div', { className: 'card-content' });
+
+    const dragHandle = createElement('span', { className: 'drag-handle' });
+    setIcon(dragHandle, 'grip-vertical');
+    cardContent.appendChild(dragHandle);
 
     const checkIcon = createElement('span', { className: 'check-icon' });
     setIcon(checkIcon, card.completedAt ? 'check-circle-2' : 'circle');
@@ -163,6 +203,21 @@ export class RoadmapViewRenderer implements IViewRenderer {
     status.textContent = column?.name || '';
     status.style.backgroundColor = column?.color || '#94a3b8';
     cardContent.appendChild(status);
+
+    const removeBtn = createElement('button', { className: 'remove-card-btn' });
+    setIcon(removeBtn, 'x');
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Trova la milestone e rimuovi la card
+      const board = context.boardService.getBoard();
+      board.milestones.forEach(m => {
+        m.cardIds = m.cardIds.filter(id => id !== card.id);
+      });
+      context.render();
+      context.saveBoard();
+      new Notice('Card removed from milestone', 2000);
+    });
+    cardContent.appendChild(removeBtn);
 
     cardEl.appendChild(cardContent);
 
@@ -298,5 +353,89 @@ export class RoadmapViewRenderer implements IViewRenderer {
       'Select a card',
       'No cards available'
     ).open();
+  }
+
+  private setupMilestoneDragDrop(container: HTMLElement, context: ViewRendererContext): void {
+    // Drag start
+    container.addEventListener('dragstart', (e: DragEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains('milestone-card')) return;
+
+      this.draggedCard = target;
+      target.classList.add('dragging');
+
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', target.dataset.cardId || '');
+      }
+    });
+
+    // Drag end
+    container.addEventListener('dragend', (e: DragEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains('milestone-card')) return;
+
+      target.classList.remove('dragging');
+      this.draggedCard = null;
+
+      // Remove drag-over classes
+      container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    });
+
+    // Drag over
+    container.addEventListener('dragover', (e: DragEvent) => {
+      e.preventDefault();
+      if (!this.draggedCard) return;
+
+      const target = e.target as HTMLElement;
+      const milestoneCards = target.closest('.milestone-cards') as HTMLElement;
+
+      if (!milestoneCards) return;
+
+      milestoneCards.classList.add('drag-over');
+    });
+
+    // Drag leave
+    container.addEventListener('dragleave', (e: DragEvent) => {
+      const target = e.target as HTMLElement;
+      const milestoneCards = target.closest('.milestone-cards') as HTMLElement;
+
+      if (milestoneCards) {
+        milestoneCards.classList.remove('drag-over');
+      }
+    });
+
+    // Drop
+    container.addEventListener('drop', (e: DragEvent) => {
+      e.preventDefault();
+      if (!this.draggedCard) return;
+
+      const target = e.target as HTMLElement;
+      const milestoneCards = target.closest('.milestone-cards') as HTMLElement;
+
+      if (!milestoneCards) return;
+
+      const cardId = this.draggedCard.dataset.cardId;
+      const toMilestoneId = milestoneCards.dataset.milestoneId;
+
+      if (!cardId || !toMilestoneId) return;
+
+      // Remove card from all milestones
+      const board = context.boardService.getBoard();
+      board.milestones.forEach(m => {
+        m.cardIds = m.cardIds.filter(id => id !== cardId);
+      });
+
+      // Add to target milestone
+      const targetMilestone = board.milestones.find(m => m.id === toMilestoneId);
+      if (targetMilestone && !targetMilestone.cardIds.includes(cardId)) {
+        targetMilestone.cardIds.push(cardId);
+      }
+
+      milestoneCards.classList.remove('drag-over');
+      context.render();
+      context.saveBoard();
+      new Notice('✓ Card moved to milestone', 1500);
+    });
   }
 }

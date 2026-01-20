@@ -218,11 +218,21 @@ export class KanbanBoardView extends ItemView {
       render: () => this.render()
     };
 
-    renderer.render(container, context);
+    try {
+      renderer.render(container, context);
 
-    // Update selected cards for board view
-    if (this.currentView === 'board' && renderer instanceof BoardViewRenderer) {
-      renderer.setSelectedCards(this.selectedCards);
+      // Update selected cards for board view
+      if (this.currentView === 'board' && renderer instanceof BoardViewRenderer) {
+        renderer.setSelectedCards(this.selectedCards);
+      }
+    } catch (error) {
+      console.error('Kanban Pro: Error rendering view:', error);
+      container.empty();
+      const errorDiv = container.createDiv({ cls: 'view-error' });
+      errorDiv.createEl('h3', { text: '⚠️ Error rendering view' });
+      errorDiv.createEl('p', { text: 'Switch to another view or check the console for details.' });
+      
+      // Non bloccare la navigazione - l'utente può ancora cambiare view
     }
   }
 

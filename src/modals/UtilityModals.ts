@@ -1,7 +1,3 @@
-// ============================================
-// UTILITY MODALS
-// ============================================
-
 import { App, Modal, Setting, FuzzySuggestModal, Notice, setIcon } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { StatusGroup, BoardTemplate } from '../models/types';
@@ -333,10 +329,12 @@ class ConfirmModal extends Modal {
 
 // Quick Add Card Modal
 class QuickAddCardModal extends Modal {
-  private onSubmit: (title: string) => void;
+  private onSubmit: (title: string, startDate?: string, dueDate?: string) => void;
   private title: string = '';
+  private startDate: string | null = null;
+  private dueDate: string | null = null;
 
-  constructor(app: App, onSubmit: (title: string) => void) {
+  constructor(app: App, onSubmit: (title: string, startDate?: string, dueDate?: string) => void) {
     super(app);
     this.onSubmit = onSubmit;
   }
@@ -347,28 +345,43 @@ class QuickAddCardModal extends Modal {
 
     contentEl.createEl('h2', { text: '✨ Quick Add Card' });
 
-    const input = contentEl.createEl('input', {
-      type: 'text',
-      placeholder: 'Card title...',
-      cls: 'quick-add-input'
-    });
-    
-    input.focus();
-    
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        this.title = input.value;
-        this.submit();
-      } else if (e.key === 'Escape') {
-        this.close();
-      }
-    });
+    // Title
+    new Setting(contentEl)
+      .setName('Title')
+      .addText(text => {
+        text
+          .setPlaceholder('Card title')
+          .onChange(value => this.title = value);
+        text.inputEl.focus();
+        text.inputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.submit();
+          }
+        });
+      });
 
-    input.addEventListener('input', () => {
-      this.title = input.value;
-    });
+    // Start Date (optional)
+    new Setting(contentEl)
+      .setName('Start Date (optional)')
+      .addText(text => {
+        text.inputEl.type = 'date';
+        text.onChange(value => {
+          this.startDate = value ? new Date(value).toISOString() : null;
+        });
+      });
 
+    // Due Date (optional)
+    new Setting(contentEl)
+      .setName('Due Date (optional)')
+      .addText(text => {
+        text.inputEl.type = 'date';
+        text.onChange(value => {
+          this.dueDate = value ? new Date(value).toISOString() : null;
+        });
+      });
+
+    // Buttons
     const buttonContainer = contentEl.createDiv({ cls: 'button-container' });
 
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
@@ -379,12 +392,17 @@ class QuickAddCardModal extends Modal {
   }
 
   private submit(): void {
-    if (this.title.trim()) {
-      this.onSubmit(this.title.trim());
-      this.close();
-    } else {
-      new Notice('⚠️ Please enter a card title', 2000);
+    if (!this.title.trim()) {
+      new Notice('⚠️ Please enter a title', 2000);
+      return;
     }
+
+    this.onSubmit(
+      this.title,
+      this.startDate || undefined,
+      this.dueDate || undefined
+    );
+    this.close();
   }
 
   onClose(): void {
