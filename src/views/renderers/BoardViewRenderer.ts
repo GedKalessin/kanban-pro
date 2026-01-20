@@ -147,17 +147,35 @@ export class BoardViewRenderer implements IViewRenderer {
   }
 
   private addColumn(context: ViewRendererContext): void {
-    const { TextInputModal } = require('../../modals/UtilityModals');
+    const { TextInputModal: TextInputModalClass } = require('../../modals/UtilityModals');
+    interface TextInputModalCallback {
+        (value: string): void;
+    }
+
+    interface TextInputModalConstructor {
+        new (
+            app: any,
+            title: string,
+            placeholder: string,
+            value: string,
+            onSubmit: TextInputModalCallback
+        ): {
+            open(): void;
+        };
+    }
+
+    const TextInputModal = TextInputModalClass as TextInputModalConstructor;
+
     new TextInputModal(
-      context.app,
-      'Add Column',
-      'Column name',
-      '',
-      (value) => {
-        context.boardService.addColumn(value);
-        context.render();
-        context.saveBoard();
-      }
+        context.app,
+        'Add Column',
+        'Column name',
+        '',
+        (value: string) => {
+            context.boardService.addColumn(value);
+            context.render();
+            context.saveBoard();
+        }
     ).open();
   }
 
@@ -184,12 +202,29 @@ export class BoardViewRenderer implements IViewRenderer {
 
   private renameLane(lane: SwimLane, context: ViewRendererContext): void {
     const { TextInputModal } = require('../../modals/UtilityModals');
+    interface TextInputModalCallback {
+        (value: string): void;
+    }
+
+    interface TextInputModalConstructor {
+        new (
+            app: any,
+            title: string,
+            placeholder: string,
+            value: string,
+            onSubmit: TextInputModalCallback
+        ): {
+            open(): void;
+        };
+    }
+
+
     new TextInputModal(
       context.app,
       'Rename Swim Lane',
       'Lane name',
       lane.name,
-      (value) => {
+      (value: string) => {
         context.boardService.updateSwimLane(lane.id, { name: value });
         context.render();
         context.saveBoard();
@@ -199,16 +234,32 @@ export class BoardViewRenderer implements IViewRenderer {
 
   private changeLaneColor(lane: SwimLane, context: ViewRendererContext): void {
     const { ColorPickerModal } = require('../../modals/UtilityModals');
-    new ColorPickerModal(context.app, lane.color, (color) => {
+    interface ColorPickerCallback {
+      (color: string): void;
+    }
+
+    interface ColorPickerModalConstructor {
+      new (
+        app: any,
+        initialColor: string,
+        onSubmit: ColorPickerCallback
+      ): {
+        open(): void;
+      };
+    }
+
+    const ColorPickerModalClass = ColorPickerModal as ColorPickerModalConstructor;
+
+    new ColorPickerModalClass(context.app, lane.color, (color: string) => {
       context.boardService.updateSwimLane(lane.id, { color });
       context.render();
       context.saveBoard();
     }).open();
   }
 
-  private deleteLane(lane: SwimLane, context: ViewRendererContext): void {
-    const { ConfirmModal } = require('../../modals/UtilityModals');
-    new ConfirmModal(
+private deleteLane(lane: SwimLane, context: ViewRendererContext): void {
+  const { ConfirmModal } = require('../../modals/UtilityModals');
+  new ConfirmModal(
       context.app,
       'Delete Swim Lane',
       `Delete "${lane.name}"? Cards will be moved to Unassigned.`,

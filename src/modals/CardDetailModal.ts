@@ -149,12 +149,16 @@ export class CardDetailModal extends Modal {
         btn.setButtonText(this.card.dueDate ? formatDisplayDate(this.card.dueDate) : 'Set date');
         btn.onClick(() => {
           const { DatePickerModal } = require('./UtilityModals');
-          new DatePickerModal(this.app, this.card.dueDate, (date) => {
-            this.boardService.updateCard(this.card.id, { dueDate: date });
-            this.onUpdate();
-            this.close();
-            new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
-          }).open();
+          new DatePickerModal(
+            this.app,
+            this.card.dueDate,
+            (date: string | null) => {
+              this.boardService.updateCard(this.card.id, { dueDate: date });
+              this.onUpdate();
+              this.close();
+              new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+            }
+          ).open();
         });
       });
 
@@ -183,10 +187,14 @@ export class CardDetailModal extends Modal {
         btn.setButtonText('Choose');
         btn.onClick(() => {
           const { ColorPickerModal } = require('./UtilityModals');
-          new ColorPickerModal(this.app, this.card.color || '#6366f1', (color) => {
-            this.boardService.updateCard(this.card.id, { color });
-            this.onUpdate();
-          }).open();
+          new ColorPickerModal(
+            this.app,
+            this.card.color || '#6366f1',
+            (color: string) => {
+              this.boardService.updateCard(this.card.id, { color });
+              this.onUpdate();
+            }
+          ).open();
         });
       });
 
@@ -243,7 +251,7 @@ export class CardDetailModal extends Modal {
       'Add Checklist Item',
       'Item text',
       '',
-      (text) => {
+      (text: string) => {
         this.boardService.addChecklistItem(this.card.id, text);
         this.onUpdate();
         this.renderChecklist(container);
@@ -287,18 +295,18 @@ export class CardDetailModal extends Modal {
   private editAssignees(): void {
     const { TextInputModal } = require('./UtilityModals');
     new TextInputModal(
-      this.app,
-      'Edit Assignees',
-      'Assignees (comma-separated)',
-      this.card.assignee.join(', '),
-      (value) => {
-        const assignees = value.split(',').map(a => a.trim()).filter(a => a);
-        this.boardService.updateCard(this.card.id, { assignee: assignees });
-        this.onUpdate();
-        this.close();
-        new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
-      }
-    ).open();
+        this.app,
+        'Edit Assignees',
+        'Assignees (comma-separated)',
+        this.card.assignee.join(', '),
+        (value: string) => {
+          const assignees: string[] = value.split(',').map((a: string) => a.trim()).filter((a: string) => a);
+          this.boardService.updateCard(this.card.id, { assignee: assignees });
+          this.onUpdate();
+          this.close();
+          new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+        }
+        ).open();
   }
 
   private editTags(): void {
@@ -308,8 +316,8 @@ export class CardDetailModal extends Modal {
       'Edit Tags',
       'Tags (comma-separated)',
       this.card.tags.join(', '),
-      (value) => {
-        const tags = value.split(',').map(t => t.trim()).filter(t => t);
+      (value: string) => {
+        const tags: string[] = value.split(',').map((t: string) => t.trim()).filter((t: string) => t);
         this.boardService.updateCard(this.card.id, { tags });
         this.onUpdate();
         this.close();

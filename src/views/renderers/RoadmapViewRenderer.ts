@@ -117,7 +117,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     progressSection.appendChild(progressBar);
 
     const progressText = createElement('span', { className: 'progress-text' }, [
-      `${completedCards}/${milestoneCards.length} cards completed (${Math.round(progress)}%)`
+      `${completedCards}/${milestoneCards.length} cards completed (${Math.round(Number(progress))}%)`
     ]);
     progressSection.appendChild(progressText);
     milestoneEl.appendChild(progressSection);
@@ -171,7 +171,14 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
   private addMilestone(context: ViewRendererContext): void {
     const { MilestoneModal } = require('../../modals/MilestoneModal');
-    new MilestoneModal(context.app, null, (milestoneData) => {
+    interface MilestoneFormData {
+      name: string;
+      description: string;
+      dueDate: string;
+      color: string;
+    }
+
+    new MilestoneModal(context.app, null, (milestoneData: MilestoneFormData) => {
       const board = context.boardService.getBoard();
       const newMilestone: Milestone = {
         id: require('../../utils/helpers').generateId(),
@@ -215,14 +222,21 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
   private editMilestone(milestone: Milestone, context: ViewRendererContext): void {
     const { MilestoneModal } = require('../../modals/MilestoneModal');
-    new MilestoneModal(context.app, milestone, (milestoneData) => {
-      milestone.name = milestoneData.name;
-      milestone.description = milestoneData.description;
-      milestone.dueDate = milestoneData.dueDate;
-      milestone.color = milestoneData.color || milestone.color;
-      context.render();
-      context.saveBoard();
-      new Notice('✅ Milestone updated', 2000);
+    interface MilestoneFormData {
+        name: string;
+        description: string;
+        dueDate: string;
+        color: string;
+    }
+
+    new MilestoneModal(context.app, milestone, (milestoneData: MilestoneFormData) => {
+        milestone.name = milestoneData.name;
+        milestone.description = milestoneData.description;
+        milestone.dueDate = milestoneData.dueDate;
+        milestone.color = milestoneData.color || milestone.color;
+        context.render();
+        context.saveBoard();
+        new Notice('✅ Milestone updated', 2000);
     }).open();
   }
 
@@ -267,10 +281,15 @@ export class RoadmapViewRenderer implements IViewRenderer {
       value: card.id
     }));
 
+    interface SuggesterItem {
+      display: string;
+      value: string;
+    }
+
     new SuggesterModal(
       context.app,
       items,
-      (item) => {
+      (item: SuggesterItem) => {
         milestone.cardIds.push(item.value);
         context.render();
         context.saveBoard();

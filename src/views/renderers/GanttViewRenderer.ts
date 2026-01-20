@@ -86,14 +86,25 @@ export class GanttViewRenderer implements IViewRenderer {
     const addTaskBtn = createElement('button', { className: 'add-task-btn' });
     setIcon(addTaskBtn, 'plus');
     addTaskBtn.appendChild(createElement('span', {}, ['Add Task']));
-    addTaskBtn.addEventListener('click', () => {
-      const board = context.boardService.getBoard();
-      if (board.columns[0]) {
-        const { QuickAddCardModal } = require('../../modals/UtilityModals');
-        new QuickAddCardModal(context.app, (title) => {
-          context.boardService.addCard(board.columns[0].id, { title });
-          context.render();
-          context.saveBoard();
+addTaskBtn.addEventListener('click', () => {
+  const board = context.boardService.getBoard();
+  if (board.columns[0]) {
+    interface QuickAddCardModalCallback {
+        (title: string): void;
+    }
+
+    interface QuickAddCardModalConstructor {
+        new (app: any, callback: QuickAddCardModalCallback): {
+            open(): void;
+        };
+    }
+
+    const QuickAddCardModal = require('../../modals/UtilityModals').QuickAddCardModal as QuickAddCardModalConstructor;
+
+    new QuickAddCardModal(context.app, (title: string) => {
+            context.boardService.addCard(board.columns[0].id, { title });
+            context.render();
+            context.saveBoard();
         }).open();
       }
     });

@@ -168,7 +168,7 @@ export class ToolbarBuilder {
       'Rename Board',
       'Board name',
       board.name,
-      (value) => {
+      (value: string) => {
         this.boardService.updateBoard({ name: value });
         this.onRender();
         this.onSave();
@@ -227,7 +227,7 @@ export class ToolbarBuilder {
       'Add Swim Lane',
       'Swim lane name',
       '',
-      (value) => {
+      (value: string) => {
         this.boardService.addSwimLane(value);
         this.onRender();
         this.onSave();

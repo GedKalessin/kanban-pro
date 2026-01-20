@@ -119,7 +119,7 @@ export class ColumnRenderer {
       'Rename Column',
       'Column name',
       column.name,
-      (value) => {
+      (value: string) => {
         this.context.boardService.updateColumn(column.id, { name: value });
         this.context.render();
         this.context.saveBoard();
@@ -129,11 +129,18 @@ export class ColumnRenderer {
 
   private quickAddCard(columnId: string, swimLaneId?: string): void {
     const { QuickAddCardModal } = require('../../modals/UtilityModals');
-    new QuickAddCardModal(this.context.app, (title) => {
-      this.context.boardService.addCard(columnId, { title, swimLaneId });
-      this.context.render();
-      this.context.saveBoard();
-    }).open();
+    interface QuickAddCardCallback {
+      (title: string): void;
+    }
+
+    new QuickAddCardModal(
+      this.context.app,
+      (title: string): void => {
+        this.context.boardService.addCard(columnId, { title, swimLaneId });
+        this.context.render();
+        this.context.saveBoard();
+      }
+    ).open();
   }
 
   private showColumnMenu(column: KanbanColumn, event: MouseEvent): void {
@@ -164,22 +171,34 @@ export class ColumnRenderer {
 
   private changeColumnColor(column: KanbanColumn): void {
     const { ColorPickerModal } = require('../../modals/UtilityModals');
-    new ColorPickerModal(this.context.app, column.color, (color) => {
-      this.context.boardService.updateColumn(column.id, { color });
-      this.context.render();
-      this.context.saveBoard();
-    }).open();
+    interface ColorPickerCallback {
+        (color: string): void;
+    }
+
+    new ColorPickerModal(
+        this.context.app,
+        column.color,
+        (color: string): void => {
+            this.context.boardService.updateColumn(column.id, { color });
+            this.context.render();
+            this.context.saveBoard();
+        }
+    ).open();
   }
 
   private setWipLimit(column: KanbanColumn): void {
     const { TextInputModal } = require('../../modals/UtilityModals');
+    interface WipLimitCallback {
+      (value: string): void;
+    }
+
     new TextInputModal(
       this.context.app,
       'Set WIP Limit',
       'Maximum cards in this column',
       column.wipLimit?.toString() || '',
-      (value) => {
-        const limit = parseInt(value);
+      (value: string): void => {
+        const limit: number = parseInt(value);
         this.context.boardService.updateColumn(column.id, { wipLimit: isNaN(limit) ? null : limit });
         this.context.render();
         this.context.saveBoard();

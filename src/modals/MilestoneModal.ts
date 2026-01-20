@@ -77,9 +77,13 @@ export class MilestoneModal extends Modal {
         btn.setButtonText('Choose Color');
         btn.onClick(() => {
           const { ColorPickerModal } = require('./UtilityModals');
-          new ColorPickerModal(this.app, this.formData.color, (color) => {
-            this.formData.color = color;
-          }).open();
+          new ColorPickerModal(
+            this.app,
+            this.formData.color,
+            (color: string) => {
+              this.formData.color = color;
+            }
+          ).open();
         });
       });
 
