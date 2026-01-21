@@ -105,8 +105,14 @@ export class MilestoneModal extends Modal {
       return;
     }
 
-    this.onSubmit(this.formData);
+    // Close first, then submit callback to avoid render conflicts
     this.close();
+
+    // Increased delay to ensure modal is fully closed before rendering
+    // This prevents race conditions with the view render cycle
+    setTimeout(() => {
+      this.onSubmit(this.formData);
+    }, 150);
   }
 
   onClose(): void {

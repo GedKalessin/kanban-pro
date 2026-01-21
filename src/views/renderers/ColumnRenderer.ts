@@ -16,9 +16,12 @@ export class ColumnRenderer {
   render(column: KanbanColumn, cards: KanbanCard[], swimLaneId?: string, selectedCards: Set<string> = new Set()): HTMLElement {
     const board = this.context.boardService.getBoard();
 
+    console.log('🎨 ColumnRenderer.render() - Column:', column.name, 'ID:', column.id, 'Board ID:', board.id);  // ✅ Debug
+
     const columnEl = createElement('div', {
       className: `kanban-column ${column.collapsed ? 'collapsed' : ''}`,
       'data-column-id': column.id,
+      'data-board-id': board.id,  // ✅ Add board ID for validation
       'data-swim-lane-id': swimLaneId || ''
     });
 
@@ -87,7 +90,22 @@ export class ColumnRenderer {
 
     const addCardBtn = createElement('button', { className: 'add-card-btn clickable-icon' });
     setIcon(addCardBtn, 'plus');
-    addCardBtn.addEventListener('click', () => this.quickAddCard(column.id));
+    addCardBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      console.log('➕ Add card button clicked for column:', column.name);  // ✅ Debug
+
+      // ✅ CRITICAL: Validate that we're still on the same board
+      const currentBoard = this.context.boardService.getBoard();
+      const columnElement = (e.target as HTMLElement).closest('.kanban-column') as HTMLElement;
+      const elementBoardId = columnElement?.dataset.boardId;
+
+      if (elementBoardId && elementBoardId !== currentBoard.id) {
+        console.warn('⚠️ Ignoring click on stale column element. Element board:', elementBoardId, 'Current board:', currentBoard.id);
+        return;
+      }
+
+      this.quickAddCard(column.id);
+    });
     headerRight.appendChild(addCardBtn);
 
     const menuBtn = createElement('button', { className: 'column-menu-btn clickable-icon' });
@@ -104,7 +122,10 @@ export class ColumnRenderer {
     content.dataset.columnId = column.id;
     content.dataset.swimLaneId = swimLaneId || '';
 
+    console.log(`Rendering ${cards.length} cards for column ${column.name}`);  // ✅ Debug
+
     [...cards].sort((a, b) => a.order - b.order).forEach(card => {
+      console.log('Rendering card:', card.title);  // ✅ Debug
       content.appendChild(this.cardRenderer.render(card, selectedCards));
     });
 
@@ -128,18 +149,50 @@ export class ColumnRenderer {
   }
 
   private quickAddCard(columnId: string, swimLaneId?: string): void {
-    const { QuickAddCardModal } = require('../../modals/UtilityModals');
-    interface QuickAddCardCallback {
-      (title: string): void;
+    console.log('🎯 quickAddCard called for column:', columnId, 'swimLaneId:', swimLaneId);  // ✅ Debug
+
+    const board = this.context.boardService.getBoard();
+    console.log('📊 Current board ID:', board.id);  // ✅ Debug
+    console.log('📊 Current board columns:', board.columns.map(c => ({ id: c.id, name: c.name })));  // ✅ Debug
+
+    // ✅ CRITICAL: Verify the column exists in the current board
+    const column = this.context.boardService.getColumn(columnId);
+    if (!column) {
+      console.error('❌ Column not found in current board:', columnId);  // ✅ Debug
+      console.error('❌ Available columns:', board.columns.map(c => c.id));  // ✅ Debug
+      return;
     }
 
+    const { QuickAddCardModal } = require('../../modals/UtilityModals');
+
+    console.log('📦 QuickAddCardModal loaded:', QuickAddCardModal);  // ✅ Debug
+
     new QuickAddCardModal(
-      this.context.app,
-      (title: string): void => {
-        this.context.boardService.addCard(columnId, { title, swimLaneId });
+    this.context.app,
+    (title: string, startDate?: string, dueDate?: string): void => {
+
+        console.log('✨ Card creation callback triggered:', { title, startDate, dueDate, columnId, swimLaneId });  // ✅ Debug
+        console.log('📊 Board cards BEFORE add:', this.context.boardService.getBoard().cards.length);  // ✅ Debug
+
+        const newCard = this.context.boardService.addCard(columnId, {
+        title,
+        swimLaneId,
+        startDate: startDate ?? null,
+        dueDate: dueDate ?? null
+        });
+
+        console.log('✅ Card created:', newCard);  // ✅ Debug
+        console.log('📊 Board cards AFTER add:', this.context.boardService.getBoard().cards.length);  // ✅ Debug
+        console.log('📋 All cards:', this.context.boardService.getBoard().cards.map(c => ({ id: c.id, title: c.title, columnId: c.columnId })));  // ✅ Debug
+
         this.context.render();
+
+        console.log('🔄 Render completed');  // ✅ Debug
+
         this.context.saveBoard();
-      }
+
+        console.log('💾 Save completed');  // ✅ Debug
+    }
     ).open();
   }
 

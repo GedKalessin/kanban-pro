@@ -21,7 +21,7 @@ export class CardRenderer {
     const displayOptions = board.settings.cardDisplayOptions;
 
     const cardEl = createElement('div', {
-      className: `kanban-card ${card.blocked ? 'blocked' : ''} ${selectedCards.has(card.id) ? 'selected' : ''}`,
+      className: `kanban-card ${card.blocked ? 'blocked' : ''} ${card.completedAt ? 'completed' : ''} ${selectedCards.has(card.id) ? 'selected' : ''}`,
       'data-card-id': card.id,
       draggable: 'true'
     });
@@ -131,6 +131,17 @@ export class CardRenderer {
     if (displayOptions.showAssignee && card.assignee.length > 0) {
       hasFooterContent = true;
       cardFooter.appendChild(this.renderAssignees(card.assignee));
+    }
+
+    // Completion status
+    if (card.completedAt) {
+      hasFooterContent = true;
+      const completedEl = createElement('div', { className: 'completed-badge' });
+      const checkIcon = createElement('span', { className: 'icon' });
+      setIcon(checkIcon, 'check-circle-2');
+      completedEl.appendChild(checkIcon);
+      completedEl.appendChild(createElement('span', {}, ['Done']));
+      cardFooter.appendChild(completedEl);
     }
 
     return hasFooterContent ? cardFooter : null;

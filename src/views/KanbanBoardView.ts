@@ -1,7 +1,3 @@
-// ============================================
-// src/views/KanbanBoardView.ts - REFACTORED
-// ============================================
-
 import { ItemView, WorkspaceLeaf, Notice, TFile } from 'obsidian';
 import type KanbanProPlugin from '../main';
 import { BoardService } from '../services/BoardService';
@@ -32,14 +28,19 @@ export class KanbanBoardView extends ItemView {
   private currentView: ExtendedViewType = 'board';
   private selectedCards: Set<string> = new Set();
   private filePath: string = '';
-  
+
   // View Renderers
   private renderers: Map<ExtendedViewType, IViewRenderer>;
+
+  // Persistent context - created once and reused
+  private viewContext: ViewRendererContext;
 
   constructor(leaf: WorkspaceLeaf, plugin: KanbanProPlugin) {
     super(leaf);
     this.plugin = plugin;
     this.boardService = new BoardService();
+    console.log('🏗️ KanbanBoardView constructor - Board ID:', this.boardService.getBoard().id);  // ✅ Debug
+
     this.dragDropService = new DragDropService(
       this.boardService,
       () => this.render(),
@@ -47,13 +48,36 @@ export class KanbanBoardView extends ItemView {
     );
 
     // Initialize renderers
-    this.renderers = new Map([
+    this.renderers = new Map<ExtendedViewType, IViewRenderer>([
       ['board', new BoardViewRenderer()],
       ['list', new ListViewRenderer()],
       ['timeline', new TimelineViewRenderer()],
       ['gantt', new GanttViewRenderer()],
       ['roadmap', new RoadmapViewRenderer()]
     ]);
+
+    // Create persistent context - bound to THIS view instance
+    this.viewContext = {
+      app: this.app,
+      plugin: this.plugin,
+      boardService: this.boardService,
+      onCardClick: (cardId) => this.openCardModal(cardId),
+      onColumnUpdate: (columnId) => {
+        console.log('🔄 onColumnUpdate callback for board:', this.boardService.getBoard().id);  // ✅ Debug
+        this.render();
+        this.saveBoard();
+      },
+      onCardUpdate: (cardId) => {
+        console.log('🔄 onCardUpdate callback for board:', this.boardService.getBoard().id);  // ✅ Debug
+        this.render();
+        this.saveBoard();
+      },
+      saveBoard: () => this.saveBoard(),
+      render: () => {
+        console.log('🔄 render callback from context for board:', this.boardService.getBoard().id);  // ✅ Debug
+        this.render();
+      }
+    };
   }
 
   // ==================== OBSIDIAN VIEW INTERFACE ====================
@@ -63,11 +87,34 @@ export class KanbanBoardView extends ItemView {
   }
 
   getDisplayText(): string {
-    return this.boardService.getBoard().name || 'Kanban Pro';
+    const board = this.boardService.getBoard();
+    return board.name || 'Kanban Board';
   }
 
   getIcon(): string {
     return 'layout-grid';
+  }
+
+  // Update the view title when board name changes (safe version without setState loop)
+  private updateTitleSafe(): void {
+    const title = this.boardService.getBoard().name || 'Kanban Board';
+
+    // Aggiorna titolo nella view header (a destra)
+    const viewAny = this.leaf.view as any;
+    if (viewAny?.titleEl) {
+      // alcuni usano titleEl.setText, altri textContent
+      if (typeof viewAny.titleEl.setText === 'function') {
+        viewAny.titleEl.setText(title);
+      } else {
+        viewAny.titleEl.textContent = title;
+      }
+    }
+
+    // Aggiorna tab title (a sinistra) — API interna
+    const leafAny = this.leaf as any;
+    if (typeof leafAny.updateHeader === 'function') {
+      leafAny.updateHeader(); // undocumented
+    }
   }
 
   async onOpen(): Promise<void> {
@@ -99,24 +146,39 @@ export class KanbanBoardView extends ItemView {
   }
 
   async setState(state: any, result: any): Promise<void> {
-    if (state?.file) {
-      await this.loadFile(state.file);
-    }
+    if (!state?.file) return;
+    // Guard: evita reload inutile se è lo stesso file
+    if (this.filePath === state.file) return;
+    await this.loadFile(state.file);
   }
 
   // ==================== FILE OPERATIONS ====================
 
   private async loadFile(filePath: string): Promise<void> {
     try {
+      console.log('📂 loadFile: Loading file from', filePath);
+
       const abstractFile = this.app.vault.getAbstractFileByPath(filePath);
       if (abstractFile && abstractFile instanceof TFile) {
         const content = await this.app.vault.read(abstractFile);
+        console.log('📂 loadFile: Read', content.length, 'bytes from file');
+
         const board = JSON.parse(content) as KanbanBoard;
-        this.boardService = new BoardService(board);
+        console.log('📂 loadFile: Parsed board', board.id, 'with', board.cards.length, 'cards');
+
+        // ✅ CRITICAL FIX: Instead of creating a new BoardService,
+        // replace the board inside the existing BoardService
+        // This keeps all references (ToolbarBuilder, DragDropService, viewContext) valid!
+        this.boardService.setBoard(board);
         this.filePath = filePath;
+
+        console.log('✅ Loaded board into existing BoardService:', this.boardService.getBoard().id);
+
         this.render();
+        this.updateTitleSafe(); // Aggiorna il titolo dopo il load
         this.plugin.setupAutoSave(filePath, this);
       } else {
+        console.warn('⚠️ loadFile: File not found at path:', filePath);
         this.render();
       }
     } catch (error) {
@@ -127,8 +189,12 @@ export class KanbanBoardView extends ItemView {
   }
 
   setBoard(board: KanbanBoard, filePath: string): void {
-    this.boardService = new BoardService(board);
+    // ✅ CRITICAL FIX: Use setBoard() instead of creating new BoardService
+    this.boardService.setBoard(board);
     this.filePath = filePath;
+
+    console.log('✅ Set board via setBoard():', this.boardService.getBoard().id);
+
     this.render();
   }
 
@@ -137,16 +203,28 @@ export class KanbanBoardView extends ItemView {
   }
 
   async saveBoard(): Promise<void> {
-    if (!this.filePath) return;
+    if (!this.filePath) {
+      console.warn('⚠️ saveBoard called but no filePath set');
+      return;
+    }
 
     try {
       const board = this.boardService.getBoard();
+      console.log('💾 saveBoard: Saving board', board.id, 'with', board.cards.length, 'cards to', this.filePath);
+
       board.updatedAt = new Date().toISOString();
       const content = JSON.stringify(board, null, 2);
+
+      console.log('💾 saveBoard: JSON content length:', content.length, 'bytes');
 
       const file = this.app.vault.getAbstractFileByPath(this.filePath);
       if (file instanceof TFile) {
         await this.app.vault.modify(file, content);
+        console.log('✅ saveBoard: File successfully modified');
+
+        // Niente updateTitle qui: evita re-init/loop durante save.
+      } else {
+        console.error('❌ saveBoard: File not found at path:', this.filePath);
       }
     } catch (error) {
       console.error('Kanban Pro: Error saving board:', error);
@@ -157,6 +235,10 @@ export class KanbanBoardView extends ItemView {
   // ==================== RENDERING ====================
 
   render(): void {
+    console.log('🔄 KanbanBoardView.render() called for board:', this.boardService.getBoard().id);  // ✅ Debug
+
+    // ✅ CRITICAL: Completely clear the DOM and cleanup drag-drop before rendering
+    this.dragDropService.cleanup();
     this.contentEl.empty();
 
     const wrapper = createElement('div', { className: 'kanban-pro-wrapper' });
@@ -174,17 +256,36 @@ export class KanbanBoardView extends ItemView {
 
     // Setup drag and drop
     this.dragDropService.setupDragAndDrop(this.contentEl);
+
+    // Niente updateTitle nel render loop.
   }
 
   private buildToolbar(): HTMLElement {
+    console.log('🔧 buildToolbar() for board:', this.boardService.getBoard().id);  // ✅ Debug
+
+    // Capture the current view instance to ensure callbacks are bound correctly
+    const self = this;
+
+    // ✅ CRITICAL FIX: Pass callbacks that always use the current boardService,
+    // not a captured reference that might become stale
     const toolbarBuilder = new ToolbarBuilder(
       this.app,
       this.plugin,
-      this.boardService,
+      this.boardService,  // This reference gets stale! ToolbarBuilder stores it
       this.currentView,
-      (view) => this.switchView(view),
-      () => this.saveBoard(),
-      () => this.render()
+      (view) => self.switchView(view),
+      () => {
+        console.log('💾 saveBoard callback - board:', self.boardService.getBoard().id);  // ✅ Debug
+        self.saveBoard();
+      },
+      () => {
+        console.log('🔄 render callback - board:', self.boardService.getBoard().id);  // ✅ Debug
+        self.render();
+      },
+      () => {
+        console.log('📝 updateTitle callback - board:', self.boardService.getBoard().id);  // ✅ Debug
+        self.updateTitleSafe();
+      }
     );
 
     return toolbarBuilder.build();
@@ -192,34 +293,18 @@ export class KanbanBoardView extends ItemView {
 
   private renderView(container: HTMLElement): void {
     const renderer = this.renderers.get(this.currentView);
-    
+
     if (!renderer) {
-      container.createEl('div', { 
+      container.createEl('div', {
         text: `View "${this.currentView}" not implemented yet`,
         cls: 'error-message'
       });
       return;
     }
 
-    const context: ViewRendererContext = {
-      app: this.app,
-      plugin: this.plugin,
-      boardService: this.boardService,
-      onCardClick: (cardId) => this.openCardModal(cardId),
-      onColumnUpdate: (columnId) => {
-        this.render();
-        this.saveBoard();
-      },
-      onCardUpdate: (cardId) => {
-        this.render();
-        this.saveBoard();
-      },
-      saveBoard: () => this.saveBoard(),
-      render: () => this.render()
-    };
-
     try {
-      renderer.render(container, context);
+      // Use the persistent context that's bound to THIS view instance
+      renderer.render(container, this.viewContext);
 
       // Update selected cards for board view
       if (this.currentView === 'board' && renderer instanceof BoardViewRenderer) {
@@ -231,7 +316,7 @@ export class KanbanBoardView extends ItemView {
       const errorDiv = container.createDiv({ cls: 'view-error' });
       errorDiv.createEl('h3', { text: '⚠️ Error rendering view' });
       errorDiv.createEl('p', { text: 'Switch to another view or check the console for details.' });
-      
+
       // Non bloccare la navigazione - l'utente può ancora cambiare view
     }
   }

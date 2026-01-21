@@ -22,14 +22,14 @@ export class TimelineViewRenderer implements IViewRenderer {
     try {
       container.addClass('kanban-timeline-view', 'horizontal');
 
-      const toolbar = this.renderToolbar(context);
+      const toolbar = this.renderToolbar(context, container);
       container.appendChild(toolbar);
 
       const filteredCards = context.boardService.getFilteredCards()
         .filter(c => c.dueDate || (c as any).startDate);
 
       if (filteredCards.length === 0) {
-        container.appendChild(this.renderEmptyState());
+        container.appendChild(this.renderEmptyState(context));
         return;
       }
 
@@ -38,11 +38,11 @@ export class TimelineViewRenderer implements IViewRenderer {
       container.appendChild(timelineContainer);
     } catch (error) {
       console.error('Timeline View Error:', error);
-      this.renderError(container, 'Failed to render Timeline view');
+      this.renderError(container, 'Failed to render Timeline view', context);
     }
   }
 
-  private renderToolbar(context: ViewRendererContext): HTMLElement {
+  private renderToolbar(context: ViewRendererContext, container: HTMLElement): HTMLElement {
     const toolbar = createElement('div', { className: 'timeline-toolbar' });
 
     // View Mode Selector
@@ -84,7 +84,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     const todayBtn = createElement('button', { className: 'today-btn' }, ['Today']);
     todayBtn.addEventListener('click', () => {
       setTimeout(() => {
-        const marker = document.querySelector('.timeline-container .today-marker');
+        const marker = container.querySelector('.timeline-container .today-marker');
         if (marker) marker.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       }, 100);
     });
@@ -93,13 +93,33 @@ export class TimelineViewRenderer implements IViewRenderer {
     return toolbar;
   }
 
-  private renderEmptyState(): HTMLElement {
-    const emptyState = createElement('div', { className: 'empty-state' });
+  private renderEmptyState(context: ViewRendererContext): HTMLElement {
+    const emptyState = createElement('div', { className: 'empty-state timeline-empty' });
     const emptyIcon = createElement('div', { className: 'empty-icon' });
     setIcon(emptyIcon, 'calendar-x');
     emptyState.appendChild(emptyIcon);
     emptyState.appendChild(createElement('h3', {}, ['No cards with dates']));
-    emptyState.appendChild(createElement('p', {}, ['Add start or due dates to see cards in timeline.']));
+    emptyState.appendChild(createElement('p', {}, ['Add start or due dates to cards to see them in timeline view.']));
+
+    // Button to create a card with dates
+    const createBtn = createElement('button', { className: 'primary-btn' }, ['Create Card with Dates']);
+    createBtn.addEventListener('click', () => {
+      const board = context.boardService.getBoard();
+      if (board.columns.length > 0) {
+        const { QuickAddCardModal } = require('../../modals/UtilityModals');
+        new QuickAddCardModal(context.app, (title: string, startDate: string | undefined, dueDate: string | undefined) => {
+          context.boardService.addCard(board.columns[0].id, {
+            title,
+            startDate: startDate ?? new Date().toISOString(),
+            dueDate: dueDate ?? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          });
+          context.render();
+          context.saveBoard();
+        }).open();
+      }
+    });
+    emptyState.appendChild(createBtn);
+
     return emptyState;
   }
 
@@ -322,7 +342,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     return groups;
   }
 
-  private renderError(container: HTMLElement, message: string): void {
+  private renderError(container: HTMLElement, message: string, context: ViewRendererContext): void {
     container.empty();
     const errorDiv = container.createDiv({ cls: 'view-error' });
 
@@ -332,13 +352,13 @@ export class TimelineViewRenderer implements IViewRenderer {
     errorDiv.createEl('h3', { text: '⚠️ View Error' });
     errorDiv.createEl('p', { text: message });
 
-    const retryBtn = errorDiv.createEl('button', {
-      text: 'Try Again',
-      cls: 'retry-btn'
+    const backBtn = errorDiv.createEl('button', {
+      text: 'Back to Board',
+      cls: 'primary-btn'
     });
-    retryBtn.addEventListener('click', () => {
-      container.empty();
-      // Re-render will be triggered by parent
+    backBtn.addEventListener('click', () => {
+      // Trigger re-render by calling context render
+      context.render();
     });
   }
 }

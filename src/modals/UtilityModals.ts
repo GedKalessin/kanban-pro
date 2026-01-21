@@ -329,12 +329,17 @@ class ConfirmModal extends Modal {
 
 // Quick Add Card Modal
 class QuickAddCardModal extends Modal {
-  private onSubmit: (title: string, startDate?: string, dueDate?: string) => void;
-  private title: string = '';
-  private startDate: string | null = null;
-  private dueDate: string | null = null;
+  private onSubmit: (title: string, startDate?: string | null, dueDate?: string | null) => void;
+  private formData = {
+    title: '',
+    startDate: null as string | null,
+    dueDate: null as string | null
+  };
 
-  constructor(app: App, onSubmit: (title: string, startDate?: string, dueDate?: string) => void) {
+  constructor(
+    app: App,
+    onSubmit: (title: string, startDate?: string | null, dueDate?: string | null) => void
+  ) {
     super(app);
     this.onSubmit = onSubmit;
   }
@@ -348,10 +353,13 @@ class QuickAddCardModal extends Modal {
     // Title
     new Setting(contentEl)
       .setName('Title')
+      .setDesc('Card title (required)')
       .addText(text => {
         text
-          .setPlaceholder('Card title')
-          .onChange(value => this.title = value);
+          .setPlaceholder('Enter card title')
+          .onChange(value => {
+            this.formData.title = value;
+          });
         text.inputEl.focus();
         text.inputEl.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
@@ -361,25 +369,63 @@ class QuickAddCardModal extends Modal {
         });
       });
 
-    // Start Date (optional)
+    // Start Date
     new Setting(contentEl)
-      .setName('Start Date (optional)')
+      .setName('Start Date')
+      .setDesc('When work begins (optional)')
       .addText(text => {
         text.inputEl.type = 'date';
-        text.onChange(value => {
-          this.startDate = value ? new Date(value).toISOString() : null;
+        text.inputEl.addEventListener('change', (e) => {
+          const value = (e.target as HTMLInputElement).value;
+          this.formData.startDate = value ? new Date(value + 'T00:00:00').toISOString() : null;
         });
       });
 
-    // Due Date (optional)
+    // Due Date
     new Setting(contentEl)
-      .setName('Due Date (optional)')
+      .setName('Due Date')
+      .setDesc('When work should be done (optional)')
       .addText(text => {
         text.inputEl.type = 'date';
-        text.onChange(value => {
-          this.dueDate = value ? new Date(value).toISOString() : null;
+        text.inputEl.addEventListener('change', (e) => {
+          const value = (e.target as HTMLInputElement).value;
+          this.formData.dueDate = value ? new Date(value + 'T23:59:59').toISOString() : null;
         });
       });
+
+    // Quick date buttons
+    const quickDatesSection = contentEl.createDiv({ cls: 'quick-dates-section' });
+    quickDatesSection.createEl('h4', { text: 'Quick Dates' });
+
+    const quickDatesContainer = quickDatesSection.createDiv({ cls: 'quick-dates-buttons' });
+
+    const quickDates = [
+      { label: 'Today', days: 0 },
+      { label: 'Tomorrow', days: 1 },
+      { label: 'This Week', days: 7 },
+      { label: 'Next Week', days: 14 }
+    ];
+
+    quickDates.forEach(({ label, days }) => {
+      const btn = quickDatesContainer.createEl('button', { text: label, cls: 'quick-date-btn' });
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dueDate = new Date(today);
+        dueDate.setDate(dueDate.getDate() + days);
+        dueDate.setHours(23, 59, 59, 999);
+
+        this.formData.startDate = today.toISOString();
+        this.formData.dueDate = dueDate.toISOString();
+
+        // Update input values
+        const startInput = contentEl.querySelector('input[type="date"]') as HTMLInputElement;
+        const dueInput = contentEl.querySelectorAll('input[type="date"]')[1] as HTMLInputElement;
+        if (startInput) startInput.value = today.toISOString().split('T')[0];
+        if (dueInput) dueInput.value = dueDate.toISOString().split('T')[0];
+      });
+    });
 
     // Buttons
     const buttonContainer = contentEl.createDiv({ cls: 'button-container' });
@@ -392,16 +438,17 @@ class QuickAddCardModal extends Modal {
   }
 
   private submit(): void {
-    if (!this.title.trim()) {
+    if (!this.formData.title.trim()) {
       new Notice('⚠️ Please enter a title', 2000);
       return;
     }
 
     this.onSubmit(
-      this.title,
-      this.startDate || undefined,
-      this.dueDate || undefined
+      this.formData.title.trim(),
+      this.formData.startDate ?? undefined,  
+      this.formData.dueDate ?? undefined      
     );
+
     this.close();
   }
 

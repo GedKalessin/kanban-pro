@@ -11,16 +11,39 @@ export class BoardViewRenderer implements IViewRenderer {
   render(container: HTMLElement, context: ViewRendererContext): void {
     this.columnRenderer = new ColumnRenderer(context);
     const board = context.boardService.getBoard();
+
+    // ✅ DEBUG CRITICO - AGGIUNGI QUESTO
+    console.log('🎨🎨🎨 BoardViewRenderer.render() START 🎨🎨🎨');
+    console.log('📊 Board ID:', board.id);
+    console.log('📊 Total cards in board.cards:', board.cards.length);
+    console.log('📋 All board cards:', board.cards.map(c => ({
+      id: c.id,
+      title: c.title,
+      columnId: c.columnId
+    })));
+
     const filteredCards = context.boardService.getFilteredCards();
+
+    console.log('🔍 Filtered cards count:', filteredCards.length);
+    console.log('📋 Filtered cards:', filteredCards.map(c => ({
+      id: c.id,
+      title: c.title,
+      columnId: c.columnId
+    })));
+
     const columns = [...board.columns].sort((a, b) => a.order - b.order);
 
     container.addClass('kanban-board');
 
     if (board.settings.enableSwimLanes && board.swimLanes.length > 0) {
+      console.log('🏊 Using SWIM LANES mode');
       this.renderWithSwimLanes(container, context, columns, filteredCards);
     } else {
+      console.log('🎯 Using SIMPLE BOARD mode');
       this.renderSimpleBoard(container, context, columns, filteredCards);
     }
+
+    console.log('🎨🎨🎨 BoardViewRenderer.render() END 🎨🎨🎨');
   }
 
   private renderWithSwimLanes(
@@ -125,8 +148,16 @@ export class BoardViewRenderer implements IViewRenderer {
   ): void {
     const columnsContainer = createElement('div', { className: 'columns-container' });
 
+    console.log('🏗️ renderSimpleBoard - START');
+    console.log('📊 Total filteredCards:', filteredCards.length);
+    console.log('📋 FilteredCards details:', filteredCards.map(c => ({ id: c.id, title: c.title, columnId: c.columnId })));
+
     columns.forEach(column => {
       const columnCards = filteredCards.filter(c => c.columnId === column.id);
+
+      console.log(`📊 Column "${column.name}" (${column.id}): ${columnCards.length} cards`);
+      console.log('🔍 Column cards:', columnCards.map(c => ({ id: c.id, title: c.title })));
+
       columnsContainer.appendChild(this.columnRenderer.render(column, columnCards, undefined, this.selectedCards));
     });
 
@@ -134,6 +165,7 @@ export class BoardViewRenderer implements IViewRenderer {
     columnsContainer.appendChild(addColumnBtn);
 
     container.appendChild(columnsContainer);
+    console.log('🏗️ renderSimpleBoard - END');
   }
 
   private createAddColumnButton(context: ViewRendererContext): HTMLElement {

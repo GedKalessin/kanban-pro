@@ -8,6 +8,8 @@ export class CardDetailModal extends Modal {
   private boardService: BoardService;
   private onUpdate: () => void;
   private contentArea: HTMLElement | null = null;
+  private checklistContainerEl: HTMLElement | null = null;
+  private linkedNotesContainerEl: HTMLElement | null = null;
 
   constructor(app: App, card: KanbanCard, boardService: BoardService, onUpdate: () => void) {
     super(app);
@@ -86,14 +88,17 @@ export class CardDetailModal extends Modal {
 
     const addChecklistBtn = checklistHeader.createEl('button', { cls: 'icon-btn' });
     setIcon(addChecklistBtn, 'plus');
-    addChecklistBtn.addEventListener('click', () => this.addChecklistItem(checklistSection));
+    addChecklistBtn.addEventListener('click', () => this.addChecklistItem());
 
-    this.renderChecklist(checklistSection);
+    this.checklistContainerEl = checklistSection.createDiv({ cls: 'checklist-content' });
+    this.renderChecklist();
 
     // Linked Notes
     const notesSection = container.createDiv({ cls: 'card-section' });
     notesSection.createEl('h3', { text: '🔗 Linked Notes' });
-    this.renderLinkedNotes(notesSection);
+
+    this.linkedNotesContainerEl = notesSection.createDiv({ cls: 'linked-notes-content' });
+    this.renderLinkedNotes();
   }
 
   private renderMetadata(container: HTMLElement): void {
@@ -231,175 +236,148 @@ export class CardDetailModal extends Modal {
       });
   }
 
-  private renderChecklist(container: HTMLElement): void {
-    // Trova e rimuovi il container esistente se presente
-    const existingContainer = container.querySelector('.checklist-container');
-    if (existingContainer) {
-        existingContainer.remove();
-    }
+  private renderChecklist(): void {
+    if (!this.checklistContainerEl) return;
 
-    const checklistContainer = container.createDiv({ cls: 'checklist-container' });
+    this.checklistContainerEl.empty();
 
     // Prendi sempre la versione aggiornata della card
     const currentCard = this.boardService.getCard(this.card.id);
     if (!currentCard) return;
 
+    // Aggiorna il riferimento locale
+    this.card = currentCard;
+
     currentCard.checklist.forEach(item => {
-        const itemEl = checklistContainer.createDiv({ cls: 'checklist-item' });
+      const itemEl = this.checklistContainerEl!.createDiv({ cls: 'checklist-item' });
 
-        const checkbox = itemEl.createEl('input', { type: 'checkbox' });
-        checkbox.checked = item.completed;
-        checkbox.addEventListener('change', () => {
+      const checkbox = itemEl.createEl('input', { type: 'checkbox' });
+      checkbox.checked = item.completed;
+      checkbox.addEventListener('change', () => {
         this.boardService.updateChecklistItem(currentCard.id, item.id, { completed: checkbox.checked });
-        this.onUpdate();
-        // Aggiorna il riferimento locale
         this.card = this.boardService.getCard(currentCard.id)!;
-        });
+        this.onUpdate();
+        this.renderChecklist(); // Re-render immediato
+      });
 
-        const text = itemEl.createEl('input', {
+      const text = itemEl.createEl('input', {
         type: 'text',
         value: item.text,
         cls: item.completed ? 'completed' : ''
-        });
-        text.addEventListener('change', () => {
+      });
+      text.addEventListener('change', () => {
         this.boardService.updateChecklistItem(currentCard.id, item.id, { text: text.value });
-        this.onUpdate();
         this.card = this.boardService.getCard(currentCard.id)!;
-        });
+        this.onUpdate();
+      });
 
-        const deleteBtn = itemEl.createEl('button', { cls: 'icon-btn-small' });
-        setIcon(deleteBtn, 'trash-2');
-        deleteBtn.addEventListener('click', (e) => {
+      const deleteBtn = itemEl.createEl('button', { cls: 'icon-btn-small' });
+      setIcon(deleteBtn, 'trash-2');
+      deleteBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
-        // Elimina l'item
-        this.boardService.deleteChecklistItem(currentCard.id, item.id);
-        this.onUpdate();
-        
-        // Aggiorna il riferimento locale
-        this.card = this.boardService.getCard(currentCard.id)!;
-        
-        // Re-render immediato del checklist
-        this.renderChecklist(container.parentElement as HTMLElement);
-        });
-    });
-}
 
-  private addChecklistItem(container: HTMLElement): void {
+        this.boardService.deleteChecklistItem(currentCard.id, item.id);
+        this.card = this.boardService.getCard(currentCard.id)!;
+        this.onUpdate();
+        this.renderChecklist(); // Re-render immediato
+      });
+    });
+  }
+
+  private addChecklistItem(): void {
     const { TextInputModal } = require('./UtilityModals');
     new TextInputModal(
-        this.app,
-        'Add Checklist Item',
-        'Item text',
-        '',
-        (text: string) => {
+      this.app,
+      'Add Checklist Item',
+      'Item text',
+      '',
+      (text: string) => {
         this.boardService.addChecklistItem(this.card.id, text);
-        this.onUpdate();
-        
-        // Aggiorna il riferimento locale
         this.card = this.boardService.getCard(this.card.id)!;
-        
-        // Re-render del checklist
-        this.renderChecklist(container);
-        }
-    ).open();
-}
-
-  private renderLinkedNotes(container: HTMLElement): void {
-  const notesContainer = container.createDiv({ cls: 'linked-notes-container' });
-
-  // Inizializza linkedNotes se non esiste
-  if (!this.card.linkedNotes) {
-    this.card.linkedNotes = [];
-  }
-
-  if (this.card.linkedNotes.length > 0) {
-    this.card.linkedNotes.forEach(notePath => {
-      const noteEl = notesContainer.createDiv({ cls: 'linked-note' });
-      
-      const noteIcon = noteEl.createSpan({ cls: 'note-icon' });
-      setIcon(noteIcon, 'file-text');
-      
-      const noteLink = noteEl.createEl('a', { 
-        text: notePath.split('/').pop() || notePath, 
-        cls: 'internal-link' 
-      });
-      noteLink.addEventListener('click', async (e) => {
-        e.preventDefault();
-        await this.app.workspace.openLinkText(notePath, '', false);
-      });
-
-      const removeBtn = noteEl.createEl('button', { cls: 'icon-btn-small' });
-      setIcon(removeBtn, 'x');
-      removeBtn.addEventListener('click', () => {
-        const updatedNotes = this.card.linkedNotes?.filter(n => n !== notePath) || [];
-        this.boardService.updateCard(this.card.id, { linkedNotes: updatedNotes });
-        this.card.linkedNotes = updatedNotes;
         this.onUpdate();
-        this.renderLinkedNotes(container);
-      });
-    });
-  } else {
-    notesContainer.createEl('p', { 
-      text: 'No linked notes yet', 
-      cls: 'empty-state-text' 
-    });
+        this.renderChecklist(); // Re-render immediato
+      }
+    ).open();
   }
 
-  const addNoteBtn = notesContainer.createEl('button', { cls: 'add-note-btn' });
-  setIcon(addNoteBtn, 'plus');
-  addNoteBtn.appendChild(document.createTextNode(' Link Note'));
-  addNoteBtn.addEventListener('click', () => this.linkNote());
-}
+  private renderLinkedNotes(): void {
+    if (!this.linkedNotesContainerEl) return;
 
-// Implementa linkNote() con file suggester
+    this.linkedNotesContainerEl.empty();
 
-private linkNote(): void {
-  const { FileSuggestModal } = require('./UtilityModals');
-  
-  // Se FileSuggestModal non esiste ancora in UtilityModals, usa questo semplice input:
-  const files = this.app.vault.getMarkdownFiles();
-  const items = files.map(file => ({
-    display: file.path,
-    value: file.path
-  }));
+    if (!this.card.linkedNotes) {
+      this.card.linkedNotes = [];
+    }
 
-  const { SuggesterModal } = require('./UtilityModals');
-interface SuggesterItem {
-    display: string;
-    value: string;
-}
+    if (this.card.linkedNotes.length > 0) {
+      this.card.linkedNotes.forEach(notePath => {
+        const noteEl = this.linkedNotesContainerEl!.createDiv({ cls: 'linked-note' });
 
-new SuggesterModal(
-    this.app,
-    items,
-    (item: SuggesterItem) => {
+        const noteIcon = noteEl.createSpan({ cls: 'note-icon' });
+        setIcon(noteIcon, 'file-text');
+
+        const noteLink = noteEl.createEl('a', {
+          text: notePath.split('/').pop() || notePath,
+          cls: 'internal-link'
+        });
+        noteLink.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await this.app.workspace.openLinkText(notePath, '', false);
+        });
+
+        const removeBtn = noteEl.createEl('button', { cls: 'icon-btn-small' });
+        setIcon(removeBtn, 'x');
+        removeBtn.addEventListener('click', () => {
+          const updatedNotes = this.card.linkedNotes?.filter(n => n !== notePath) || [];
+          this.boardService.updateCard(this.card.id, { linkedNotes: updatedNotes });
+          this.card.linkedNotes = updatedNotes;
+          this.onUpdate();
+          this.renderLinkedNotes(); // Re-render immediato
+        });
+      });
+    } else {
+      this.linkedNotesContainerEl.createEl('p', {
+        text: 'No linked notes yet',
+        cls: 'empty-state-text'
+      });
+    }
+
+    const addNoteBtn = this.linkedNotesContainerEl.createEl('button', { cls: 'add-note-btn' });
+    setIcon(addNoteBtn, 'plus');
+    addNoteBtn.appendChild(document.createTextNode(' Link Note'));
+    addNoteBtn.addEventListener('click', () => this.linkNote());
+  }
+
+  private linkNote(): void {
+    const files = this.app.vault.getMarkdownFiles();
+    const items = files.map(file => ({
+      display: file.path,
+      value: file.path
+    }));
+
+    const { SuggesterModal } = require('./UtilityModals');
+    new SuggesterModal(
+      this.app,
+      items,
+      (item: { display: string; value: string }) => {
         if (!this.card.linkedNotes) {
-            this.card.linkedNotes = [];
+          this.card.linkedNotes = [];
         }
-        
+
         if (!this.card.linkedNotes.includes(item.value)) {
-            this.card.linkedNotes.push(item.value);
-            this.boardService.updateCard(this.card.id, { linkedNotes: this.card.linkedNotes });
-            this.onUpdate();
-            
-            // Re-render linked notes section
-            const notesSection: Element | null | undefined = this.contentArea?.querySelector('.card-section:has(h3:contains("Linked Notes"))');
-            if (notesSection) {
-                const container: HTMLElement = notesSection as HTMLElement;
-                const existingContainer: Element | null = container.querySelector('.linked-notes-container');
-                if (existingContainer) existingContainer.remove();
-                this.renderLinkedNotes(container);
-            }
+          this.card.linkedNotes.push(item.value);
+          this.boardService.updateCard(this.card.id, { linkedNotes: this.card.linkedNotes });
+          this.onUpdate();
+          this.renderLinkedNotes(); // Re-render immediato
         } else {
-            new Notice('⚠️ Note already linked', 2000);
+          new Notice('⚠️ Note already linked', 2000);
         }
-    },
-    'Search notes...',
-    'No notes found'
-).open();
-}
+      },
+      'Search notes...',
+      'No notes found'
+    ).open();
+  }
 
   private editAssignees(): void {
     const { TextInputModal } = require('./UtilityModals');

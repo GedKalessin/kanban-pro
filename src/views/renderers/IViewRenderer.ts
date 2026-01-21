@@ -9,7 +9,7 @@ export interface ViewRendererContext {
   onCardClick: (cardId: string) => void;
   onColumnUpdate: (columnId: string) => void;
   onCardUpdate: (cardId: string) => void;
-  saveBoard: () => void;
+  saveBoard: () => Promise<void>;
   render: () => void;
 }
 
