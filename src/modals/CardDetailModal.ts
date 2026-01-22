@@ -71,14 +71,43 @@ export class CardDetailModal extends Modal {
     const descSection = container.createDiv({ cls: 'card-section' });
     descSection.createEl('h3', { text: '📝 Description' });
 
+    // Get the current card from BoardService to ensure we have the latest data
+    const currentCard = this.boardService.getCard(this.card.id);
+    const descriptionValue = currentCard?.description || this.card.description || '';
+
+    console.log('🔍 Rendering description field:', {
+      cardId: this.card.id,
+      descriptionValue,
+      cardDescriptionDirect: this.card.description,
+      currentCardDescription: currentCard?.description
+    });
+
     const descTextarea = descSection.createEl('textarea', {
       cls: 'card-description-input',
-      placeholder: 'Add a description...',
-      value: this.card.description
+      placeholder: 'Add a description...'
     });
-    descTextarea.addEventListener('change', () => {
+
+    // Set value explicitly to ensure it's displayed
+    descTextarea.value = descriptionValue;
+
+    // Save on blur (when user clicks away)
+    descTextarea.addEventListener('blur', () => {
+      console.log('💾 Saving description on blur:', descTextarea.value);
       this.boardService.updateCard(this.card.id, { description: descTextarea.value });
+      this.card = this.boardService.getCard(this.card.id)!;
       this.onUpdate();
+    });
+
+    // Also save on input with debouncing for auto-save
+    let saveTimeout: NodeJS.Timeout;
+    descTextarea.addEventListener('input', () => {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        console.log('💾 Auto-saving description:', descTextarea.value);
+        this.boardService.updateCard(this.card.id, { description: descTextarea.value });
+        this.card = this.boardService.getCard(this.card.id)!;
+        this.onUpdate();
+      }, 1000); // Auto-save after 1 second of inactivity
     });
 
     // Checklist
@@ -161,7 +190,10 @@ export class CardDetailModal extends Modal {
                             this.boardService.updateCard(this.card.id, { startDate: date });
                             this.onUpdate();
                             this.close();
-                            new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+                            const updatedCard = this.boardService.getCard(this.card.id);
+                            if (updatedCard) {
+                              new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
+                            }
                           }
                         ).open();
         });
@@ -182,7 +214,10 @@ export class CardDetailModal extends Modal {
               this.boardService.updateCard(this.card.id, { dueDate: date });
               this.onUpdate();
               this.close();
-              new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+              const updatedCard = this.boardService.getCard(this.card.id);
+              if (updatedCard) {
+                new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
+              }
             }
           ).open();
         });
@@ -400,7 +435,10 @@ export class CardDetailModal extends Modal {
           this.boardService.updateCard(this.card.id, { assignee: assignees });
           this.onUpdate();
           this.close();
-          new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+          const updatedCard = this.boardService.getCard(this.card.id);
+          if (updatedCard) {
+            new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
+          }
         }
         ).open();
   }
@@ -417,7 +455,10 @@ export class CardDetailModal extends Modal {
         this.boardService.updateCard(this.card.id, { tags });
         this.onUpdate();
         this.close();
-        new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+        const updatedCard = this.boardService.getCard(this.card.id);
+        if (updatedCard) {
+          new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
+        }
       }
     ).open();
   }
@@ -466,7 +507,10 @@ export class CardDetailModal extends Modal {
         this.boardService.updateCard(this.card.id, { dependencies: selectedIds });
         this.onUpdate();
         this.close();
-        new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+        const updatedCard = this.boardService.getCard(this.card.id);
+        if (updatedCard) {
+          new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
+        }
       }
     ).open();
   }

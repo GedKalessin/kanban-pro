@@ -314,6 +314,13 @@ export class BoardService {
       const card = this.board.cards[index];
       const previousCompletedState = card.completedAt;
 
+      console.log('💾 BoardService.updateCard:', {
+        cardId,
+        updates,
+        currentDescription: card.description,
+        newDescription: updates.description
+      });
+
       const { assignee, tags, checklist, ...restUpdates } = updates;
       const sanitizedUpdates: Partial<KanbanCard> = {
         ...restUpdates,
@@ -326,6 +333,8 @@ export class BoardService {
         ...sanitizedUpdates,
         updatedAt: new Date().toISOString()
       };
+
+      console.log('✅ Card updated, new description:', this.board.cards[index].description);
 
       // AUTO-MOVE LOGIC: Handle completion state changes
       if (updates.completedAt !== undefined) {

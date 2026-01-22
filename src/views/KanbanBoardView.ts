@@ -337,6 +337,13 @@ export class KanbanBoardView extends ItemView {
       return;
     }
 
+    console.log('🔍 Opening card modal:', {
+      cardId: card.id,
+      title: card.title,
+      description: card.description,
+      descriptionLength: card.description?.length || 0
+    });
+
     new CardDetailModal(
       this.app,
       card,

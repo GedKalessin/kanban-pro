@@ -5672,7 +5672,8 @@
 
 /* Card Detail Modal Improvements */
 .kanban-card-detail-modal .modal-content {
-  max-width: 900px;
+  max-width: 1200px;
+  width: 95vw;
   max-height: 90vh;
   overflow-y: auto;
 }
