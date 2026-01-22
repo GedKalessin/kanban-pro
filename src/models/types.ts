@@ -58,10 +58,11 @@ export interface KanbanCard {
   blocked: boolean;
   checklist: ChecklistItem[];
   linkedNote?: string; // Deprecato - mantieni per backward compatibility
-  linkedNotes?: string[]; 
+  linkedNotes?: string[];
   estimatedHours?: number;
   timeTracked?: number;
   customFields?: Record<string, any>;
+  dependencies?: string[]; // Array of card IDs that this card depends on
 }
 
 

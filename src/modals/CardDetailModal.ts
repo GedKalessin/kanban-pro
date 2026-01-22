@@ -206,6 +206,15 @@ export class CardDetailModal extends Modal {
         btn.onClick(() => this.editTags());
       });
 
+    // Dependencies
+    new Setting(container)
+      .setName('Dependencies')
+      .setDesc(this.getDependenciesDescription())
+      .addButton(btn => {
+        btn.setButtonText('Edit');
+        btn.onClick(() => this.editDependencies());
+      });
+
     // Color
     new Setting(container)
       .setName('Card Color')
@@ -406,6 +415,55 @@ export class CardDetailModal extends Modal {
       (value: string) => {
         const tags: string[] = value.split(',').map((t: string) => t.trim()).filter((t: string) => t);
         this.boardService.updateCard(this.card.id, { tags });
+        this.onUpdate();
+        this.close();
+        new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();
+      }
+    ).open();
+  }
+
+  private getDependenciesDescription(): string {
+    if (!this.card.dependencies || this.card.dependencies.length === 0) {
+      return 'None';
+    }
+
+    const board = this.boardService.getBoard();
+    const dependencyTitles = this.card.dependencies
+      .map(depId => {
+        const depCard = board.cards.find(c => c.id === depId);
+        return depCard ? depCard.title : `[Unknown: ${depId}]`;
+      })
+      .join(', ');
+
+    return `${this.card.dependencies.length} task${this.card.dependencies.length > 1 ? 's' : ''}: ${dependencyTitles}`;
+  }
+
+  private editDependencies(): void {
+    const board = this.boardService.getBoard();
+
+    // Ottieni tutte le card tranne questa
+    const availableCards = board.cards
+      .filter(c => c.id !== this.card.id)
+      .map(c => ({
+        display: c.title,
+        value: c.id,
+        selected: this.card.dependencies?.includes(c.id) || false
+      }));
+
+    if (availableCards.length === 0) {
+      new Notice('No other cards available for dependencies', 2000);
+      return;
+    }
+
+    // Usa un modal multi-select
+    const { MultiSelectModal } = require('./UtilityModals');
+    new MultiSelectModal(
+      this.app,
+      'Select Dependencies',
+      'Select which tasks this card depends on',
+      availableCards,
+      (selectedIds: string[]) => {
+        this.boardService.updateCard(this.card.id, { dependencies: selectedIds });
         this.onUpdate();
         this.close();
         new CardDetailModal(this.app, this.card, this.boardService, this.onUpdate).open();

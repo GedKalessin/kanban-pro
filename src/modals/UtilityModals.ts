@@ -879,6 +879,87 @@ class SaveTemplateModal extends Modal {
   }
 }
 
+// ============================================
+// MULTI-SELECT MODAL
+// ============================================
+
+class MultiSelectModal extends Modal {
+  private title: string;
+  private description: string;
+  private items: { display: string; value: string; selected: boolean }[];
+  private onSubmit: (selectedIds: string[]) => void;
+  private selectedIds: Set<string>;
+
+  constructor(
+    app: App,
+    title: string,
+    description: string,
+    items: { display: string; value: string; selected: boolean }[],
+    onSubmit: (selectedIds: string[]) => void
+  ) {
+    super(app);
+    this.title = title;
+    this.description = description;
+    this.items = items;
+    this.onSubmit = onSubmit;
+    this.selectedIds = new Set(items.filter(i => i.selected).map(i => i.value));
+  }
+
+  onOpen(): void {
+    const { contentEl } = this;
+    contentEl.addClass('kanban-multi-select-modal');
+
+    // Header
+    contentEl.createEl('h2', { text: this.title });
+    if (this.description) {
+      contentEl.createEl('p', { text: this.description, cls: 'modal-description' });
+    }
+
+    // Items list
+    const itemsList = contentEl.createDiv({ cls: 'multi-select-list' });
+
+    this.items.forEach(item => {
+      const itemEl = itemsList.createDiv({ cls: 'multi-select-item' });
+
+      const checkbox = itemEl.createEl('input', { type: 'checkbox' });
+      checkbox.checked = this.selectedIds.has(item.value);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          this.selectedIds.add(item.value);
+        } else {
+          this.selectedIds.delete(item.value);
+        }
+      });
+
+      const label = itemEl.createEl('label', { text: item.display });
+      label.addEventListener('click', () => {
+        checkbox.checked = !checkbox.checked;
+        if (checkbox.checked) {
+          this.selectedIds.add(item.value);
+        } else {
+          this.selectedIds.delete(item.value);
+        }
+      });
+    });
+
+    // Buttons
+    const buttonContainer = contentEl.createDiv({ cls: 'button-container' });
+
+    const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
+    cancelBtn.addEventListener('click', () => this.close());
+
+    const submitBtn = buttonContainer.createEl('button', { text: 'Apply', cls: 'submit-btn' });
+    submitBtn.addEventListener('click', () => {
+      this.onSubmit(Array.from(this.selectedIds));
+      this.close();
+    });
+  }
+
+  onClose(): void {
+    this.contentEl.empty();
+  }
+}
+
 // Export all modals
 export {
   TextInputModal,
@@ -888,5 +969,6 @@ export {
   ConfirmModal,
   QuickAddCardModal,
   StatusManagementModal,
-  SaveTemplateModal
+  SaveTemplateModal,
+  MultiSelectModal
 };

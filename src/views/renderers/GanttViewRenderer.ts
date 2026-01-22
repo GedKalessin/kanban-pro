@@ -1,6 +1,6 @@
 // ============================================
-// FIX COMPLETO: src/views/renderers/GanttViewRenderer.ts
-// Frappe Gantt con tutte le view modes corrette
+// GanttViewRenderer - Frappe Gantt Implementation
+// Utilizzo ottimizzato della libreria Frappe Gantt
 // ============================================
 
 import { setIcon, Notice } from 'obsidian';
@@ -8,10 +8,14 @@ import { KanbanCard } from '../../models/types';
 import { createElement } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 
+// Import Frappe Gantt CSS
+import 'frappe-gantt/dist/frappe-gantt.css';
+
 export class GanttViewRenderer implements IViewRenderer {
   private ganttInstance: any = null;
   private currentViewMode: string = 'Day';
   private containerElement: HTMLElement | null = null;
+  private ganttWrapper: HTMLElement | null = null;
 
   render(container: HTMLElement, context: ViewRendererContext): void {
     try {
@@ -36,9 +40,11 @@ export class GanttViewRenderer implements IViewRenderer {
         const ganttModule = require('frappe-gantt');
         // Handle both CommonJS and ES module exports
         FrappeGantt = ganttModule.default || ganttModule;
-        console.log('Frappe Gantt loaded:', typeof FrappeGantt);
+        console.log('Frappe Gantt loaded successfully');
       } catch (e) {
-        console.warn('Frappe Gantt not available:', e);
+        console.warn('Frappe Gantt not available, using fallback:', e);
+        this.renderFallback(container, filteredCards, context);
+        return;
       }
 
       if (FrappeGantt && typeof FrappeGantt === 'function') {
@@ -54,50 +60,81 @@ export class GanttViewRenderer implements IViewRenderer {
   }
 
   private renderWithFrappeGantt(
-    container: HTMLElement, 
-    cards: KanbanCard[], 
+    container: HTMLElement,
+    cards: KanbanCard[],
     context: ViewRendererContext,
     FrappeGantt: any
   ): void {
     const ganttContainer = container.createDiv({ cls: 'gantt-container-frappe' });
 
-    // Prepara i task con date corrette
+    // Prepara i task con date corrette e dipendenze
     const tasks = cards.map(card => {
-      let start = (card as any).startDate 
-        ? new Date((card as any).startDate) 
-        : card.dueDate 
-          ? new Date(card.dueDate) 
-          : new Date();
-      
-      let end = card.dueDate ? new Date(card.dueDate) : new Date(start);
-      
-      // Normalizza le date a mezzanotte UTC
-      start = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
-      end = new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()));
-      
-      // Se end è uguale a start, aggiungi 1 giorno
+      // Determina le date di inizio e fine
+      let start: Date;
+      let end: Date;
+
+      // Se esiste startDate, usalo, altrimenti usa dueDate come start
+      if ((card as any).startDate) {
+        start = new Date((card as any).startDate);
+      } else if (card.dueDate) {
+        // Se c'è solo dueDate, usa oggi come start
+        start = new Date();
+      } else {
+        // Default: oggi
+        start = new Date();
+      }
+
+      // Se esiste dueDate, usalo come end, altrimenti calcola +7 giorni
+      if (card.dueDate) {
+        end = new Date(card.dueDate);
+      } else {
+        end = new Date(start);
+        end.setDate(end.getDate() + 7); // Default: 7 giorni dopo start
+      }
+
+      // Normalizza le date a mezzanotte locale (rimuovi ore/minuti/secondi)
+      start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      end = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+      // Assicurati che end sia dopo start
+      if (end < start) {
+        console.warn(`Card "${card.title}": end date is before start date, swapping`);
+        [start, end] = [end, start];
+      }
+
+      // Se end è uguale a start, aggiungi 1 giorno (Frappe Gantt richiede almeno 1 giorno di durata)
       if (end.getTime() === start.getTime()) {
+        console.log(`Card "${card.title}": start and end are same, adding 1 day to end`);
         end = new Date(start);
         end.setDate(end.getDate() + 1);
       }
 
-      // Calcola progress
-      const progress = card.checklist.length > 0 
+      // Calcola progress dalla checklist
+      const progress = card.checklist.length > 0
         ? Math.round((card.checklist.filter(i => i.completed).length / card.checklist.length) * 100)
         : 0;
 
-      return {
+      // Gestisci le dipendenze - converti array di ID in stringa separata da virgole
+      const dependencies = card.dependencies && card.dependencies.length > 0
+        ? card.dependencies.join(', ')
+        : '';
+
+      const task = {
         id: card.id,
         name: card.title,
-        start: start.toISOString().split('T')[0],
-        end: end.toISOString().split('T')[0],
+        start: this.formatDate(start),
+        end: this.formatDate(end),
         progress: progress,
-        dependencies: '', // Puoi aggiungere dipendenze se necessario
+        dependencies: dependencies,
         custom_class: this.getCustomClass(card)
       };
+
+      console.log(`Task: ${task.name} | Start: ${task.start} | End: ${task.end} | Progress: ${task.progress}% | Dependencies: ${dependencies || 'none'}`);
+
+      return task;
     });
 
-    console.log('Gantt tasks:', tasks);
+    console.log('Gantt tasks prepared:', tasks.length, 'tasks');
 
     try {
       // Destroy previous instance
@@ -105,38 +142,61 @@ export class GanttViewRenderer implements IViewRenderer {
         this.ganttInstance = null;
       }
 
-      // Create wrapper per il gantt
-      const wrapper = ganttContainer.createDiv({ cls: 'gantt-wrapper' });
+      // Create wrapper per il gantt con SVG container
+      this.ganttWrapper = ganttContainer.createDiv({ cls: 'gantt-wrapper' });
 
-      // Inizializza Frappe Gantt con configurazione corretta
-      this.ganttInstance = new FrappeGantt(wrapper, tasks, {
+      // Inizializza Frappe Gantt con configurazione ottimizzata (ClickUp style)
+      this.ganttInstance = new FrappeGantt(this.ganttWrapper, tasks, {
+        // Layout settings - ClickUp style
         header_height: 50,
         column_width: 30,
         step: 24,
+        bar_height: 32,
+        bar_corner_radius: 6,
+        arrow_curve: 14, // Curved arrows like Vue example
+        padding: 20,
+
+        // View configuration
         view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month', 'Year'],
-        bar_height: 20,
-        bar_corner_radius: 3,
-        arrow_curve: 5,
-        padding: 18,
         view_mode: this.currentViewMode,
+
+        // Date formatting
         date_format: 'YYYY-MM-DD',
+
+        // Popup configuration - usa 'click' per popolare il popup solo al click
         popup_trigger: 'click',
         language: 'en',
-        
-        // Custom popup HTML
+
+        // Custom popup HTML - ClickUp style
         custom_popup_html: (task: any) => {
           const card = context.boardService.getCard(task.id);
-          if (!card) return '';
+          if (!card) return '<div class="gantt-popup-wrapper">Task not found</div>';
 
           const column = context.boardService.getColumn(card.columnId);
           const startDate = new Date(task._start);
           const endDate = new Date(task._end);
           const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
+          // Priority badge
+          const priorityBadge = card.priority !== 'none'
+            ? `<span class="popup-priority priority-${card.priority}">${card.priority.toUpperCase()}</span>`
+            : '';
+
+          // Dependencies info
+          const depsInfo = card.dependencies && card.dependencies.length > 0
+            ? `<div class="popup-dependencies"><strong>Dependencies:</strong> ${card.dependencies.length} task${card.dependencies.length > 1 ? 's' : ''}</div>`
+            : '';
+
           return `
             <div class="gantt-popup-wrapper">
-              <div class="popup-title">${task.name}</div>
-              <div class="popup-column">${column?.name || 'No column'}</div>
+              <div class="popup-header">
+                <div class="popup-title">${this.escapeHtml(task.name)}</div>
+                ${priorityBadge}
+              </div>
+              <div class="popup-column" style="background-color: ${column?.color || '#94a3b8'}20; color: ${column?.color || '#94a3b8'};">
+                ${this.escapeHtml(column?.name || 'No column')}
+              </div>
+              ${card.description ? `<div class="popup-description">${this.escapeHtml(card.description)}</div>` : ''}
               <div class="popup-dates">
                 <strong>Start:</strong> ${startDate.toLocaleDateString()}<br>
                 <strong>End:</strong> ${endDate.toLocaleDateString()}<br>
@@ -144,12 +204,16 @@ export class GanttViewRenderer implements IViewRenderer {
               </div>
               <div class="popup-progress">
                 <strong>Progress:</strong> ${Math.round(task.progress)}%
+                ${card.checklist.length > 0 ? ` (${card.checklist.filter((i: any) => i.completed).length}/${card.checklist.length} items)` : ''}
               </div>
-              ${card.assignee ? `<div class="popup-assignee"><strong>Assignee:</strong> ${card.assignee}</div>` : ''}
+              ${card.assignee && card.assignee.length > 0 ? `<div class="popup-assignee"><strong>👤 Assignee:</strong> ${this.escapeTagsArray(card.assignee)}</div>` : ''}
+              ${card.tags && card.tags.length > 0 ? `<div class="popup-tags"><strong>🏷️ Tags:</strong> ${this.escapeTagsArray(card.tags)}</div>` : ''}
+              ${depsInfo}
             </div>
           `;
         },
 
+        // Event handlers
         on_click: (task: any) => {
           console.log('Task clicked:', task);
           context.onCardClick(task.id);
@@ -157,22 +221,22 @@ export class GanttViewRenderer implements IViewRenderer {
 
         on_date_change: (task: any, start: Date, end: Date) => {
           console.log('Date changed:', task.id, start, end);
-          
+
           // Normalizza le date
-          const startISO = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())).toISOString();
-          const endISO = new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59)).toISOString();
-          
+          const startISO = new Date(start.getFullYear(), start.getMonth(), start.getDate()).toISOString();
+          const endISO = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59).toISOString();
+
           context.boardService.updateCard(task.id, {
             startDate: startISO,
             dueDate: endISO
           });
           context.saveBoard();
-          new Notice('✓ Dates updated', 1500);
+          new Notice('Dates updated successfully', 1500);
         },
 
         on_progress_change: (task: any, progress: number) => {
           console.log('Progress changed:', task.id, progress);
-          
+
           const card = context.boardService.getCard(task.id);
           if (card && card.checklist.length > 0) {
             const itemsToComplete = Math.round((progress / 100) * card.checklist.length);
@@ -182,7 +246,7 @@ export class GanttViewRenderer implements IViewRenderer {
               });
             });
             context.saveBoard();
-            new Notice('✓ Progress updated', 1500);
+            new Notice('Progress updated successfully', 1500);
           }
         },
 
@@ -192,53 +256,108 @@ export class GanttViewRenderer implements IViewRenderer {
         }
       });
 
-      console.log('Gantt initialized successfully');
+      console.log('Gantt initialized successfully with', tasks.length, 'tasks');
 
     } catch (error) {
       console.error('Frappe Gantt initialization error:', error);
       ganttContainer.empty();
       const errorMsg = ganttContainer.createDiv({ cls: 'gantt-error' });
-      errorMsg.textContent = '⚠️ Error loading Gantt chart. Using fallback view.';
+      errorMsg.innerHTML = `
+        <h3>⚠️ Error loading Gantt chart</h3>
+        <p>Using fallback view...</p>
+      `;
       setTimeout(() => this.renderFallback(container, cards, context), 100);
     }
   }
 
   private getCustomClass(card: KanbanCard): string {
+    // Priority based classes (highest priority)
     if (card.blocked) return 'bar-blocked';
     if (card.completedAt) return 'bar-completed';
+
+    // Priority classes
     if (card.priority === 'critical') return 'bar-critical';
     if (card.priority === 'high') return 'bar-high';
-    return '';
+    if (card.priority === 'medium') return 'bar-medium';
+    if (card.priority === 'low') return 'bar-low';
+
+    // Assignee based classes (for color variety like Vue example)
+    if (card.assignee && card.assignee.length > 0) {
+      // Create a deterministic hash from assignee name to assign consistent colors
+      const assigneeName = card.assignee[0].toLowerCase();
+      const hash = Array.from(assigneeName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const colorIndex = hash % 6; // 6 different assignee colors
+      return `bar-assignee-${colorIndex}`;
+    }
+
+    // Task type based classes
+    if (card.taskType === 'bug') return 'bar-bug';
+    if (card.taskType === 'feature') return 'bar-feature';
+    if (card.taskType === 'epic') return 'bar-epic';
+
+    // Default
+    return 'bar-default';
   }
 
   private renderToolbar(context: ViewRendererContext): HTMLElement {
     const toolbar = createElement('div', { className: 'gantt-toolbar' });
-    
+
     const leftSection = toolbar.createDiv({ cls: 'toolbar-left' });
-    leftSection.createEl('h3', { text: 'Gantt Chart' });
+    leftSection.createEl('h3', { text: 'Gantt Chart', cls: 'gantt-title' });
 
     const rightSection = toolbar.createDiv({ cls: 'toolbar-right' });
 
-    // View mode buttons
-    const viewModes = ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month', 'Year'];
+    // View mode buttons con icone e layout migliorato
+    const viewModes = [
+      { mode: 'Quarter Day', label: 'Quarter', icon: 'clock' },
+      { mode: 'Half Day', label: 'Half Day', icon: 'sunrise' },
+      { mode: 'Day', label: 'Day', icon: 'calendar-days' },
+      { mode: 'Week', label: 'Week', icon: 'calendar-range' },
+      { mode: 'Month', label: 'Month', icon: 'calendar' },
+      { mode: 'Year', label: 'Year', icon: 'calendar-clock' }
+    ];
+
     const viewModeContainer = rightSection.createDiv({ cls: 'view-mode-buttons' });
 
-    viewModes.forEach(mode => {
+    viewModes.forEach(({ mode, label }) => {
       const btn = viewModeContainer.createEl('button', {
-        text: mode,
+        text: label,
         cls: `view-mode-btn ${this.currentViewMode === mode ? 'active' : ''}`
       });
-      
+
+      btn.setAttribute('data-mode', mode);
+
       btn.addEventListener('click', () => {
         if (this.ganttInstance) {
-          this.ganttInstance.change_view_mode(mode);
-          this.currentViewMode = mode;
-          
-          // Update button states
-          viewModeContainer.querySelectorAll('.view-mode-btn').forEach(b => b.removeClass('active'));
-          btn.addClass('active');
+          try {
+            this.ganttInstance.change_view_mode(mode);
+            this.currentViewMode = mode;
+
+            // Update button states
+            viewModeContainer.querySelectorAll('.view-mode-btn').forEach(b => b.removeClass('active'));
+            btn.addClass('active');
+          } catch (error) {
+            console.error('Error changing view mode:', error);
+            new Notice('Failed to change view mode', 2000);
+          }
         }
       });
+    });
+
+    // Aggiungi pulsante Today per tornare alla data corrente
+    const todayBtn = rightSection.createEl('button', {
+      text: 'Today',
+      cls: 'gantt-today-btn'
+    });
+
+    todayBtn.addEventListener('click', () => {
+      if (this.ganttInstance && this.ganttWrapper) {
+        // Scroll to today
+        const todayHighlight = this.ganttWrapper.querySelector('.today-highlight');
+        if (todayHighlight) {
+          todayHighlight.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        }
+      }
     });
 
     return toolbar;
@@ -331,5 +450,24 @@ export class GanttViewRenderer implements IViewRenderer {
       this.ganttInstance = null;
     }
     this.containerElement = null;
+    this.ganttWrapper = null;
+  }
+
+  // Helper methods
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  private escapeTagsArray(tags: string[]): string {
+    return tags.map(tag => this.escapeHtml(tag)).join(', ');
   }
 }
