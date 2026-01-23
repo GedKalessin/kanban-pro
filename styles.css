@@ -5214,13 +5214,16 @@
   border: 1px solid var(--kp-border);
   border-radius: var(--kp-radius-md);
   padding: var(--kp-space-lg);
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
   min-height: 500px;
 }
 
 .gantt-container-frappe svg {
   font-family: var(--kp-font-family) !important;
+  display: block;
+  max-width: none;
 }
 
 .gantt-container-frappe text {
@@ -5230,8 +5233,8 @@
 }
 
 .gantt-wrapper {
-  width: 100%;
-  min-width: 1000px;
+  width: max-content;
+  min-width: 100%;
   position: relative;
 }
 
@@ -6284,9 +6287,9 @@
    ============================================ */
 
 .gantt-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
+  width: max-content;
+  min-width: 100%;
+  overflow: visible;
 }
 
 .view-mode-buttons {
@@ -6404,14 +6407,19 @@
   min-width: 250px;
   max-width: 350px;
   z-index: 1000;
-  pointer-events: auto !important;
-  /* Nascondi completamente il popup di default - sarà Frappe Gantt a gestire la visibilità */
-  display: none !important;
+  /* Disabilita completamente le interazioni di default per evitare che blocchi il contenuto */
+  pointer-events: none !important;
+  transition: opacity 0.2s ease;
+  /* Nascondi completamente di default - sposta fuori dallo schermo */
+  visibility: hidden !important;
+  transform: translateX(-9999px) !important;
 }
 
-/* Mostra il popup quando Frappe Gantt lo attiva (rimuove classe 'hidden') */
-.gantt-container-frappe .popup-wrapper:not(.hidden) {
-  display: block !important;
+/* Quando il popup è visibile, il JS lo riporta in posizione */
+.gantt-container-frappe .popup-wrapper.is-visible {
+  visibility: visible !important;
+  transform: translateX(0) !important;
+  pointer-events: auto !important;
 }
 
 .gantt-popup-wrapper .popup-description {

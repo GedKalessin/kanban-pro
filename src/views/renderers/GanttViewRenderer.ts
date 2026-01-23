@@ -258,6 +258,26 @@ export class GanttViewRenderer implements IViewRenderer {
 
       console.log('Gantt initialized successfully with', tasks.length, 'tasks');
 
+      // Fix popup pointer-events e visibility - nascondi completamente quando non in uso
+      const popupWrapper = this.ganttWrapper.querySelector('.popup-wrapper') as HTMLElement;
+      if (popupWrapper) {
+        // Rimuovi la classe is-visible di default (il CSS lo nasconderà)
+        popupWrapper.classList.remove('is-visible');
+
+        // Osserva i cambiamenti di opacity per mostrare/nascondere il popup
+        const observer = new MutationObserver(() => {
+          const opacity = parseFloat(popupWrapper.style.opacity || '0');
+          if (opacity > 0.5) {
+            // Popup visibile - aggiungi classe e riporta in posizione
+            popupWrapper.classList.add('is-visible');
+          } else {
+            // Popup nascosto - rimuovi classe e sposta fuori schermo
+            popupWrapper.classList.remove('is-visible');
+          }
+        });
+        observer.observe(popupWrapper, { attributes: true, attributeFilter: ['style'] });
+      }
+
     } catch (error) {
       console.error('Frappe Gantt initialization error:', error);
       ganttContainer.empty();
