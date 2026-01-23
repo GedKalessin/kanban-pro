@@ -5674,9 +5674,15 @@
 }
 
 /* Card Detail Modal Improvements */
-.kanban-card-detail-modal .modal-content {
-  max-width: 1200px;
-  width: 95vw;
+/* Aumenta la larghezza del contenitore esterno del modal */
+.modal:has(.kanban-card-detail-modal) {
+  max-width: 1600px !important;
+  width: 95vw !important;
+}
+
+.kanban-card-detail-modal {
+  max-width: 1600px !important;
+  width: 95vw !important;
   max-height: 90vh;
   overflow-y: auto;
 }
