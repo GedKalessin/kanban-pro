@@ -14,10 +14,12 @@ export class ListViewRenderer implements IViewRenderer {
   private groupBy: 'none' | 'column' | 'assignee' | 'priority' | 'status' = 'column';
 
   render(container: HTMLElement, context: ViewRendererContext): void {
+    this.currentContext = context;
+
     container.empty();
     container.addClass('kanban-list-view');
 
-    const toolbar = this.renderToolbar(context, container);
+    const toolbar = this.renderToolbar(context);
     container.appendChild(toolbar);
 
     const filteredCards = context.boardService.getFilteredCards();
@@ -36,7 +38,7 @@ export class ListViewRenderer implements IViewRenderer {
     }
   }
 
-  private renderToolbar(context: ViewRendererContext, container: HTMLElement): HTMLElement {
+  private renderToolbar(context: ViewRendererContext): HTMLElement {
     const toolbar = createElement('div', { className: 'list-toolbar' });
 
     // Sort controls
@@ -58,7 +60,7 @@ export class ListViewRenderer implements IViewRenderer {
 
     sortSelect.addEventListener('change', () => {
       this.sortBy = sortSelect.value as any;
-      this.render(container.parentElement as HTMLElement, context);
+      context.render();
     });
 
     // Sort direction
@@ -66,7 +68,7 @@ export class ListViewRenderer implements IViewRenderer {
     setIcon(sortOrderBtn, this.sortOrder === 'asc' ? 'arrow-up' : 'arrow-down');
     sortOrderBtn.addEventListener('click', () => {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-      this.render(container.parentElement as HTMLElement, context);
+      context.render();
     });
 
     // Group controls
@@ -89,7 +91,7 @@ export class ListViewRenderer implements IViewRenderer {
 
     groupSelect.addEventListener('change', () => {
       this.groupBy = groupSelect.value as any;
-      this.render(container.parentElement as HTMLElement, context);
+      context.render();
     });
 
     return toolbar;
@@ -294,7 +296,7 @@ export class ListViewRenderer implements IViewRenderer {
   }
 
   private groupCards(cards: KanbanCard[]): Array<{ key: string; name: string; cards: KanbanCard[] }> {
-    const groups = new Map<string, KanbanCard[]>();
+    const groups = new Map<string, { name: string; cards: KanbanCard[] }>();
 
     cards.forEach(card => {
       let key = '';
@@ -321,15 +323,15 @@ export class ListViewRenderer implements IViewRenderer {
       }
 
       if (!groups.has(key)) {
-        groups.set(key, []);
+        groups.set(key, { name, cards: [] });
       }
-      groups.get(key)!.push(card);
+      groups.get(key)!.cards.push(card);
     });
 
-    return Array.from(groups.entries()).map(([key, cards]) => ({
+    return Array.from(groups.entries()).map(([key, group]) => ({
       key,
-      name: key,
-      cards
+      name: group.name,
+      cards: group.cards
     }));
   }
 
