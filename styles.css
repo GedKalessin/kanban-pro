@@ -6330,59 +6330,71 @@
 }
 
 .gantt-popup-wrapper {
-  padding: 12px;
+  padding: 16px;
   min-width: 280px;
+  background: var(--background-primary);
+  border-radius: 8px;
 }
 
 .gantt-popup-wrapper .popup-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .gantt-popup-wrapper .popup-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-normal);
   flex: 1;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .gantt-popup-wrapper .popup-priority {
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .gantt-popup-wrapper .popup-priority.priority-critical {
   background-color: #ef4444;
   color: white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
 .gantt-popup-wrapper .popup-priority.priority-high {
   background-color: #f97316;
   color: white;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3);
 }
 
 .gantt-popup-wrapper .popup-priority.priority-medium {
   background-color: #f59e0b;
   color: white;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
 }
 
 .gantt-popup-wrapper .popup-priority.priority-low {
   background-color: #3b82f6;
   color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .gantt-popup-wrapper .popup-column {
   font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-bottom: 12px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  margin-bottom: 14px;
   display: inline-block;
   font-weight: 500;
 }
@@ -6393,50 +6405,121 @@
 .gantt-popup-wrapper .popup-tags,
 .gantt-popup-wrapper .popup-dependencies {
   font-size: 13px;
-  color: var(--kp-text-secondary);
-  line-height: 1.6;
-  margin-bottom: 6px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.gantt-popup-wrapper .popup-dates {
+  background: var(--background-secondary);
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.gantt-popup-wrapper .popup-progress {
+  background: var(--background-secondary);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
 }
 
 .gantt-popup-wrapper strong {
-  color: var(--kp-text-primary);
-  font-weight: var(--kp-font-weight-semibold);
+  color: var(--text-normal);
+  font-weight: 600;
 }
 
 /* Popup styling override for Frappe Gantt */
 .gantt-container-frappe .popup-wrapper {
-  background: var(--kp-bg-secondary) !important;
-  border: 1px solid var(--kp-border) !important;
-  border-radius: var(--kp-radius-md) !important;
-  box-shadow: var(--kp-shadow-lg) !important;
+  position: absolute !important;
+  background: var(--background-primary) !important;
+  border: 1px solid var(--background-modifier-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25),
+              0 4px 12px rgba(0, 0, 0, 0.15) !important;
   padding: 0 !important;
-  min-width: 250px;
-  max-width: 350px;
-  z-index: 1000;
-  /* Disabilita completamente le interazioni di default per evitare che blocchi il contenuto */
-  pointer-events: none !important;
-  transition: opacity 0.2s ease;
-  /* Nascondi completamente di default - sposta fuori dallo schermo */
-  visibility: hidden !important;
-  transform: translateX(-9999px) !important;
+  min-width: 280px;
+  max-width: 380px;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  transform: translateY(10px);
 }
 
-/* Quando il popup è visibile, il JS lo riporta in posizione */
+/* Quando il popup è visibile (Frappe Gantt lo attiva via opacity inline) */
+.gantt-container-frappe .popup-wrapper[style*="opacity: 1"],
 .gantt-container-frappe .popup-wrapper.is-visible {
+  opacity: 1 !important;
   visibility: visible !important;
-  transform: translateX(0) !important;
+  transform: translateY(0) !important;
   pointer-events: auto !important;
 }
 
+/* Title area del popup con effetto header */
+.gantt-container-frappe .popup-wrapper .title {
+  display: none; /* Nascondi il title default di Frappe, usiamo il nostro custom */
+}
+
+/* Pointer/freccia del popup */
+.gantt-container-frappe .popup-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  width: 16px;
+  height: 16px;
+  background: var(--background-primary);
+  border-left: 1px solid var(--background-modifier-border);
+  border-top: 1px solid var(--background-modifier-border);
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+/* Hover effect sul popup */
+.gantt-container-frappe .popup-wrapper:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3),
+              0 6px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Ensure subtitle is hidden */
+.gantt-container-frappe .popup-wrapper .subtitle {
+  display: none !important;
+}
+
+/* Dark theme adjustments */
+.theme-dark .gantt-container-frappe .popup-wrapper {
+  background: var(--background-primary) !important;
+  border-color: var(--background-modifier-border) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+              0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.theme-dark .gantt-container-frappe .popup-wrapper::before {
+  background: var(--background-primary);
+  border-color: var(--background-modifier-border);
+}
+
+.theme-dark .gantt-popup-wrapper .popup-dates,
+.theme-dark .gantt-popup-wrapper .popup-progress,
+.theme-dark .gantt-popup-wrapper .popup-description {
+  background: var(--background-secondary);
+}
+
 .gantt-popup-wrapper .popup-description {
-  font-size: 12px;
-  color: var(--kp-text-secondary);
-  line-height: 1.5;
-  margin-bottom: var(--kp-space-sm);
-  padding: var(--kp-space-xs) 0;
-  border-bottom: 1px solid var(--kp-border);
-  font-style: italic;
-  max-width: 300px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  border-left: 3px solid var(--interactive-accent);
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

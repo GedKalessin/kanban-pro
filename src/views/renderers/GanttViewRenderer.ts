@@ -258,25 +258,8 @@ export class GanttViewRenderer implements IViewRenderer {
 
       console.log('Gantt initialized successfully with', tasks.length, 'tasks');
 
-      // Fix popup pointer-events e visibility - nascondi completamente quando non in uso
-      const popupWrapper = this.ganttWrapper.querySelector('.popup-wrapper') as HTMLElement;
-      if (popupWrapper) {
-        // Rimuovi la classe is-visible di default (il CSS lo nasconderà)
-        popupWrapper.classList.remove('is-visible');
-
-        // Osserva i cambiamenti di opacity per mostrare/nascondere il popup
-        const observer = new MutationObserver(() => {
-          const opacity = parseFloat(popupWrapper.style.opacity || '0');
-          if (opacity > 0.5) {
-            // Popup visibile - aggiungi classe e riporta in posizione
-            popupWrapper.classList.add('is-visible');
-          } else {
-            // Popup nascosto - rimuovi classe e sposta fuori schermo
-            popupWrapper.classList.remove('is-visible');
-          }
-        });
-        observer.observe(popupWrapper, { attributes: true, attributeFilter: ['style'] });
-      }
+      // Setup popup visibility handling
+      this.setupPopupVisibility();
 
     } catch (error) {
       console.error('Frappe Gantt initialization error:', error);
@@ -463,6 +446,57 @@ export class GanttViewRenderer implements IViewRenderer {
     
     const backBtn = errorDiv.createEl('button', { text: 'Back to Board', cls: 'primary-btn' });
     backBtn.addEventListener('click', () => context.render());
+  }
+
+  private setupPopupVisibility(): void {
+    if (!this.ganttWrapper) return;
+
+    // Wait for popup wrapper to be created by Frappe Gantt
+    const checkPopup = () => {
+      const popupWrapper = this.ganttWrapper?.querySelector('.popup-wrapper') as HTMLElement;
+      if (popupWrapper) {
+        // Initial state: hidden
+        popupWrapper.classList.remove('is-visible');
+
+        // Observe style changes (Frappe Gantt uses inline opacity)
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+              const style = popupWrapper.getAttribute('style') || '';
+              // Check if Frappe Gantt set opacity to 1 (visible)
+              if (style.includes('opacity: 1') || style.includes('opacity:1')) {
+                popupWrapper.classList.add('is-visible');
+              } else if (style.includes('opacity: 0') || style.includes('opacity:0')) {
+                popupWrapper.classList.remove('is-visible');
+              }
+            }
+          }
+        });
+
+        observer.observe(popupWrapper, {
+          attributes: true,
+          attributeFilter: ['style']
+        });
+
+        // Also handle click outside to close popup
+        document.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          const isClickOnBar = target.closest('.bar-wrapper') || target.closest('.bar');
+          const isClickOnPopup = target.closest('.popup-wrapper');
+
+          if (!isClickOnBar && !isClickOnPopup && popupWrapper.classList.contains('is-visible')) {
+            popupWrapper.classList.remove('is-visible');
+            popupWrapper.style.opacity = '0';
+          }
+        });
+      } else {
+        // Popup not yet created, check again shortly
+        setTimeout(checkPopup, 100);
+      }
+    };
+
+    // Start checking after a short delay
+    setTimeout(checkPopup, 200);
   }
 
   cleanup(): void {
