@@ -9,6 +9,8 @@ export class DragDropService {
   private abort?: AbortController;
 
   private draggedCardId: string | null = null;
+  private draggedCardEl: HTMLElement | null = null;
+  private placeholder: HTMLElement | null = null;
 
   private draggedColumn: HTMLElement | null = null;
   private startX = 0;
@@ -42,9 +44,25 @@ export class DragDropService {
     this.abort?.abort();
     this.abort = undefined;
 
+    this.removePlaceholder();
     this.draggedCardId = null;
+    this.draggedCardEl = null;
     this.draggedColumn = null;
     this.isDraggingColumn = false;
+  }
+
+  private createPlaceholder(height: number): HTMLElement {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'kanban-card-placeholder';
+    placeholder.style.height = `${height}px`;
+    return placeholder;
+  }
+
+  private removePlaceholder(): void {
+    if (this.placeholder) {
+      this.placeholder.remove();
+      this.placeholder = null;
+    }
   }
 
   // ======================
@@ -58,12 +76,21 @@ export class DragDropService {
     this.draggedCardId = target.dataset.cardId ?? null;
     if (!this.draggedCardId) return;
 
+    this.draggedCardEl = target;
+
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', this.draggedCardId);
     }
 
-    target.classList.add('dragging');
+    // Create placeholder with same height as the dragged card
+    const cardRect = target.getBoundingClientRect();
+    this.placeholder = this.createPlaceholder(cardRect.height);
+
+    // Delay adding dragging class for smoother visual
+    requestAnimationFrame(() => {
+      target.classList.add('dragging');
+    });
   };
 
   private onDragEnd = (e: DragEvent) => {
@@ -71,7 +98,9 @@ export class DragDropService {
     if (!target?.classList.contains('kanban-card')) return;
 
     target.classList.remove('dragging');
+    this.removePlaceholder();
     this.draggedCardId = null;
+    this.draggedCardEl = null;
 
     const container = target.closest('.kanban-pro-container') ?? document.body;
     container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
@@ -79,7 +108,7 @@ export class DragDropService {
 
   private onDragOver = (e: DragEvent) => {
     e.preventDefault();
-    if (!this.draggedCardId) return;
+    if (!this.draggedCardId || !this.placeholder) return;
 
     const target = e.target as HTMLElement;
     const cardsContainer = target.closest('.column-content') as HTMLElement;
@@ -87,6 +116,38 @@ export class DragDropService {
 
     if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
     cardsContainer.classList.add('drag-over');
+
+    // Get all cards in this container (excluding the dragged one and placeholder)
+    const cards = Array.from(
+      cardsContainer.querySelectorAll('.kanban-card:not(.dragging)')
+    ) as HTMLElement[];
+
+    // Find the insertion point based on mouse Y position
+    let insertBefore: HTMLElement | null = null;
+    for (const card of cards) {
+      const rect = card.getBoundingClientRect();
+      const midpoint = rect.top + rect.height / 2;
+      if (e.clientY < midpoint) {
+        insertBefore = card;
+        break;
+      }
+    }
+
+    // Only move placeholder if position changed
+    const currentNext = this.placeholder.nextElementSibling;
+    if (insertBefore !== currentNext || this.placeholder.parentElement !== cardsContainer) {
+      if (insertBefore) {
+        cardsContainer.insertBefore(this.placeholder, insertBefore);
+      } else {
+        // Insert before the drop-zone if it exists, otherwise append
+        const dropZone = cardsContainer.querySelector('.drop-zone');
+        if (dropZone) {
+          cardsContainer.insertBefore(this.placeholder, dropZone);
+        } else {
+          cardsContainer.appendChild(this.placeholder);
+        }
+      }
+    }
   };
 
   private onDragLeave = (e: DragEvent) => {
@@ -109,17 +170,35 @@ export class DragDropService {
     const cardsContainer = column.querySelector('.column-content') as HTMLElement;
     if (!cardsContainer) return;
 
-    const cards = Array.from(cardsContainer.querySelectorAll('.kanban-card:not(.dragging)'));
-    let insertIndex = cards.length;
-
-    for (let i = 0; i < cards.length; i++) {
-      const cardEl = cards[i] as HTMLElement;
-      const rect = cardEl.getBoundingClientRect();
-      const midpoint = rect.top + rect.height / 2;
-      if (e.clientY < midpoint) {
-        insertIndex = i;
-        break;
+    // Calculate insert index based on placeholder position
+    let insertIndex = 0;
+    if (this.placeholder && this.placeholder.parentElement === cardsContainer) {
+      const allElements = Array.from(cardsContainer.children);
+      const placeholderIndex = allElements.indexOf(this.placeholder);
+      // Count only actual cards before the placeholder
+      insertIndex = allElements
+        .slice(0, placeholderIndex)
+        .filter(el => el.classList.contains('kanban-card') && !el.classList.contains('dragging'))
+        .length;
+    } else {
+      // Fallback to mouse position calculation
+      const cards = Array.from(cardsContainer.querySelectorAll('.kanban-card:not(.dragging)'));
+      insertIndex = cards.length;
+      for (let i = 0; i < cards.length; i++) {
+        const cardEl = cards[i] as HTMLElement;
+        const rect = cardEl.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        if (e.clientY < midpoint) {
+          insertIndex = i;
+          break;
+        }
       }
+    }
+
+    // Clean up before updating
+    this.removePlaceholder();
+    if (this.draggedCardEl) {
+      this.draggedCardEl.classList.remove('dragging');
     }
 
     this.boardService.moveCard(this.draggedCardId, toColumnId, insertIndex);
@@ -130,6 +209,7 @@ export class DragDropService {
     new Notice('Card moved', 1000);
 
     this.draggedCardId = null;
+    this.draggedCardEl = null;
   };
 
   // ======================

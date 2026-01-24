@@ -437,7 +437,12 @@
 }
 
 .column-content.drag-over {
-  background: var(--kp-primary-bg);
+  background: linear-gradient(
+    180deg,
+    rgba(99, 102, 241, 0.08) 0%,
+    rgba(99, 102, 241, 0.03) 100%
+  );
+  border-radius: var(--kp-radius-md);
 }
 
 /* Drop Zone */
@@ -457,6 +462,48 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* Card Drag Placeholder */
+.kanban-card-placeholder {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(99, 102, 241, 0.08) 50%,
+    rgba(99, 102, 241, 0.05) 100%
+  );
+  border: 2px dashed rgba(99, 102, 241, 0.5);
+  border-radius: var(--kp-radius-lg);
+  transition: all var(--kp-transition-fast);
+  animation: placeholder-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes placeholder-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+}
+
+/* Smooth card reordering animation */
+.column-content .kanban-card {
+  transition:
+    transform var(--kp-transition-base),
+    opacity var(--kp-transition-base),
+    box-shadow var(--kp-transition-base),
+    margin var(--kp-transition-fast);
+}
+
+/* When dragging, other cards should animate smoothly */
+.column-content.drag-over .kanban-card:not(.dragging) {
+  transition:
+    transform var(--kp-transition-fast),
+    margin var(--kp-transition-fast);
 }
 
 
@@ -546,12 +593,13 @@
 }
 
 .kanban-card.dragging {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: grabbing;
-  transform: rotate(2deg) scale(1.02);
+  transform: scale(0.98);
   box-shadow:
-    0 16px 48px rgba(0, 0, 0, 0.2),
-    0 8px 16px rgba(0, 0, 0, 0.1);
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 1000;
 }
 
 .kanban-card.selected {
