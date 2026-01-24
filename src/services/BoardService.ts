@@ -383,10 +383,46 @@ export class BoardService {
 
     const fromColumnId = card.columnId;
     const fromSwimLaneId = card.swimLaneId;
+    const oldOrder = card.order;
+
+    // Preserve swimLaneId if not explicitly provided
+    const targetSwimLaneId = swimLaneId !== undefined ? swimLaneId : fromSwimLaneId;
+    const isSameColumn = fromColumnId === toColumnId;
+    const isSameSwimLane = fromSwimLaneId === targetSwimLaneId;
+
+    // Handle same-column reordering
+    if (isSameColumn && isSameSwimLane) {
+      if (oldOrder === newOrder) return;
+
+      // Shift other cards' orders to make room
+      const columnCards = this.getColumnCards(toColumnId).filter(c => c.swimLaneId === fromSwimLaneId);
+      columnCards.forEach(c => {
+        if (c.id === cardId) return;
+        if (oldOrder < newOrder) {
+          // Moving down: shift cards between old and new position up
+          if (c.order > oldOrder && c.order <= newOrder) {
+            c.order--;
+          }
+        } else {
+          // Moving up: shift cards between new and old position down
+          if (c.order >= newOrder && c.order < oldOrder) {
+            c.order++;
+          }
+        }
+      });
+    } else {
+      // Moving to a different column or swim lane: shift cards in destination to make room
+      const destCards = this.getColumnCards(toColumnId).filter(c => c.swimLaneId === targetSwimLaneId);
+      destCards.forEach(c => {
+        if (c.order >= newOrder) {
+          c.order++;
+        }
+      });
+    }
 
     card.columnId = toColumnId;
     card.order = newOrder;
-    card.swimLaneId = swimLaneId;
+    card.swimLaneId = targetSwimLaneId;
     card.updatedAt = new Date().toISOString();
 
     // Sync completion state when moving to/from Done column
@@ -419,7 +455,7 @@ export class BoardService {
 
       this.reorderCardsInColumn(fromColumnId);
     }
-    if (fromSwimLaneId !== swimLaneId) {
+    if (!isSameSwimLane) {
       this.reorderCardsInColumn(toColumnId);
     }
 

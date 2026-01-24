@@ -577,15 +577,17 @@
 }
 
 .kanban-card.dragging {
-  opacity: 0.4;
-  cursor: grabbing;
-  transform: scale(0.98) translateZ(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* Collapse the card completely so it doesn't affect layout */
+  /* This ensures the placeholder position matches the actual drop position */
+  opacity: 0;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden;
   pointer-events: none;
-  z-index: 1000;
-  /* Disable transitions on dragged card for immediate response */
   transition: none !important;
-  will-change: transform, opacity;
 }
 
 .kanban-card.selected {
@@ -6502,9 +6504,10 @@
 }
 
 .kanban-card.dragging {
-  opacity: 0.4;
-  transform: rotate(2deg);
-  cursor: grabbing;
+  /* Collapse - defined earlier, just ensure no override */
+  opacity: 0;
+  height: 0 !important;
+  overflow: hidden;
 }
 
 .column-content.drag-over {
