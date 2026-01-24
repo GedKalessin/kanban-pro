@@ -1092,6 +1092,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px;
+  min-height: 0;
 }
 
 /* List Group */
@@ -1099,7 +1100,7 @@
   margin-bottom: 24px;
   background: var(--background-secondary);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--background-modifier-border);
 }
 

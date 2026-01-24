@@ -298,34 +298,57 @@ export class ListViewRenderer implements IViewRenderer {
   private groupCards(cards: KanbanCard[]): Array<{ key: string; name: string; cards: KanbanCard[] }> {
     const groups = new Map<string, { name: string; cards: KanbanCard[] }>();
 
-    cards.forEach(card => {
-      let key = '';
-      let name = '';
-
-      switch (this.groupBy) {
-        case 'column':
-          key = card.columnId;
-          const column = this.currentContext?.boardService.getColumn(card.columnId);
-          name = column?.name || 'Unknown';
-          break;
-        case 'priority':
-          key = card.priority || 'none';
-          name = card.priority ? card.priority.charAt(0).toUpperCase() + card.priority.slice(1) : 'No Priority';
-          break;
-        case 'assignee':
-          key = card.assignee && card.assignee.length > 0 ? card.assignee[0] : 'unassigned';
-          name = card.assignee && card.assignee.length > 0 ? card.assignee.join(', ') : 'Unassigned';
-          break;
-        case 'status':
-          key = card.completedAt ? 'completed' : card.blocked ? 'blocked' : 'active';
-          name = card.completedAt ? 'Completed' : card.blocked ? 'Blocked' : 'Active';
-          break;
-      }
-
+    const addToGroup = (key: string, name: string, card: KanbanCard) => {
       if (!groups.has(key)) {
         groups.set(key, { name, cards: [] });
       }
       groups.get(key)!.cards.push(card);
+    };
+
+    cards.forEach(card => {
+      switch (this.groupBy) {
+        case 'column': {
+          const key = card.columnId;
+          const column = this.currentContext?.boardService.getColumn(card.columnId);
+          const name = column?.name || 'Unknown';
+          addToGroup(key, name, card);
+          break;
+        }
+        case 'priority': {
+          const key = card.priority || 'none';
+          const name = card.priority ? card.priority.charAt(0).toUpperCase() + card.priority.slice(1) : 'No Priority';
+          addToGroup(key, name, card);
+          break;
+        }
+        case 'assignee': {
+          // Parse all assignees (handle both array elements and comma-separated values)
+          const allAssignees: string[] = [];
+          if (card.assignee && card.assignee.length > 0) {
+            card.assignee.forEach(a => {
+              // Split by comma and trim each name
+              const parts = a.split(',').map(p => p.trim()).filter(p => p.length > 0);
+              allAssignees.push(...parts);
+            });
+          }
+
+          if (allAssignees.length === 0) {
+            addToGroup('unassigned', 'Unassigned', card);
+          } else {
+            // Add the card to each assignee's group
+            allAssignees.forEach(assignee => {
+              const key = assignee.toLowerCase();
+              addToGroup(key, assignee, card);
+            });
+          }
+          break;
+        }
+        case 'status': {
+          const key = card.completedAt ? 'completed' : card.blocked ? 'blocked' : 'active';
+          const name = card.completedAt ? 'Completed' : card.blocked ? 'Blocked' : 'Active';
+          addToGroup(key, name, card);
+          break;
+        }
+      }
     });
 
     return Array.from(groups.entries()).map(([key, group]) => ({
