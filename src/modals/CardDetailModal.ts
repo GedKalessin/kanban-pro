@@ -194,7 +194,8 @@ export class CardDetailModal extends Modal {
                             if (updatedCard) {
                               new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
                             }
-                          }
+                          },
+                          'start'
                         ).open();
         });
         });

@@ -158,18 +158,21 @@ class ColorPickerModal extends Modal {
 class DatePickerModal extends Modal {
   private date: string | null;
   private onSubmit: (date: string | null) => void;
+  private dateType: 'start' | 'due';
 
-  constructor(app: App, initialDate: string | null, onSubmit: (date: string | null) => void) {
+  constructor(app: App, initialDate: string | null, onSubmit: (date: string | null) => void, dateType: 'start' | 'due' = 'due') {
     super(app);
     this.date = initialDate;
     this.onSubmit = onSubmit;
+    this.dateType = dateType;
   }
 
   onOpen(): void {
     const { contentEl } = this;
     contentEl.addClass('kanban-date-picker-modal');
 
-    contentEl.createEl('h2', { text: '📅 Set Due Date' });
+    const title = this.dateType === 'start' ? '📅 Set Start Date' : '📅 Set Due Date';
+    contentEl.createEl('h2', { text: title });
 
     // Quick Date Buttons
     const quickDates = contentEl.createDiv({ cls: 'quick-dates' });
@@ -207,9 +210,10 @@ class DatePickerModal extends Modal {
 
     // Remove Date Button
     if (this.date) {
-      const removeBtn = contentEl.createEl('button', { 
-        text: 'Remove Due Date', 
-        cls: 'danger-btn full-width-btn' 
+      const removeBtnText = this.dateType === 'start' ? 'Remove Start Date' : 'Remove Due Date';
+      const removeBtn = contentEl.createEl('button', {
+        text: removeBtnText,
+        cls: 'danger-btn full-width-btn'
       });
       removeBtn.addEventListener('click', () => {
         this.date = null;
