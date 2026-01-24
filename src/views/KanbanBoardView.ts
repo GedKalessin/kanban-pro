@@ -232,6 +232,54 @@ export class KanbanBoardView extends ItemView {
     }
   }
 
+  async renameFile(newName: string): Promise<void> {
+    if (!this.filePath) {
+      console.warn('⚠️ renameFile called but no filePath set');
+      return;
+    }
+
+    // Sanitize filename: remove invalid characters
+    const sanitizedName = newName
+      .replace(/[\\/:*?"<>|]/g, '') // Remove invalid file chars
+      .trim();
+
+    if (!sanitizedName) {
+      new Notice('⚠️ Invalid board name', 2000);
+      return;
+    }
+
+    const file = this.app.vault.getAbstractFileByPath(this.filePath);
+    if (!(file instanceof TFile)) {
+      console.error('❌ renameFile: File not found at path:', this.filePath);
+      return;
+    }
+
+    // Build new path: same folder, new name
+    const folder = file.parent?.path || '';
+    const newPath = folder ? `${folder}/${sanitizedName}.kanban` : `${sanitizedName}.kanban`;
+
+    // Skip if path is the same
+    if (newPath === this.filePath) {
+      return;
+    }
+
+    // Check if a file with the new name already exists
+    const existingFile = this.app.vault.getAbstractFileByPath(newPath);
+    if (existingFile) {
+      new Notice('⚠️ A board with this name already exists', 2000);
+      return;
+    }
+
+    try {
+      await this.app.vault.rename(file, newPath);
+      this.filePath = newPath;
+      console.log('✅ renameFile: File renamed to', newPath);
+    } catch (error) {
+      console.error('Kanban Pro: Error renaming file:', error);
+      new Notice('⚠️ Failed to rename board file', 3000);
+    }
+  }
+
   // ==================== RENDERING ====================
 
   render(): void {
@@ -274,9 +322,9 @@ export class KanbanBoardView extends ItemView {
       this.boardService,  // This reference gets stale! ToolbarBuilder stores it
       this.currentView,
       (view) => self.switchView(view),
-      () => {
+      async () => {
         console.log('💾 saveBoard callback - board:', self.boardService.getBoard().id);  // ✅ Debug
-        self.saveBoard();
+        await self.saveBoard();
       },
       () => {
         console.log('🔄 render callback - board:', self.boardService.getBoard().id);  // ✅ Debug
@@ -285,6 +333,10 @@ export class KanbanBoardView extends ItemView {
       () => {
         console.log('📝 updateTitle callback - board:', self.boardService.getBoard().id);  // ✅ Debug
         self.updateTitleSafe();
+      },
+      async (newName: string) => {
+        console.log('📝 renameFile callback - newName:', newName);  // ✅ Debug
+        await self.renameFile(newName);
       }
     );
 

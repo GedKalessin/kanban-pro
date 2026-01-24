@@ -12,9 +12,10 @@ export class ToolbarBuilder {
   private boardService: BoardService;
   private currentView: ExtendedViewType;
   private onViewChange: (view: ExtendedViewType) => void;
-  private onSave: () => void;
+  private onSave: () => Promise<void>;
   private onRender: () => void;
   private onTitleChange?: () => void;
+  private onFileRename?: (newName: string) => Promise<void>;
 
   constructor(
     app: App,
@@ -22,9 +23,10 @@ export class ToolbarBuilder {
     boardService: BoardService,
     currentView: ExtendedViewType,
     onViewChange: (view: ExtendedViewType) => void,
-    onSave: () => void,
+    onSave: () => Promise<void>,
     onRender: () => void,
-    onTitleChange?: () => void
+    onTitleChange?: () => void,
+    onFileRename?: (newName: string) => Promise<void>
   ) {
     this.app = app;
     this.plugin = plugin;
@@ -34,6 +36,7 @@ export class ToolbarBuilder {
     this.onSave = onSave;
     this.onRender = onRender;
     this.onTitleChange = onTitleChange;
+    this.onFileRename = onFileRename;
   }
 
   build(): HTMLElement {
@@ -72,14 +75,19 @@ export class ToolbarBuilder {
       placeholder: 'Board name'
     });
 
-    nameInput.addEventListener('blur', () => {
+    nameInput.addEventListener('blur', async () => {
       const newName = nameInput.value.trim();
       if (newName && newName !== board.name) {
         this.boardService.updateBoard({ name: newName });
         if (this.onTitleChange) {
           this.onTitleChange(); // Aggiorna il titolo della tab
         }
-        this.onSave();
+        // IMPORTANTE: Salva PRIMA il contenuto (con il nuovo nome nel JSON)
+        await this.onSave();
+        // POI rinomina il file .kanban nella sidebar
+        if (this.onFileRename) {
+          await this.onFileRename(newName);
+        }
         new Notice('✓ Board renamed', 1500);
       } else if (!newName) {
         nameInput.value = board.name;
@@ -441,10 +449,18 @@ export class ToolbarBuilder {
 
   private showSettingsModal(): void {
     const { BoardSettingsModal } = require('../modals/BoardSettingsModal');
-    new BoardSettingsModal(this.app, this.boardService, () => {
-      this.onRender();
-      this.onSave();
-    }).open();
+    new BoardSettingsModal(
+      this.app,
+      this.boardService,
+      async () => {
+        this.onRender();
+        await this.onSave();
+        if (this.onTitleChange) {
+          this.onTitleChange();
+        }
+      },
+      this.onFileRename
+    ).open();
   }
 
   private hasActiveFilters(): boolean {

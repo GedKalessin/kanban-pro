@@ -4,12 +4,21 @@ import { ViewType } from '../models/types';
 
 export class BoardSettingsModal extends Modal {
   private boardService: BoardService;
-  private onUpdate: () => void;
+  private onUpdate: () => Promise<void>;
+  private onFileRename?: (newName: string) => Promise<void>;
+  private originalName: string;
 
-  constructor(app: App, boardService: BoardService, onUpdate: () => void) {
+  constructor(
+    app: App,
+    boardService: BoardService,
+    onUpdate: () => Promise<void>,
+    onFileRename?: (newName: string) => Promise<void>
+  ) {
     super(app);
     this.boardService = boardService;
     this.onUpdate = onUpdate;
+    this.onFileRename = onFileRename;
+    this.originalName = boardService.getBoard().name;
   }
 
   onOpen(): void {
@@ -231,7 +240,15 @@ export class BoardSettingsModal extends Modal {
     closeBtn.addEventListener('click', () => this.close());
   }
 
-  onClose(): void {
+  async onClose(): Promise<void> {
+    // Check if board name changed and rename file if needed
+    const currentName = this.boardService.getBoard().name;
+    if (currentName !== this.originalName && this.onFileRename) {
+      // IMPORTANTE: Salva PRIMA il contenuto (con il nuovo nome nel JSON)
+      await this.onUpdate();
+      // POI rinomina il file
+      await this.onFileRename(currentName);
+    }
     this.contentEl.empty();
   }
 }
