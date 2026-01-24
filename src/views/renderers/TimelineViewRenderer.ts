@@ -137,14 +137,36 @@ export class TimelineViewRenderer implements IViewRenderer {
       if (due && !start && due < minDate) minDate = new Date(due);
     });
 
-    minDate.setDate(minDate.getDate() - 7);
-    maxDate.setDate(maxDate.getDate() + 14);
+    // Adjust padding based on view mode
+    const padding = this.config.viewMode === 'day' ? 3 : this.config.viewMode === 'week' ? 7 : 14;
+    minDate.setDate(minDate.getDate() - padding);
+    maxDate.setDate(maxDate.getDate() + padding * 2);
+
+    // Align to start of period based on view mode
+    if (this.config.viewMode === 'week') {
+      // Align to Monday
+      const dayOfWeek = minDate.getDay();
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      minDate.setDate(minDate.getDate() + diff);
+    } else if (this.config.viewMode === 'month') {
+      // Align to first of month
+      minDate.setDate(1);
+    }
 
     const dates: Date[] = [];
     const current = new Date(minDate);
+
     while (current <= maxDate) {
       dates.push(new Date(current));
-      current.setDate(current.getDate() + 1);
+
+      if (this.config.viewMode === 'day') {
+        current.setDate(current.getDate() + 1);
+      } else if (this.config.viewMode === 'week') {
+        current.setDate(current.getDate() + 7);
+      } else {
+        // month
+        current.setMonth(current.getMonth() + 1);
+      }
     }
 
     return { dates, startDate: minDate };
@@ -182,6 +204,15 @@ export class TimelineViewRenderer implements IViewRenderer {
     return timelineContainer;
   }
 
+  private getCellWidth(): number {
+    switch (this.config.viewMode) {
+      case 'day': return 40;
+      case 'week': return 100;
+      case 'month': return 120;
+      default: return 40;
+    }
+  }
+
   private renderTimelineHeader(dates: Date[]): HTMLElement {
     const header = createElement('div', { className: 'timeline-header' });
     header.appendChild(createElement('div', { className: 'timeline-sidebar-spacer' }));
@@ -189,23 +220,63 @@ export class TimelineViewRenderer implements IViewRenderer {
     const dateCells = createElement('div', { className: 'timeline-date-cells' });
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const cellWidth = this.getCellWidth();
 
     dates.forEach(date => {
-      const isToday = date.getTime() === today.getTime();
-      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      const dayCell = createElement('div', { className: 'day-cell' });
+      dayCell.style.width = `${cellWidth}px`;
 
-      const dayCell = createElement('div', {
-        className: `day-cell ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`
-      });
-      dayCell.style.width = `${this.config.cellWidth}px`;
+      if (this.config.viewMode === 'day') {
+        const isToday = date.getTime() === today.getTime();
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
-      dayCell.appendChild(createElement('span', { className: 'day-number' }, [date.getDate().toString()]));
-      dayCell.appendChild(createElement('span', { className: 'day-name' }, [
-        date.toLocaleString('default', { weekday: 'short' })
-      ]));
+        if (isToday) dayCell.addClass('today');
+        if (isWeekend) dayCell.addClass('weekend');
 
-      if (isToday) {
-        dayCell.appendChild(createElement('div', { className: 'today-marker' }));
+        dayCell.appendChild(createElement('span', { className: 'day-number' }, [date.getDate().toString()]));
+        dayCell.appendChild(createElement('span', { className: 'day-name' }, [
+          date.toLocaleString('default', { weekday: 'short' })
+        ]));
+
+        if (isToday) {
+          dayCell.appendChild(createElement('div', { className: 'today-marker' }));
+        }
+      } else if (this.config.viewMode === 'week') {
+        // Check if today falls within this week
+        const weekEnd = new Date(date);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        const isCurrentWeek = today >= date && today <= weekEnd;
+
+        if (isCurrentWeek) dayCell.addClass('today');
+
+        // Get week number
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const weekNum = Math.ceil((((date.getTime() - startOfYear.getTime()) / 86400000) + startOfYear.getDay() + 1) / 7);
+
+        dayCell.appendChild(createElement('span', { className: 'day-number' }, [`W${weekNum}`]));
+        dayCell.appendChild(createElement('span', { className: 'day-name' }, [
+          `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}`
+        ]));
+
+        if (isCurrentWeek) {
+          dayCell.appendChild(createElement('div', { className: 'today-marker' }));
+        }
+      } else {
+        // month view
+        const isCurrentMonth = today.getFullYear() === date.getFullYear() && today.getMonth() === date.getMonth();
+
+        if (isCurrentMonth) dayCell.addClass('today');
+
+        dayCell.appendChild(createElement('span', { className: 'day-number' }, [
+          date.toLocaleString('default', { month: 'short' })
+        ]));
+        dayCell.appendChild(createElement('span', { className: 'day-name' }, [
+          date.getFullYear().toString()
+        ]));
+
+        if (isCurrentMonth) {
+          dayCell.appendChild(createElement('div', { className: 'today-marker' }));
+        }
       }
 
       dateCells.appendChild(dayCell);
@@ -248,24 +319,36 @@ export class TimelineViewRenderer implements IViewRenderer {
   private renderTimelineCells(dates: Date[], card: KanbanCard, startDate: Date, context: ViewRendererContext): HTMLElement {
     const cellsContainer = createElement('div', { className: 'timeline-cells' });
     cellsContainer.style.position = 'relative';
-    cellsContainer.style.width = `${dates.length * this.config.cellWidth}px`;
+    const cellWidth = this.getCellWidth();
+    cellsContainer.style.width = `${dates.length * cellWidth}px`;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     dates.forEach(date => {
-      const isToday = date.getTime() === today.getTime();
-      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      let isCurrentPeriod = false;
+      let isWeekend = false;
+
+      if (this.config.viewMode === 'day') {
+        isCurrentPeriod = date.getTime() === today.getTime();
+        isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      } else if (this.config.viewMode === 'week') {
+        const weekEnd = new Date(date);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        isCurrentPeriod = today >= date && today <= weekEnd;
+      } else {
+        isCurrentPeriod = today.getFullYear() === date.getFullYear() && today.getMonth() === date.getMonth();
+      }
 
       const cell = createElement('div', {
-        className: `timeline-cell ${isWeekend ? 'weekend' : ''} ${isToday ? 'today' : ''}`
+        className: `timeline-cell ${isWeekend ? 'weekend' : ''} ${isCurrentPeriod ? 'today' : ''}`
       });
-      cell.style.width = `${this.config.cellWidth}px`;
+      cell.style.width = `${cellWidth}px`;
       cell.style.position = 'relative';
       cellsContainer.appendChild(cell);
     });
 
-    const bar = this.renderTimelineBar(card, startDate, context);
+    const bar = this.renderTimelineBar(card, startDate, dates, context);
     if (bar) {
       bar.style.position = 'absolute';
       bar.style.top = '12px';
@@ -275,7 +358,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     return cellsContainer;
   }
 
-  private renderTimelineBar(card: KanbanCard, startDate: Date, context: ViewRendererContext): HTMLElement | null {
+  private renderTimelineBar(card: KanbanCard, startDate: Date, _dates: Date[], context: ViewRendererContext): HTMLElement | null {
     const cardStart = (card as any).startDate ? new Date((card as any).startDate) : (card.dueDate ? new Date(card.dueDate) : null);
     const cardEnd = card.dueDate ? new Date(card.dueDate) : cardStart;
 
@@ -283,16 +366,37 @@ export class TimelineViewRenderer implements IViewRenderer {
 
     const column = context.boardService.getColumn(card.columnId);
     const barColor = card.color || column?.color || '#6366f1';
+    const cellWidth = this.getCellWidth();
 
-    const startOffset = Math.floor((cardStart.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    const duration = Math.max(1, Math.ceil((cardEnd.getTime() - cardStart.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    let startOffset: number;
+    let duration: number;
+
+    if (this.config.viewMode === 'day') {
+      startOffset = Math.floor((cardStart.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      duration = Math.max(1, Math.ceil((cardEnd.getTime() - cardStart.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    } else if (this.config.viewMode === 'week') {
+      // Calculate position in weeks
+      const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+      startOffset = (cardStart.getTime() - startDate.getTime()) / msPerWeek;
+      const endOffset = (cardEnd.getTime() - startDate.getTime()) / msPerWeek;
+      duration = Math.max(0.15, endOffset - startOffset + (1 / 7)); // At least ~1 day width
+    } else {
+      // Month view - calculate position in months
+      const startMonthDiff = (cardStart.getFullYear() - startDate.getFullYear()) * 12 + (cardStart.getMonth() - startDate.getMonth());
+      const dayInMonth = cardStart.getDate() / 30; // Approximate day position within month
+      startOffset = startMonthDiff + dayInMonth;
+
+      const endMonthDiff = (cardEnd.getFullYear() - startDate.getFullYear()) * 12 + (cardEnd.getMonth() - startDate.getMonth());
+      const endDayInMonth = cardEnd.getDate() / 30;
+      duration = Math.max(0.1, (endMonthDiff + endDayInMonth) - startOffset + 0.1);
+    }
 
     const bar = createElement('div', {
       className: `timeline-bar ${card.blocked ? 'blocked' : ''} ${card.completedAt ? 'completed' : ''}`,
       'data-card-id': card.id
     });
-    bar.style.left = `${startOffset * this.config.cellWidth}px`;
-    bar.style.width = `${duration * this.config.cellWidth - 8}px`;
+    bar.style.left = `${startOffset * cellWidth}px`;
+    bar.style.width = `${Math.max(20, duration * cellWidth - 8)}px`;
     bar.style.backgroundColor = barColor;
 
     // Progress bar
