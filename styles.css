@@ -434,14 +434,12 @@
   overflow-x: hidden;
   flex: 1 1 0;
   min-height: 0;
+  /* Performance: isolate repaints to this container */
+  contain: layout style;
 }
 
 .column-content.drag-over {
-  background: linear-gradient(
-    180deg,
-    rgba(99, 102, 241, 0.08) 0%,
-    rgba(99, 102, 241, 0.03) 100%
-  );
+  background: rgba(99, 102, 241, 0.05);
   border-radius: var(--kp-radius-md);
 }
 
@@ -466,28 +464,14 @@
 
 /* Card Drag Placeholder */
 .kanban-card-placeholder {
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.15) 0%,
-    rgba(99, 102, 241, 0.08) 50%,
-    rgba(99, 102, 241, 0.05) 100%
-  );
-  border: 2px dashed rgba(99, 102, 241, 0.5);
+  background: rgba(99, 102, 241, 0.1);
+  border: 2px dashed rgba(99, 102, 241, 0.4);
   border-radius: var(--kp-radius-lg);
-  transition: all var(--kp-transition-fast);
-  animation: placeholder-pulse 1.5s ease-in-out infinite;
   flex-shrink: 0;
-}
-
-@keyframes placeholder-pulse {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.01);
-  }
+  /* GPU acceleration for smooth insertion */
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  opacity: 0.8;
 }
 
 /* Smooth card reordering animation */
@@ -495,15 +479,15 @@
   transition:
     transform var(--kp-transition-base),
     opacity var(--kp-transition-base),
-    box-shadow var(--kp-transition-base),
-    margin var(--kp-transition-fast);
+    box-shadow var(--kp-transition-base);
+  /* GPU layer for smooth animations */
+  transform: translateZ(0);
 }
 
-/* When dragging, other cards should animate smoothly */
+/* When dragging, other cards should animate smoothly with GPU acceleration */
 .column-content.drag-over .kanban-card:not(.dragging) {
-  transition:
-    transform var(--kp-transition-fast),
-    margin var(--kp-transition-fast);
+  transition: transform 100ms cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
 }
 
 
@@ -595,11 +579,13 @@
 .kanban-card.dragging {
   opacity: 0.4;
   cursor: grabbing;
-  transform: scale(0.98);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(0.98) translateZ(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   pointer-events: none;
   z-index: 1000;
+  /* Disable transitions on dragged card for immediate response */
+  transition: none !important;
+  will-change: transform, opacity;
 }
 
 .kanban-card.selected {

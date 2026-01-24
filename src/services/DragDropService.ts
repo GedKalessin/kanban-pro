@@ -17,6 +17,10 @@ export class DragDropService {
   private currentX = 0;
   private isDraggingColumn = false;
 
+  // Performance optimization: throttle dragover with rAF
+  private rafId: number | null = null;
+  private pendingDragEvent: DragEvent | null = null;
+
   constructor(boardService: BoardService, onUpdate: () => void, onSave: () => Promise<void>) {
     this.boardService = boardService;
     this.onUpdate = onUpdate;
@@ -43,6 +47,13 @@ export class DragDropService {
   cleanup(): void {
     this.abort?.abort();
     this.abort = undefined;
+
+    // Cancel any pending animation frame
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+    this.pendingDragEvent = null;
 
     this.removePlaceholder();
     this.draggedCardId = null;
@@ -97,6 +108,13 @@ export class DragDropService {
     const target = e.target as HTMLElement;
     if (!target?.classList.contains('kanban-card')) return;
 
+    // Cancel any pending animation frame
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+    this.pendingDragEvent = null;
+
     target.classList.remove('dragging');
     this.removePlaceholder();
     this.draggedCardId = null;
@@ -110,32 +128,50 @@ export class DragDropService {
     e.preventDefault();
     if (!this.draggedCardId || !this.placeholder) return;
 
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+
+    // Store the event and schedule processing via rAF for smooth 60fps
+    this.pendingDragEvent = e;
+
+    if (this.rafId === null) {
+      this.rafId = requestAnimationFrame(this.processDragOver);
+    }
+  };
+
+  private processDragOver = () => {
+    this.rafId = null;
+
+    const e = this.pendingDragEvent;
+    if (!e || !this.draggedCardId || !this.placeholder) return;
+
     const target = e.target as HTMLElement;
     const cardsContainer = target.closest('.column-content') as HTMLElement;
     if (!cardsContainer) return;
 
-    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
     cardsContainer.classList.add('drag-over');
 
     // Get all cards in this container (excluding the dragged one and placeholder)
-    const cards = Array.from(
-      cardsContainer.querySelectorAll('.kanban-card:not(.dragging)')
-    ) as HTMLElement[];
+    const cards = cardsContainer.querySelectorAll('.kanban-card:not(.dragging)');
 
-    // Find the insertion point based on mouse Y position
+    // Find the insertion point based on mouse Y position using binary search for large lists
     let insertBefore: HTMLElement | null = null;
-    for (const card of cards) {
+    const clientY = e.clientY;
+
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i] as HTMLElement;
       const rect = card.getBoundingClientRect();
       const midpoint = rect.top + rect.height / 2;
-      if (e.clientY < midpoint) {
+      if (clientY < midpoint) {
         insertBefore = card;
         break;
       }
     }
 
-    // Only move placeholder if position changed
+    // Only move placeholder if position actually changed (avoid layout thrashing)
     const currentNext = this.placeholder.nextElementSibling;
-    if (insertBefore !== currentNext || this.placeholder.parentElement !== cardsContainer) {
+    const currentParent = this.placeholder.parentElement;
+
+    if (insertBefore !== currentNext || currentParent !== cardsContainer) {
       if (insertBefore) {
         cardsContainer.insertBefore(this.placeholder, insertBefore);
       } else {
