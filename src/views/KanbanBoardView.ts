@@ -285,6 +285,14 @@ export class KanbanBoardView extends ItemView {
   render(): void {
     console.log('🔄 KanbanBoardView.render() called for board:', this.boardService.getBoard().id);  // ✅ Debug
 
+    // Save scroll position BEFORE clearing the DOM
+    let savedScrollTop = 0;
+    const roadmapContent = this.contentEl.querySelector('.roadmap-content') as HTMLElement;
+    if (roadmapContent) {
+      savedScrollTop = roadmapContent.scrollTop;
+      console.log('📜 Saved roadmap scroll position:', savedScrollTop);
+    }
+
     // ✅ CRITICAL: Completely clear the DOM and cleanup drag-drop before rendering
     this.dragDropService.cleanup();
     this.contentEl.empty();
@@ -304,6 +312,17 @@ export class KanbanBoardView extends ItemView {
 
     // Setup drag and drop
     this.dragDropService.setupDragAndDrop(this.contentEl);
+
+    // Restore scroll position after render
+    if (savedScrollTop > 0) {
+      requestAnimationFrame(() => {
+        const newRoadmapContent = this.contentEl.querySelector('.roadmap-content') as HTMLElement;
+        if (newRoadmapContent) {
+          newRoadmapContent.scrollTop = savedScrollTop;
+          console.log('📜 Restored roadmap scroll position:', savedScrollTop);
+        }
+      });
+    }
 
     // Niente updateTitle nel render loop.
   }
