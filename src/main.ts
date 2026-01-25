@@ -26,8 +26,8 @@ export default class KanbanProPlugin extends Plugin {
     this.registerExtensions(['kanban'], KANBAN_VIEW_TYPE);
 
     // Add ribbon icon
-    this.addRibbonIcon('layout-grid', 'Create Kanban Board', () => {
-      this.showNewBoardModal();
+    this.addRibbonIcon('layout-grid', 'Create Kanban from Template', () => {
+      this.showTemplateModal();
     });
 
     // Add commands
