@@ -216,12 +216,39 @@ export class ListViewRenderer implements IViewRenderer {
       priorityBadge.style.backgroundColor = PRIORITY_COLORS[card.priority];
     }
 
-    // Assignee
+    // Assignee - show all assignees responsively
     const assigneeCell = row.createDiv({ cls: 'list-cell cell-assignee' });
     if (card.assignee && card.assignee.length > 0) {
-      const assigneeAvatar = assigneeCell.createDiv({ cls: 'assignee-avatar' });
-      assigneeAvatar.textContent = card.assignee[0].charAt(0).toUpperCase();
-      assigneeAvatar.setAttribute('title', card.assignee.join(', '));
+      // Parse all assignees (handle both array elements and comma-separated values)
+      const allAssignees: string[] = [];
+      card.assignee.forEach(a => {
+        const parts = a.split(',').map(p => p.trim()).filter(p => p.length > 0);
+        allAssignees.push(...parts);
+      });
+
+      if (allAssignees.length > 0) {
+        const assigneesContainer = assigneeCell.createDiv({
+          cls: `assignees-stack assignees-count-${Math.min(allAssignees.length, 5)}`
+        });
+        assigneesContainer.setAttribute('title', allAssignees.join(', '));
+
+        // Show all assignees (limit to 4 visible + overflow indicator)
+        const maxVisible = 4;
+        const visibleAssignees = allAssignees.slice(0, maxVisible);
+        const remaining = allAssignees.length - maxVisible;
+
+        visibleAssignees.forEach((assignee, index) => {
+          const avatar = assigneesContainer.createDiv({ cls: 'assignee-avatar-stacked' });
+          avatar.textContent = assignee.charAt(0).toUpperCase();
+          avatar.style.zIndex = `${visibleAssignees.length - index}`;
+        });
+
+        if (remaining > 0) {
+          const moreAvatar = assigneesContainer.createDiv({ cls: 'assignee-avatar-stacked assignee-more' });
+          moreAvatar.textContent = `+${remaining}`;
+          moreAvatar.style.zIndex = '0';
+        }
+      }
     }
 
     // Due Date
