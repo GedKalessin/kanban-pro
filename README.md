@@ -9,12 +9,12 @@ Advanced Kanban board plugin for Obsidian with a modern, sleek UI inspired by Cl
 - **List View**: Compact list of all tasks
 - **Timeline View**: Horizontal timeline with date-based scheduling
 - **Gantt View**: Professional Gantt chart for project planning
-- **Roadmap View**: Milestone-based planning (coming soon)
+- **Roadmap View**: Milestone-based planning 
 
 ### Advanced Features
 - 🏊 **Swim Lanes**: Group cards horizontally by assignee, priority, or custom tags
 - 🎯 **WIP Limits**: Set work-in-progress limits per column
-- ⏱️ **Time Tracking**: Track time spent on tasks
+- ⏱️ **Time Tracking**: Track time spent on tasks (coming soon)
 - ✅ **Checklists**: Add subtasks to cards
 - 🔗 **Note Linking**: Link cards to Obsidian notes
 - 🎨 **Custom Colors**: Colorize columns, cards, and swim lanes
