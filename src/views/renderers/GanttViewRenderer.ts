@@ -1,8 +1,3 @@
-// ============================================
-// GanttViewRenderer - Frappe Gantt Implementation
-// Utilizzo ottimizzato della libreria Frappe Gantt
-// ============================================
-
 import { setIcon, Notice } from 'obsidian';
 import { KanbanCard } from '../../models/types';
 import { createElement } from '../../utils/helpers';
@@ -119,9 +114,15 @@ export class GanttViewRenderer implements IViewRenderer {
         ? card.dependencies.join(', ')
         : '';
 
+      // Truncate long titles to prevent overflow
+      const maxTitleLength = 40;
+      const displayTitle = card.title.length > maxTitleLength
+        ? card.title.substring(0, maxTitleLength) + '...'
+        : card.title;
+
       const task = {
         id: card.id,
-        name: card.title,
+        name: displayTitle,
         start: this.formatDate(start),
         end: this.formatDate(end),
         progress: progress,

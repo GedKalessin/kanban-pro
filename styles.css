@@ -5649,8 +5649,8 @@
 }
 
 .gantt-container-frappe .gantt .bar-progress {
-  fill: var(--interactive-accent-hover);
-  opacity: 0.8;
+  fill: rgba(0, 0, 0, 0.25);
+  opacity: 1;
 }
 
 .gantt-container-frappe .gantt .bar.bar-blocked {
@@ -5755,12 +5755,20 @@
   font-weight: 500;
   dominant-baseline: central;
   text-anchor: middle;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gantt-container-frappe .gantt .bar-label.big {
   fill: var(--text-normal);
   text-anchor: start;
   font-size: 13px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Gantt Handles - Resize */
@@ -6863,6 +6871,10 @@
 .theme-dark .gantt-popup-wrapper .popup-progress,
 .theme-dark .gantt-popup-wrapper .popup-description {
   background: var(--background-secondary);
+}
+
+.theme-dark .gantt-container-frappe .gantt .bar-progress {
+  fill: rgba(255, 255, 255, 0.2);
 }
 
 .gantt-popup-wrapper .popup-description {
