@@ -162,7 +162,6 @@ export class ListViewRenderer implements IViewRenderer {
     columns.forEach(col => {
       const cell = container.createDiv({ cls: 'list-header-cell' });
       cell.textContent = col.label;
-      cell.style.width = col.width;
     });
   }
 
