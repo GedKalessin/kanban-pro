@@ -1781,6 +1781,67 @@
   flex-shrink: 0;
 }
 
+/* Stacked assignees for timeline view */
+.assignees-stack-mini {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+
+.assignee-avatar-mini {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--interactive-accent) 0%, var(--interactive-accent-hover) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 9px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid var(--background-primary);
+  margin-left: -6px;
+  position: relative;
+  text-transform: uppercase;
+}
+
+.assignee-avatar-mini:first-child {
+  margin-left: 0;
+}
+
+.assignee-avatar-mini:hover {
+  transform: scale(1.15);
+  z-index: 10 !important;
+}
+
+.assignee-avatar-mini.assignee-more {
+  background: var(--background-modifier-hover);
+  color: var(--text-muted);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+/* Responsive sizing based on count for timeline mini avatars */
+.assignees-count-3 .assignee-avatar-mini,
+.assignees-count-4 .assignee-avatar-mini,
+.assignees-count-5 .assignee-avatar-mini {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  font-size: 8px;
+  margin-left: -8px;
+}
+
+.assignees-count-3 .assignee-avatar-mini:first-child,
+.assignees-count-4 .assignee-avatar-mini:first-child,
+.assignees-count-5 .assignee-avatar-mini:first-child {
+  margin-left: 0;
+}
+
 .timeline-cells {
   display: flex;
   flex: 1;

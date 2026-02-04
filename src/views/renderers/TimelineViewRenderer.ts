@@ -302,10 +302,42 @@ export class TimelineViewRenderer implements IViewRenderer {
     cardInfo.appendChild(title);
     sidebar.appendChild(cardInfo);
 
-    if (card.assignee.length > 0) {
-      const avatar = createElement('div', { className: 'mini-avatar' });
-      avatar.textContent = card.assignee[0].charAt(0).toUpperCase();
-      sidebar.appendChild(avatar);
+    // Show all assignees responsively
+    if (card.assignee && card.assignee.length > 0) {
+      // Parse all assignees (handle both array elements and comma-separated values)
+      const allAssignees: string[] = [];
+      card.assignee.forEach(a => {
+        const parts = a.split(',').map(p => p.trim()).filter(p => p.length > 0);
+        allAssignees.push(...parts);
+      });
+
+      if (allAssignees.length > 0) {
+        const assigneesContainer = createElement('div', {
+          className: `assignees-stack-mini assignees-count-${Math.min(allAssignees.length, 5)}`
+        });
+        assigneesContainer.setAttribute('title', allAssignees.join(', '));
+
+        // Show all assignees (limit to 3 visible + overflow indicator for compact timeline)
+        const maxVisible = 3;
+        const visibleAssignees = allAssignees.slice(0, maxVisible);
+        const remaining = allAssignees.length - maxVisible;
+
+        visibleAssignees.forEach((assignee, index) => {
+          const avatar = createElement('div', { className: 'assignee-avatar-mini' });
+          avatar.textContent = assignee.charAt(0).toUpperCase();
+          avatar.style.zIndex = `${visibleAssignees.length - index}`;
+          assigneesContainer.appendChild(avatar);
+        });
+
+        if (remaining > 0) {
+          const moreAvatar = createElement('div', { className: 'assignee-avatar-mini assignee-more' });
+          moreAvatar.textContent = `+${remaining}`;
+          moreAvatar.style.zIndex = '0';
+          assigneesContainer.appendChild(moreAvatar);
+        }
+
+        sidebar.appendChild(assigneesContainer);
+      }
     }
     row.appendChild(sidebar);
 
