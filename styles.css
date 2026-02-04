@@ -1198,6 +1198,9 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .cell-title input[type="checkbox"] {
@@ -1247,6 +1250,8 @@
 
 .cell-column {
   width: 15%;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .column-badge {
@@ -1262,6 +1267,8 @@
 
 .cell-priority {
   width: 10%;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .priority-badge {
@@ -1276,6 +1283,8 @@
 
 .cell-assignee {
   width: 15%;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .assignee-avatar {
@@ -1367,6 +1376,8 @@
 
 .cell-due-date {
   width: 15%;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .due-date-badge {
@@ -1397,6 +1408,8 @@
   width: 10%;
   flex-direction: column;
   gap: 4px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .progress-bar-mini {
@@ -1423,6 +1436,7 @@
 .cell-actions {
   width: 5%;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .row-menu-btn {
