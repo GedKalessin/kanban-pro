@@ -5816,20 +5816,31 @@
   font-weight: 500;
   dominant-baseline: central;
   text-anchor: middle;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .gantt-container-frappe .gantt .bar-label.big {
   fill: var(--text-normal);
   text-anchor: start;
   font-size: 13px;
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+/* Hide overflow for bar wrappers to contain text within bars */
+.gantt-container-frappe .gantt .bar-wrapper {
+  overflow: hidden !important;
+  clip-path: inset(0);
+}
+
+.gantt-container-frappe .gantt .bar {
+  overflow: hidden !important;
+}
+
+/* Ensure bar labels stay within the bar bounds */
+.gantt-container-frappe .gantt .bar-wrapper .bar-label {
+  max-width: calc(100% - 10px);
+}
+
+.gantt-container-frappe .gantt .bar-wrapper .bar-label.big {
+  max-width: calc(100% - 10px);
 }
 
 /* Gantt Handles - Resize */

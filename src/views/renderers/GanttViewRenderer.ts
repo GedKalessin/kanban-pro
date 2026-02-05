@@ -115,7 +115,7 @@ export class GanttViewRenderer implements IViewRenderer {
         : '';
 
       // Truncate long titles to prevent overflow
-      const maxTitleLength = 40;
+      const maxTitleLength = 25;
       const displayTitle = card.title.length > maxTitleLength
         ? card.title.substring(0, maxTitleLength) + '...'
         : card.title;
