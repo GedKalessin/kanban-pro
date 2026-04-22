@@ -14,14 +14,12 @@ Advanced Kanban board plugin for Obsidian with a modern, sleek UI inspired by Cl
 ### Advanced Features
 - 🏊 **Swim Lanes**: Group cards horizontally by assignee, priority, or custom tags
 - 🎯 **WIP Limits**: Set work-in-progress limits per column
-- ⏱️ **Time Tracking**: Track time spent on tasks (coming soon)
 - ✅ **Checklists**: Add subtasks to cards
 - 🔗 **Note Linking**: Link cards to Obsidian notes
 - 🎨 **Custom Colors**: Colorize columns, cards, and swim lanes
 - 🔄 **Undo/Redo**: Full history support
 - 🔍 **Advanced Filters**: Filter by assignee, priority, tags, dates
 - 📊 **Analytics**: View board statistics and insights
-- ⚡ **Automations**: Automate repetitive tasks (coming soon)
 
 ### Modern UI/UX
 - Clean, modern design inspired by ClickUp

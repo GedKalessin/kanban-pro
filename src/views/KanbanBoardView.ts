@@ -99,10 +99,9 @@ export class KanbanBoardView extends ItemView {
   private updateTitleSafe(): void {
     const title = this.boardService.getBoard().name || 'Kanban Board';
 
-    // Aggiorna titolo nella view header (a destra)
+    // Aggiorna titolo nella view header
     const viewAny = this.leaf.view as any;
     if (viewAny?.titleEl) {
-      // alcuni usano titleEl.setText, altri textContent
       if (typeof viewAny.titleEl.setText === 'function') {
         viewAny.titleEl.setText(title);
       } else {
@@ -110,16 +109,52 @@ export class KanbanBoardView extends ItemView {
       }
     }
 
-    // Aggiorna tab title (a sinistra) — API interna
     const leafAny = this.leaf as any;
+
+    // Prova updateHeader() (API interna Obsidian)
     if (typeof leafAny.updateHeader === 'function') {
-      leafAny.updateHeader(); // undocumented
+      leafAny.updateHeader();
     }
+
+    // Fallback: aggiorna direttamente il DOM del tab
+    if (leafAny.tabHeaderInnerTitleEl) {
+      leafAny.tabHeaderInnerTitleEl.textContent = title;
+    } else if (leafAny.tabHeaderEl) {
+      const tabTitleEl = leafAny.tabHeaderEl.querySelector('.view-tab-header-inner-title');
+      if (tabTitleEl) tabTitleEl.textContent = title;
+    }
+
+    // Forza Obsidian ad aggiornare l'header del workspace
+    this.app.workspace.trigger('layout-change');
   }
 
   async onOpen(): Promise<void> {
     this.contentEl.empty();
     this.contentEl.addClass('kanban-pro-container');
+
+    // Handle external file renames (file renamed from Obsidian file explorer)
+    this.registerEvent(
+      this.app.vault.on('rename', async (file, oldPath) => {
+        if (oldPath !== this.filePath || !(file instanceof TFile)) return;
+
+        const newPath = file.path;
+        const newBasename = file.basename;
+
+        // Update tracked path first so setState guard skips if it fires after
+        this.filePath = newPath;
+
+        // Sync board name to new filename
+        const board = this.boardService.getBoard();
+        if (board.name !== newBasename) {
+          this.boardService.updateBoard({ name: newBasename });
+        }
+
+        this.plugin.setupAutoSave(newPath, this);
+        this.render();
+        this.updateTitleSafe();
+        await this.saveBoard();
+      })
+    );
 
     const state = this.leaf.getViewState();
     const fileState = state.state as { file?: string } | undefined;
@@ -154,7 +189,22 @@ export class KanbanBoardView extends ItemView {
 
   // ==================== FILE OPERATIONS ====================
 
+  getFilePath(): string {
+    return this.filePath;
+  }
+
   private async loadFile(filePath: string): Promise<void> {
+    this.filePath = filePath;
+
+    // If another leaf already has this file open, close this one and reveal that one
+    const existingLeaf = this.app.workspace.getLeavesOfType(KANBAN_VIEW_TYPE)
+      .find(leaf => leaf !== this.leaf && (leaf.view as KanbanBoardView).getFilePath() === filePath);
+    if (existingLeaf) {
+      this.app.workspace.revealLeaf(existingLeaf);
+      setTimeout(() => this.leaf.detach(), 0);
+      return;
+    }
+
     try {
       console.log('📂 loadFile: Loading file from', filePath);
 
@@ -166,17 +216,26 @@ export class KanbanBoardView extends ItemView {
         const board = JSON.parse(content) as KanbanBoard;
         console.log('📂 loadFile: Parsed board', board.id, 'with', board.cards.length, 'cards');
 
-        // ✅ CRITICAL FIX: Instead of creating a new BoardService,
-        // replace the board inside the existing BoardService
-        // This keeps all references (ToolbarBuilder, DragDropService, viewContext) valid!
+        // Se il file è stato rinominato esternamente, sincronizza il nome interno
+        const fileBasename = abstractFile.basename;
+        const renamedExternally = board.name !== fileBasename;
+        if (renamedExternally) {
+          board.name = fileBasename;
+        }
+
         this.boardService.setBoard(board);
         this.filePath = filePath;
 
         console.log('✅ Loaded board into existing BoardService:', this.boardService.getBoard().id);
 
         this.render();
-        this.updateTitleSafe(); // Aggiorna il titolo dopo il load
+        this.updateTitleSafe();
         this.plugin.setupAutoSave(filePath, this);
+
+        // Persisti il nome aggiornato nel JSON
+        if (renamedExternally) {
+          await this.saveBoard();
+        }
       } else {
         console.warn('⚠️ loadFile: File not found at path:', filePath);
         this.render();
@@ -229,54 +288,6 @@ export class KanbanBoardView extends ItemView {
     } catch (error) {
       console.error('Kanban Pro: Error saving board:', error);
       new Notice('⚠️ Failed to save board', 3000);
-    }
-  }
-
-  async renameFile(newName: string): Promise<void> {
-    if (!this.filePath) {
-      console.warn('⚠️ renameFile called but no filePath set');
-      return;
-    }
-
-    // Sanitize filename: remove invalid characters
-    const sanitizedName = newName
-      .replace(/[\\/:*?"<>|]/g, '') // Remove invalid file chars
-      .trim();
-
-    if (!sanitizedName) {
-      new Notice('⚠️ Invalid board name', 2000);
-      return;
-    }
-
-    const file = this.app.vault.getAbstractFileByPath(this.filePath);
-    if (!(file instanceof TFile)) {
-      console.error('❌ renameFile: File not found at path:', this.filePath);
-      return;
-    }
-
-    // Build new path: same folder, new name
-    const folder = file.parent?.path || '';
-    const newPath = folder ? `${folder}/${sanitizedName}.kanban` : `${sanitizedName}.kanban`;
-
-    // Skip if path is the same
-    if (newPath === this.filePath) {
-      return;
-    }
-
-    // Check if a file with the new name already exists
-    const existingFile = this.app.vault.getAbstractFileByPath(newPath);
-    if (existingFile) {
-      new Notice('⚠️ A board with this name already exists', 2000);
-      return;
-    }
-
-    try {
-      await this.app.vault.rename(file, newPath);
-      this.filePath = newPath;
-      console.log('✅ renameFile: File renamed to', newPath);
-    } catch (error) {
-      console.error('Kanban Pro: Error renaming file:', error);
-      new Notice('⚠️ Failed to rename board file', 3000);
     }
   }
 
@@ -337,26 +348,11 @@ export class KanbanBoardView extends ItemView {
     // not a captured reference that might become stale
     const toolbarBuilder = new ToolbarBuilder(
       this.app,
-      this.plugin,
-      this.boardService,  // This reference gets stale! ToolbarBuilder stores it
+      this.boardService,
       this.currentView,
       (view) => self.switchView(view),
-      async () => {
-        console.log('💾 saveBoard callback - board:', self.boardService.getBoard().id);  // ✅ Debug
-        await self.saveBoard();
-      },
-      () => {
-        console.log('🔄 render callback - board:', self.boardService.getBoard().id);  // ✅ Debug
-        self.render();
-      },
-      () => {
-        console.log('📝 updateTitle callback - board:', self.boardService.getBoard().id);  // ✅ Debug
-        self.updateTitleSafe();
-      },
-      async (newName: string) => {
-        console.log('📝 renameFile callback - newName:', newName);  // ✅ Debug
-        await self.renameFile(newName);
-      }
+      async () => { await self.saveBoard(); },
+      () => { self.render(); }
     );
 
     return toolbarBuilder.build();

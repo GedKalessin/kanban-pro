@@ -2,41 +2,31 @@ import { Menu, Notice, setIcon } from 'obsidian';
 import type { App } from 'obsidian';
 import { createElement } from '../utils/helpers';
 import { BoardService } from '../services/BoardService';
-import type KanbanProPlugin from '../main';
 
 type ExtendedViewType = 'board' | 'list' | 'timeline' | 'gantt' | 'roadmap';
 
 export class ToolbarBuilder {
   private app: App;
-  private plugin: KanbanProPlugin;
   private boardService: BoardService;
   private currentView: ExtendedViewType;
   private onViewChange: (view: ExtendedViewType) => void;
   private onSave: () => Promise<void>;
   private onRender: () => void;
-  private onTitleChange?: () => void;
-  private onFileRename?: (newName: string) => Promise<void>;
 
   constructor(
     app: App,
-    plugin: KanbanProPlugin,
     boardService: BoardService,
     currentView: ExtendedViewType,
     onViewChange: (view: ExtendedViewType) => void,
     onSave: () => Promise<void>,
-    onRender: () => void,
-    onTitleChange?: () => void,
-    onFileRename?: (newName: string) => Promise<void>
+    onRender: () => void
   ) {
     this.app = app;
-    this.plugin = plugin;
     this.boardService = boardService;
     this.currentView = currentView;
     this.onViewChange = onViewChange;
     this.onSave = onSave;
     this.onRender = onRender;
-    this.onTitleChange = onTitleChange;
-    this.onFileRename = onFileRename;
   }
 
   build(): HTMLElement {
@@ -66,42 +56,10 @@ export class ToolbarBuilder {
     const iconWrapper = boardInfo.createDiv({ cls: 'board-icon' });
     setIcon(iconWrapper, 'layout-grid');
 
-    // Board name (editable)
+    // Board name (read-only — rename via file explorer)
     const nameWrapper = boardInfo.createDiv({ cls: 'board-name-wrapper' });
-    const nameInput = nameWrapper.createEl('input', {
-      type: 'text',
-      value: board.name,
-      cls: 'board-name-input',
-      placeholder: 'Board name'
-    });
-
-    nameInput.addEventListener('blur', async () => {
-      const newName = nameInput.value.trim();
-      if (newName && newName !== board.name) {
-        this.boardService.updateBoard({ name: newName });
-        if (this.onTitleChange) {
-          this.onTitleChange(); // Aggiorna il titolo della tab
-        }
-        // IMPORTANTE: Salva PRIMA il contenuto (con il nuovo nome nel JSON)
-        await this.onSave();
-        // POI rinomina il file .kanban nella sidebar
-        if (this.onFileRename) {
-          await this.onFileRename(newName);
-        }
-        new Notice('✓ Board renamed', 1500);
-      } else if (!newName) {
-        nameInput.value = board.name;
-      }
-    });
-
-    nameInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        nameInput.blur();
-      } else if (e.key === 'Escape') {
-        nameInput.value = board.name;
-        nameInput.blur();
-      }
-    });
+    const nameEl = nameWrapper.createDiv({ cls: 'board-name-display' });
+    nameEl.textContent = board.name;
 
     // Board description (tooltip on hover)
     if (board.description) {
@@ -455,11 +413,7 @@ export class ToolbarBuilder {
       async () => {
         this.onRender();
         await this.onSave();
-        if (this.onTitleChange) {
-          this.onTitleChange();
-        }
-      },
-      this.onFileRename
+      }
     ).open();
   }
 
