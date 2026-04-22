@@ -17,7 +17,8 @@ import {
   BOARD_TEMPLATES,
   StatusGroup,
   StatusCategory,
-  BoardTemplate
+  BoardTemplate,
+  TeamMember
 } from '../models/types';
 import { generateId } from '../utils/helpers';
 
@@ -40,6 +41,14 @@ export class BoardService {
 
   getBoard(): KanbanBoard {
     return this.board;
+  }
+
+  // ✅ NEW METHOD: Replace the entire board without creating a new BoardService
+  setBoard(board: KanbanBoard): void {
+    this.board = board;
+    this.history = [];
+    this.historyIndex = -1;
+    this.saveToHistory();
   }
 
   updateBoard(updates: BoardUpdate): void {
@@ -96,7 +105,8 @@ export class BoardService {
       milestones: [],
       automations: [],
       tags: [],
-      members: []
+      members: [],
+      teamMembers: []
     };
   }
 
@@ -130,7 +140,8 @@ export class BoardService {
       milestones: [],
       automations: [],
       tags: [],
-      members: []
+      members: [],
+      teamMembers: []
     };
 
     return board;
@@ -255,8 +266,15 @@ export class BoardService {
   }
 
   addCard(columnId: string, cardData: Partial<KanbanCard>): KanbanCard {
+
+    console.log('🏗️ BoardService.addCard called:', { columnId, cardData });  // ✅ Debug
+
     const column = this.getColumn(columnId);
-    if (!column) throw new Error('Column not found');
+
+    if (!column) {
+      console.error('❌ Column not found:', columnId);  // ✅ Debug
+      throw new Error(`Column ${columnId} not found`);
+    }
 
     const now = new Date().toISOString();
     const columnCards = this.getColumnCards(columnId);
@@ -287,6 +305,7 @@ export class BoardService {
     };
 
     this.board.cards.push(newCard);
+    console.log('✅ Card added to board.cards:', this.board.cards.length, 'total cards');  // ✅ Debug
     this.board.updatedAt = new Date().toISOString();
     this.saveToHistory();
     return newCard;
@@ -295,6 +314,16 @@ export class BoardService {
   updateCard(cardId: string, updates: CardUpdate): void {
     const index = this.board.cards.findIndex(c => c.id === cardId);
     if (index !== -1) {
+      const card = this.board.cards[index];
+      const previousCompletedState = card.completedAt;
+
+      console.log('💾 BoardService.updateCard:', {
+        cardId,
+        updates,
+        currentDescription: card.description,
+        newDescription: updates.description
+      });
+
       const { assignee, tags, checklist, ...restUpdates } = updates;
       const sanitizedUpdates: Partial<KanbanCard> = {
         ...restUpdates,
@@ -302,11 +331,25 @@ export class BoardService {
         ...(tags && { tags: tags.filter((t): t is string => t !== undefined) }),
         ...(checklist && { checklist: checklist.filter((item): item is ChecklistItem => item !== undefined) })
       };
-      this.board.cards[index] = { 
-        ...this.board.cards[index], 
+      this.board.cards[index] = {
+        ...this.board.cards[index],
         ...sanitizedUpdates,
         updatedAt: new Date().toISOString()
       };
+
+      console.log('✅ Card updated, new description:', this.board.cards[index].description);
+
+      // AUTO-MOVE LOGIC: Handle completion state changes
+      if (updates.completedAt !== undefined) {
+        if (updates.completedAt && !previousCompletedState) {
+          // Card just completed
+          this.autoMoveCompletedCard(this.board.cards[index]);
+        } else if (!updates.completedAt && previousCompletedState) {
+          // Card marked as incomplete
+          this.autoMoveIncompletedCard(this.board.cards[index]);
+        }
+      }
+
       this.board.updatedAt = new Date().toISOString();
       this.saveToHistory();
     }
@@ -343,16 +386,79 @@ export class BoardService {
 
     const fromColumnId = card.columnId;
     const fromSwimLaneId = card.swimLaneId;
+    const oldOrder = card.order;
+
+    // Preserve swimLaneId if not explicitly provided
+    const targetSwimLaneId = swimLaneId !== undefined ? swimLaneId : fromSwimLaneId;
+    const isSameColumn = fromColumnId === toColumnId;
+    const isSameSwimLane = fromSwimLaneId === targetSwimLaneId;
+
+    // Handle same-column reordering
+    if (isSameColumn && isSameSwimLane) {
+      if (oldOrder === newOrder) return;
+
+      // Shift other cards' orders to make room
+      const columnCards = this.getColumnCards(toColumnId).filter(c => c.swimLaneId === fromSwimLaneId);
+      columnCards.forEach(c => {
+        if (c.id === cardId) return;
+        if (oldOrder < newOrder) {
+          // Moving down: shift cards between old and new position up
+          if (c.order > oldOrder && c.order <= newOrder) {
+            c.order--;
+          }
+        } else {
+          // Moving up: shift cards between new and old position down
+          if (c.order >= newOrder && c.order < oldOrder) {
+            c.order++;
+          }
+        }
+      });
+    } else {
+      // Moving to a different column or swim lane: shift cards in destination to make room
+      const destCards = this.getColumnCards(toColumnId).filter(c => c.swimLaneId === targetSwimLaneId);
+      destCards.forEach(c => {
+        if (c.order >= newOrder) {
+          c.order++;
+        }
+      });
+    }
 
     card.columnId = toColumnId;
     card.order = newOrder;
-    card.swimLaneId = swimLaneId;
+    card.swimLaneId = targetSwimLaneId;
     card.updatedAt = new Date().toISOString();
 
+    // Sync completion state when moving to/from Done column
     if (fromColumnId !== toColumnId) {
+      const toColumn = this.getColumn(toColumnId);
+      const fromColumn = this.getColumn(fromColumnId);
+
+      const isDoneColumn = (column: KanbanColumn | undefined): boolean => {
+        if (!column) return false;
+        const nameLower = column.name.toLowerCase();
+        return nameLower.includes('done') ||
+               nameLower.includes('complete') ||
+               nameLower.includes('closed') ||
+               nameLower.includes('finished') ||
+               this.getColumnStatusCategory(column.id) === 'closed';
+      };
+
+      const movingToDone = isDoneColumn(toColumn);
+      const movingFromDone = isDoneColumn(fromColumn);
+
+      // Mark as complete when moving to Done
+      if (movingToDone && !card.completedAt) {
+        card.completedAt = new Date().toISOString();
+      }
+
+      // Mark as incomplete when moving from Done to another column
+      if (movingFromDone && !movingToDone && card.completedAt) {
+        card.completedAt = null;
+      }
+
       this.reorderCardsInColumn(fromColumnId);
     }
-    if (fromSwimLaneId !== swimLaneId) {
+    if (!isSameSwimLane) {
       this.reorderCardsInColumn(toColumnId);
     }
 
@@ -719,6 +825,110 @@ export class BoardService {
       });
     }
 
+    this.board.updatedAt = new Date().toISOString();
+    this.saveToHistory();
+  }
+
+  // ==================== AUTO-MOVE LOGIC ====================
+
+  private autoMoveCompletedCard(card: KanbanCard): void {
+    // Find "Done" column or similar
+    const doneColumn = this.findDoneColumn();
+
+    if (doneColumn && card.columnId !== doneColumn.id) {
+      console.log(`Auto-moving completed card ${card.id} to ${doneColumn.name}`);
+      this.moveCard(card.id, doneColumn.id, 0); // Move to top of Done column
+    }
+  }
+
+  private autoMoveIncompletedCard(card: KanbanCard): void {
+    // Find "In Progress" or "To Do" column
+    const inProgressColumn = this.findInProgressColumn();
+
+    if (inProgressColumn && card.columnId !== inProgressColumn.id) {
+      console.log(`Auto-moving incompleted card ${card.id} to ${inProgressColumn.name}`);
+      this.moveCard(card.id, inProgressColumn.id, 0);
+    }
+  }
+
+  private findDoneColumn(): KanbanColumn | null {
+    // Search by name
+    const doneNames = ['done', 'complete', 'completed', 'closed', 'finished'];
+    let column = this.board.columns.find(col =>
+      doneNames.some(name => col.name.toLowerCase().includes(name))
+    );
+
+    if (column) return column;
+
+    // Search by status group "closed"
+    if (this.board.statusGroups) {
+      const closedGroup = this.board.statusGroups.find(g => g.category === 'closed');
+      if (closedGroup && closedGroup.columnIds.length > 0) {
+        column = this.board.columns.find(c => closedGroup.columnIds.includes(c.id));
+        if (column) return column;
+      }
+    }
+
+    // Last column as fallback
+    return this.board.columns[this.board.columns.length - 1] || null;
+  }
+
+  private findInProgressColumn(): KanbanColumn | null {
+    // Search by name
+    const inProgressNames = ['in progress', 'doing', 'working', 'active', 'wip'];
+    let column = this.board.columns.find(col =>
+      inProgressNames.some(name => col.name.toLowerCase().includes(name))
+    );
+
+    if (column) return column;
+
+    // Search by status group "active"
+    if (this.board.statusGroups) {
+      const activeGroup = this.board.statusGroups.find(g => g.category === 'active');
+      if (activeGroup && activeGroup.columnIds.length > 0) {
+        column = this.board.columns.find(c => activeGroup.columnIds.includes(c.id));
+        if (column) return column;
+      }
+    }
+
+    // First column (To Do) as fallback
+    return this.board.columns[0] || null;
+  }
+
+  // ==================== TEAM MEMBER OPERATIONS ====================
+
+  getTeamMembers(): TeamMember[] {
+    return this.board.teamMembers || [];
+  }
+
+  addTeamMember(data: Omit<TeamMember, 'id'>): TeamMember {
+    if (!this.board.teamMembers) this.board.teamMembers = [];
+    const member: TeamMember = { id: generateId(), ...data };
+    this.board.teamMembers.push(member);
+    this.board.updatedAt = new Date().toISOString();
+    this.saveToHistory();
+    return member;
+  }
+
+  updateTeamMember(id: string, updates: Partial<Omit<TeamMember, 'id'>>): void {
+    if (!this.board.teamMembers) return;
+    const idx = this.board.teamMembers.findIndex(m => m.id === id);
+    if (idx === -1) return;
+    Object.assign(this.board.teamMembers[idx], updates);
+    this.board.updatedAt = new Date().toISOString();
+    this.saveToHistory();
+  }
+
+  removeTeamMember(id: string): void {
+    if (!this.board.teamMembers) return;
+    this.board.teamMembers = this.board.teamMembers.filter(m => m.id !== id);
+    // Remove from all card assignees
+    this.board.cards.forEach(card => {
+      const member = this.board.teamMembers?.find(m => m.id === id);
+      if (member) {
+        card.assignee = card.assignee.filter(a => a !== member.name);
+      }
+    });
     this.board.updatedAt = new Date().toISOString();
     this.saveToHistory();
   }

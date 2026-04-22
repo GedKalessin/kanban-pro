@@ -26,8 +26,8 @@ export default class KanbanProPlugin extends Plugin {
     this.registerExtensions(['kanban'], KANBAN_VIEW_TYPE);
 
     // Add ribbon icon
-    this.addRibbonIcon('layout-grid', 'Create Kanban Board', () => {
-      this.showNewBoardModal();
+    this.addRibbonIcon('layout-grid', 'Create Kanban from Template', () => {
+      this.showTemplateModal();
     });
 
     // Add commands
@@ -51,15 +51,6 @@ export default class KanbanProPlugin extends Plugin {
 
     // Add settings tab
     this.addSettingTab(new KanbanSettingsTab(this.app, this));
-
-    // Listen for file open events
-    this.registerEvent(
-      this.app.workspace.on('file-open', (file) => {
-        if (file && file.extension === 'kanban') {
-          this.openKanbanBoard(file);
-        }
-      })
-    );
 
     console.log('✅ Kanban Pro Plugin loaded successfully');
   }
@@ -181,6 +172,15 @@ export default class KanbanProPlugin extends Plugin {
   }
 
   private async openKanbanBoard(file: TFile) {
+    const existingLeaf = this.app.workspace.getLeavesOfType(KANBAN_VIEW_TYPE).find(
+      leaf => (leaf.view as KanbanBoardView).getFilePath() === file.path
+    );
+
+    if (existingLeaf) {
+      this.app.workspace.revealLeaf(existingLeaf);
+      return;
+    }
+
     const leaf = this.app.workspace.getLeaf(false);
     await leaf.setViewState({
       type: KANBAN_VIEW_TYPE,

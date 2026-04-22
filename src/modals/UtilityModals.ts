@@ -1,7 +1,3 @@
-// ============================================
-// UTILITY MODALS
-// ============================================
-
 import { App, Modal, Setting, FuzzySuggestModal, Notice, setIcon } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { StatusGroup, BoardTemplate } from '../models/types';
@@ -162,18 +158,21 @@ class ColorPickerModal extends Modal {
 class DatePickerModal extends Modal {
   private date: string | null;
   private onSubmit: (date: string | null) => void;
+  private dateType: 'start' | 'due';
 
-  constructor(app: App, initialDate: string | null, onSubmit: (date: string | null) => void) {
+  constructor(app: App, initialDate: string | null, onSubmit: (date: string | null) => void, dateType: 'start' | 'due' = 'due') {
     super(app);
     this.date = initialDate;
     this.onSubmit = onSubmit;
+    this.dateType = dateType;
   }
 
   onOpen(): void {
     const { contentEl } = this;
     contentEl.addClass('kanban-date-picker-modal');
 
-    contentEl.createEl('h2', { text: '📅 Set Due Date' });
+    const title = this.dateType === 'start' ? '📅 Set Start Date' : '📅 Set Due Date';
+    contentEl.createEl('h2', { text: title });
 
     // Quick Date Buttons
     const quickDates = contentEl.createDiv({ cls: 'quick-dates' });
@@ -211,9 +210,10 @@ class DatePickerModal extends Modal {
 
     // Remove Date Button
     if (this.date) {
-      const removeBtn = contentEl.createEl('button', { 
-        text: 'Remove Due Date', 
-        cls: 'danger-btn full-width-btn' 
+      const removeBtnText = this.dateType === 'start' ? 'Remove Start Date' : 'Remove Due Date';
+      const removeBtn = contentEl.createEl('button', {
+        text: removeBtnText,
+        cls: 'danger-btn full-width-btn'
       });
       removeBtn.addEventListener('click', () => {
         this.date = null;
@@ -333,10 +333,17 @@ class ConfirmModal extends Modal {
 
 // Quick Add Card Modal
 class QuickAddCardModal extends Modal {
-  private onSubmit: (title: string) => void;
-  private title: string = '';
+  private onSubmit: (title: string, startDate?: string | null, dueDate?: string | null) => void;
+  private formData = {
+    title: '',
+    startDate: null as string | null,
+    dueDate: null as string | null
+  };
 
-  constructor(app: App, onSubmit: (title: string) => void) {
+  constructor(
+    app: App,
+    onSubmit: (title: string, startDate?: string | null, dueDate?: string | null) => void
+  ) {
     super(app);
     this.onSubmit = onSubmit;
   }
@@ -347,28 +354,84 @@ class QuickAddCardModal extends Modal {
 
     contentEl.createEl('h2', { text: '✨ Quick Add Card' });
 
-    const input = contentEl.createEl('input', {
-      type: 'text',
-      placeholder: 'Card title...',
-      cls: 'quick-add-input'
-    });
-    
-    input.focus();
-    
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+    // Title
+    new Setting(contentEl)
+      .setName('Title')
+      .setDesc('Card title (required)')
+      .addText(text => {
+        text
+          .setPlaceholder('Enter card title')
+          .onChange(value => {
+            this.formData.title = value;
+          });
+        text.inputEl.focus();
+        text.inputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.submit();
+          }
+        });
+      });
+
+    // Start Date
+    new Setting(contentEl)
+      .setName('Start Date')
+      .setDesc('When work begins (optional)')
+      .addText(text => {
+        text.inputEl.type = 'date';
+        text.inputEl.addEventListener('change', (e) => {
+          const value = (e.target as HTMLInputElement).value;
+          this.formData.startDate = value ? new Date(value + 'T00:00:00').toISOString() : null;
+        });
+      });
+
+    // Due Date
+    new Setting(contentEl)
+      .setName('Due Date')
+      .setDesc('When work should be done (optional)')
+      .addText(text => {
+        text.inputEl.type = 'date';
+        text.inputEl.addEventListener('change', (e) => {
+          const value = (e.target as HTMLInputElement).value;
+          this.formData.dueDate = value ? new Date(value + 'T23:59:59').toISOString() : null;
+        });
+      });
+
+    // Quick date buttons
+    const quickDatesSection = contentEl.createDiv({ cls: 'quick-dates-section' });
+    quickDatesSection.createEl('h4', { text: 'Quick Dates' });
+
+    const quickDatesContainer = quickDatesSection.createDiv({ cls: 'quick-dates-buttons' });
+
+    const quickDates = [
+      { label: 'Today', days: 0 },
+      { label: 'Tomorrow', days: 1 },
+      { label: 'This Week', days: 7 },
+      { label: 'Next Week', days: 14 }
+    ];
+
+    quickDates.forEach(({ label, days }) => {
+      const btn = quickDatesContainer.createEl('button', { text: label, cls: 'quick-date-btn' });
+      btn.addEventListener('click', (e) => {
         e.preventDefault();
-        this.title = input.value;
-        this.submit();
-      } else if (e.key === 'Escape') {
-        this.close();
-      }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dueDate = new Date(today);
+        dueDate.setDate(dueDate.getDate() + days);
+        dueDate.setHours(23, 59, 59, 999);
+
+        this.formData.startDate = today.toISOString();
+        this.formData.dueDate = dueDate.toISOString();
+
+        // Update input values
+        const startInput = contentEl.querySelector('input[type="date"]') as HTMLInputElement;
+        const dueInput = contentEl.querySelectorAll('input[type="date"]')[1] as HTMLInputElement;
+        if (startInput) startInput.value = today.toISOString().split('T')[0];
+        if (dueInput) dueInput.value = dueDate.toISOString().split('T')[0];
+      });
     });
 
-    input.addEventListener('input', () => {
-      this.title = input.value;
-    });
-
+    // Buttons
     const buttonContainer = contentEl.createDiv({ cls: 'button-container' });
 
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
@@ -379,12 +442,18 @@ class QuickAddCardModal extends Modal {
   }
 
   private submit(): void {
-    if (this.title.trim()) {
-      this.onSubmit(this.title.trim());
-      this.close();
-    } else {
-      new Notice('⚠️ Please enter a card title', 2000);
+    if (!this.formData.title.trim()) {
+      new Notice('⚠️ Please enter a title', 2000);
+      return;
     }
+
+    this.onSubmit(
+      this.formData.title.trim(),
+      this.formData.startDate ?? undefined,  
+      this.formData.dueDate ?? undefined      
+    );
+
+    this.close();
   }
 
   onClose(): void {
@@ -814,6 +883,87 @@ class SaveTemplateModal extends Modal {
   }
 }
 
+// ============================================
+// MULTI-SELECT MODAL
+// ============================================
+
+class MultiSelectModal extends Modal {
+  private title: string;
+  private description: string;
+  private items: { display: string; value: string; selected: boolean }[];
+  private onSubmit: (selectedIds: string[]) => void;
+  private selectedIds: Set<string>;
+
+  constructor(
+    app: App,
+    title: string,
+    description: string,
+    items: { display: string; value: string; selected: boolean }[],
+    onSubmit: (selectedIds: string[]) => void
+  ) {
+    super(app);
+    this.title = title;
+    this.description = description;
+    this.items = items;
+    this.onSubmit = onSubmit;
+    this.selectedIds = new Set(items.filter(i => i.selected).map(i => i.value));
+  }
+
+  onOpen(): void {
+    const { contentEl } = this;
+    contentEl.addClass('kanban-multi-select-modal');
+
+    // Header
+    contentEl.createEl('h2', { text: this.title });
+    if (this.description) {
+      contentEl.createEl('p', { text: this.description, cls: 'modal-description' });
+    }
+
+    // Items list
+    const itemsList = contentEl.createDiv({ cls: 'multi-select-list' });
+
+    this.items.forEach(item => {
+      const itemEl = itemsList.createDiv({ cls: 'multi-select-item' });
+
+      const checkbox = itemEl.createEl('input', { type: 'checkbox' });
+      checkbox.checked = this.selectedIds.has(item.value);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          this.selectedIds.add(item.value);
+        } else {
+          this.selectedIds.delete(item.value);
+        }
+      });
+
+      const label = itemEl.createEl('label', { text: item.display });
+      label.addEventListener('click', () => {
+        checkbox.checked = !checkbox.checked;
+        if (checkbox.checked) {
+          this.selectedIds.add(item.value);
+        } else {
+          this.selectedIds.delete(item.value);
+        }
+      });
+    });
+
+    // Buttons
+    const buttonContainer = contentEl.createDiv({ cls: 'button-container' });
+
+    const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
+    cancelBtn.addEventListener('click', () => this.close());
+
+    const submitBtn = buttonContainer.createEl('button', { text: 'Apply', cls: 'submit-btn' });
+    submitBtn.addEventListener('click', () => {
+      this.onSubmit(Array.from(this.selectedIds));
+      this.close();
+    });
+  }
+
+  onClose(): void {
+    this.contentEl.empty();
+  }
+}
+
 // Export all modals
 export {
   TextInputModal,
@@ -823,5 +973,6 @@ export {
   ConfirmModal,
   QuickAddCardModal,
   StatusManagementModal,
-  SaveTemplateModal
+  SaveTemplateModal,
+  MultiSelectModal
 };

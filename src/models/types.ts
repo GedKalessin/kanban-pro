@@ -24,6 +24,18 @@ export const TASK_TYPE_ICONS: Record<TaskType, string> = {
 };
 
 // ============================================
+// TEAM MEMBER
+// ============================================
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role?: string;
+  email?: string;
+  color?: string; // hex color for avatar background
+}
+
+// ============================================
 // CHECKLIST
 // ============================================
 
@@ -58,10 +70,11 @@ export interface KanbanCard {
   blocked: boolean;
   checklist: ChecklistItem[];
   linkedNote?: string; // Deprecato - mantieni per backward compatibility
-  linkedNotes?: string[]; 
+  linkedNotes?: string[];
   estimatedHours?: number;
   timeTracked?: number;
   customFields?: Record<string, any>;
+  dependencies?: string[]; // Array of card IDs that this card depends on
 }
 
 
@@ -209,6 +222,7 @@ export interface KanbanBoard {
   automations: AutomationRule[];
   tags: string[];
   members: string[];
+  teamMembers: TeamMember[]; // Structured team members with full info
   statusGroups?: StatusGroup[]; // New field
   savedTemplates?: BoardTemplate[]; // New field
 }
