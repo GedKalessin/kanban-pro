@@ -9,6 +9,7 @@ export class CardDetailModal extends Modal {
   private onUpdate: () => void;
   private contentArea: HTMLElement | null = null;
   private checklistContainerEl: HTMLElement | null = null;
+  private checklistProgressEl: HTMLElement | null = null;
   private linkedNotesContainerEl: HTMLElement | null = null;
 
   constructor(app: App, card: KanbanCard, boardService: BoardService, onUpdate: () => void) {
@@ -110,14 +111,24 @@ export class CardDetailModal extends Modal {
       }, 1000); // Auto-save after 1 second of inactivity
     });
 
-    // Checklist
-    const checklistSection = container.createDiv({ cls: 'card-section' });
+    // Subtasks
+    const checklistSection = container.createDiv({ cls: 'card-section subtask-modal-section' });
     const checklistHeader = checklistSection.createDiv({ cls: 'section-header' });
-    checklistHeader.createEl('h3', { text: '✓ Checklist' });
+    const checklistTitle = checklistHeader.createDiv({ cls: 'subtask-modal-title' });
+    const titleIcon = checklistTitle.createSpan({ cls: 'icon' });
+    setIcon(titleIcon, 'square-check-big');
+    checklistTitle.createEl('h3', { text: 'Subtasks' });
 
-    const addChecklistBtn = checklistHeader.createEl('button', { cls: 'icon-btn' });
-    setIcon(addChecklistBtn, 'plus');
+    const addChecklistBtn = checklistHeader.createEl('button', { cls: 'subtask-add-btn' });
+    const addBtnIcon = addChecklistBtn.createSpan({ cls: 'icon' });
+    setIcon(addBtnIcon, 'plus');
+    addChecklistBtn.createSpan({ text: 'Add' });
+    addChecklistBtn.title = 'Add subtask';
     addChecklistBtn.addEventListener('click', () => this.addChecklistItem());
+
+    // Progress bar
+    this.checklistProgressEl = checklistSection.createDiv({ cls: 'subtask-modal-progress' });
+    this.renderChecklistProgress();
 
     this.checklistContainerEl = checklistSection.createDiv({ cls: 'checklist-content' });
     this.renderChecklist();
@@ -281,69 +292,141 @@ export class CardDetailModal extends Modal {
       });
   }
 
+  private renderChecklistProgress(): void {
+    if (!this.checklistProgressEl) return;
+    this.checklistProgressEl.empty();
+
+    const currentCard = this.boardService.getCard(this.card.id);
+    if (!currentCard || currentCard.checklist.length === 0) return;
+
+    const total = currentCard.checklist.length;
+    const completed = currentCard.checklist.filter(i => i.completed).length;
+    const pct = Math.round((completed / total) * 100);
+
+    const labelRow = this.checklistProgressEl.createDiv({ cls: 'subtask-modal-progress-label' });
+    labelRow.createSpan({ text: `${completed} of ${total} subtasks completed` });
+    labelRow.createSpan({ cls: 'subtask-modal-progress-pct', text: `${pct}%` });
+
+    const track = this.checklistProgressEl.createDiv({ cls: 'subtask-modal-progress-track' });
+    const fill = track.createDiv({ cls: `subtask-modal-progress-fill${pct === 100 ? ' complete' : ''}` });
+    fill.style.width = `${pct}%`;
+  }
+
   private renderChecklist(): void {
     if (!this.checklistContainerEl) return;
-
     this.checklistContainerEl.empty();
 
-    // Prendi sempre la versione aggiornata della card
     const currentCard = this.boardService.getCard(this.card.id);
     if (!currentCard) return;
-
-    // Aggiorna il riferimento locale
     this.card = currentCard;
 
+    if (currentCard.checklist.length === 0) {
+      const empty = this.checklistContainerEl.createDiv({ cls: 'subtask-empty' });
+      const emptyIcon = empty.createSpan({ cls: 'icon' });
+      setIcon(emptyIcon, 'list-checks');
+      empty.createSpan({ text: 'No subtasks yet. Click + to add one.' });
+      this.renderInlineAddRow(currentCard.id);
+      return;
+    }
+
     currentCard.checklist.forEach(item => {
-      const itemEl = this.checklistContainerEl!.createDiv({ cls: 'checklist-item' });
+      const itemEl = this.checklistContainerEl!.createDiv({
+        cls: `checklist-item${item.completed ? ' completed' : ''}`
+      });
 
-      const checkbox = itemEl.createEl('input', { type: 'checkbox' });
-      checkbox.checked = item.completed;
-      checkbox.addEventListener('change', () => {
-        this.boardService.updateChecklistItem(currentCard.id, item.id, { completed: checkbox.checked });
+      // Custom circular checkbox
+      const cb = itemEl.createDiv({ cls: `subtask-cb${item.completed ? ' checked' : ''}` });
+      const cbIcon = cb.createSpan({ cls: 'icon' });
+      if (item.completed) setIcon(cbIcon, 'check');
+
+      cb.addEventListener('click', () => {
+        const newCompleted = !item.completed;
+        this.boardService.updateChecklistItem(currentCard.id, item.id, { completed: newCompleted });
         this.card = this.boardService.getCard(currentCard.id)!;
         this.onUpdate();
-        this.renderChecklist(); // Re-render immediato
+        this.renderChecklist();
+        this.renderChecklistProgress();
       });
 
-      const text = itemEl.createEl('input', {
-        type: 'text',
-        value: item.text,
-        cls: item.completed ? 'completed' : ''
+      // Editable text
+      const textEl = itemEl.createEl('div', {
+        cls: `subtask-item-text${item.completed ? ' completed' : ''}`,
+        attr: { contenteditable: 'true' }
       });
-      text.addEventListener('change', () => {
-        this.boardService.updateChecklistItem(currentCard.id, item.id, { text: text.value });
-        this.card = this.boardService.getCard(currentCard.id)!;
-        this.onUpdate();
+      textEl.textContent = item.text;
+
+      let saveTimeout: NodeJS.Timeout;
+      textEl.addEventListener('input', () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+          this.boardService.updateChecklistItem(currentCard.id, item.id, { text: textEl.textContent || '' });
+          this.card = this.boardService.getCard(currentCard.id)!;
+          this.onUpdate();
+        }, 800);
+      });
+      textEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); textEl.blur(); }
+        if (e.key === 'Escape') { textEl.textContent = item.text; textEl.blur(); }
       });
 
-      const deleteBtn = itemEl.createEl('button', { cls: 'icon-btn-small' });
+      // Delete button
+      const deleteBtn = itemEl.createEl('button', { cls: 'subtask-delete-btn' });
       setIcon(deleteBtn, 'trash-2');
       deleteBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-
         this.boardService.deleteChecklistItem(currentCard.id, item.id);
         this.card = this.boardService.getCard(currentCard.id)!;
         this.onUpdate();
-        this.renderChecklist(); // Re-render immediato
+        this.renderChecklist();
+        this.renderChecklistProgress();
       });
     });
+
+    // Inline "add subtask" row
+    this.renderInlineAddRow(currentCard.id);
+  }
+
+  private renderInlineAddRow(cardId: string): void {
+    if (!this.checklistContainerEl) return;
+
+    const addRow = this.checklistContainerEl.createDiv({ cls: 'subtask-add-row' });
+    const addIcon = addRow.createSpan({ cls: 'subtask-add-row-icon' });
+    setIcon(addIcon, 'plus');
+    const input = addRow.createEl('input', {
+      type: 'text',
+      cls: 'subtask-add-input',
+      attr: { placeholder: 'Add a subtask… (Enter to save)' }
+    });
+
+    let isSaved = false;
+    const save = () => {
+      if (isSaved) return;
+      const text = input.value.trim();
+      if (!text) return;
+      isSaved = true;
+      input.value = '';
+      this.boardService.addChecklistItem(cardId, text);
+      this.card = this.boardService.getCard(cardId)!;
+      this.onUpdate();
+      this.renderChecklist();
+      this.renderChecklistProgress();
+    };
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); save(); }
+      if (e.key === 'Escape') { input.value = ''; input.blur(); }
+    });
+    input.addEventListener('blur', save);
   }
 
   private addChecklistItem(): void {
-    const { TextInputModal } = require('./UtilityModals');
-    new TextInputModal(
-      this.app,
-      'Add Checklist Item',
-      'Item text',
-      '',
-      (text: string) => {
-        this.boardService.addChecklistItem(this.card.id, text);
-        this.card = this.boardService.getCard(this.card.id)!;
-        this.onUpdate();
-        this.renderChecklist(); // Re-render immediato
-      }
-    ).open();
+    if (!this.checklistContainerEl) return;
+    const input = this.checklistContainerEl.querySelector('.subtask-add-input') as HTMLInputElement | null;
+    if (input) {
+      input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      input.focus();
+    }
   }
 
   private renderLinkedNotes(): void {

@@ -41,6 +41,11 @@ export class CardRenderer {
     cardTitle.addEventListener('click', () => this.context.onCardClick(card.id));
     cardEl.appendChild(cardTitle);
 
+    // Subtask inline preview
+    if (displayOptions.showChecklist && card.checklist.length > 0) {
+      cardEl.appendChild(this.renderSubtaskSection(card));
+    }
+
     // Tags
     if (displayOptions.showTags && card.tags.length > 0) {
       cardEl.appendChild(this.renderTags(card.tags));
@@ -51,6 +56,111 @@ export class CardRenderer {
     if (footerEl) cardEl.appendChild(footerEl);
 
     return cardEl;
+  }
+
+  private renderSubtaskSection(card: KanbanCard): HTMLElement {
+    const section = createElement('div', { className: 'subtask-section' });
+    const items = card.checklist;
+
+    const getCompleted = () => items.filter(i => i.completed).length;
+
+    // Header row: icon + count + chevron
+    const header = createElement('div', { className: 'subtask-header' });
+    const headerLeft = createElement('div', { className: 'subtask-header-left' });
+    const listIcon = createElement('span', { className: 'subtask-icon icon' });
+    setIcon(listIcon, 'list-checks');
+    const countEl = createElement('span', { className: 'subtask-count-text' });
+    countEl.textContent = `${getCompleted()}/${items.length} subtasks`;
+    headerLeft.appendChild(listIcon);
+    headerLeft.appendChild(countEl);
+    const chevronEl = createElement('span', { className: 'subtask-chevron icon' });
+    setIcon(chevronEl, 'chevron-right');
+    header.appendChild(headerLeft);
+    header.appendChild(chevronEl);
+
+    // Progress bar
+    const progressTrack = createElement('div', { className: 'subtask-progress-track' });
+    const progressFill = createElement('div', { className: 'subtask-progress-fill' });
+    const updateProgress = () => {
+      const completed = getCompleted();
+      const pct = items.length > 0 ? (completed / items.length) * 100 : 0;
+      progressFill.style.width = `${pct}%`;
+      progressFill.className = `subtask-progress-fill${pct === 100 ? ' complete' : ''}`;
+      countEl.textContent = `${completed}/${items.length} subtasks`;
+    };
+    updateProgress();
+    progressTrack.appendChild(progressFill);
+
+    // Subtask list (collapsed by default)
+    const list = createElement('div', { className: 'subtask-list' });
+    const previewItems = items.slice(0, 3);
+
+    previewItems.forEach(item => {
+      const row = createElement('div', { className: `subtask-row${item.completed ? ' completed' : ''}` });
+
+      const cb = createElement('div', { className: `subtask-checkbox${item.completed ? ' checked' : ''}` });
+      const cbIcon = createElement('span', { className: 'icon' });
+      if (item.completed) setIcon(cbIcon, 'check');
+      cb.appendChild(cbIcon);
+
+      const text = createElement('span', { className: 'subtask-text' });
+      text.textContent = item.text;
+
+      row.appendChild(cb);
+      row.appendChild(text);
+
+      cb.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const newCompleted = !item.completed;
+        item.completed = newCompleted;
+        this.context.boardService.updateChecklistItem(card.id, item.id, { completed: newCompleted });
+        this.context.saveBoard();
+        cb.classList.toggle('checked', newCompleted);
+        row.classList.toggle('completed', newCompleted);
+        if (newCompleted) {
+          setIcon(cbIcon, 'check');
+        } else {
+          cbIcon.innerHTML = '';
+        }
+        updateProgress();
+      });
+
+      text.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.context.onCardClick(card.id);
+      });
+
+      list.appendChild(row);
+    });
+
+    if (items.length > 3) {
+      const moreEl = createElement('div', { className: 'subtask-more' });
+      moreEl.textContent = `+${items.length - 3} more`;
+      moreEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.context.onCardClick(card.id);
+      });
+      list.appendChild(moreEl);
+    }
+
+    // Toggle expand/collapse
+    let expanded = false;
+    const toggle = (e: MouseEvent) => {
+      e.stopPropagation();
+      expanded = !expanded;
+      list.classList.toggle('visible', expanded);
+      chevronEl.classList.toggle('expanded', expanded);
+      section.classList.toggle('expanded', expanded);
+    };
+    header.addEventListener('click', toggle);
+    progressTrack.addEventListener('click', toggle);
+
+    section.appendChild(header);
+    section.appendChild(progressTrack);
+    section.appendChild(list);
+
+    return section;
   }
 
   private renderHeader(card: KanbanCard, displayOptions: any): HTMLElement {
@@ -107,20 +217,6 @@ export class CardRenderer {
       dueDateEl.appendChild(calIcon);
       dueDateEl.appendChild(createElement('span', {}, [formatDisplayDate(card.dueDate)]));
       cardFooter.appendChild(dueDateEl);
-    }
-
-    // Checklist Progress
-    if (displayOptions.showChecklist && card.checklist.length > 0) {
-      hasFooterContent = true;
-      const completed = card.checklist.filter(i => i.completed).length;
-      const checklistEl = createElement('div', {
-        className: `checklist-progress ${completed === card.checklist.length ? 'complete' : ''}`
-      });
-      const checkIcon = createElement('span', { className: 'icon' });
-      setIcon(checkIcon, 'check-square');
-      checklistEl.appendChild(checkIcon);
-      checklistEl.appendChild(createElement('span', {}, [`${completed}/${card.checklist.length}`]));
-      cardFooter.appendChild(checklistEl);
     }
 
     if (hasFooterContent) {
