@@ -12,12 +12,10 @@ Advanced Kanban board plugin for Obsidian with a modern, sleek UI inspired by Cl
 - **Roadmap View**: Milestone-based planning 
 
 ### Advanced Features
-- 🏊 **Swim Lanes**: Group cards horizontally by assignee, priority, or custom tags
 - 🎯 **WIP Limits**: Set work-in-progress limits per column
 - ✅ **Checklists**: Add subtasks to cards
 - 🔗 **Note Linking**: Link cards to Obsidian notes
-- 🎨 **Custom Colors**: Colorize columns, cards, and swim lanes
-- 🔄 **Undo/Redo**: Full history support
+- 🎨 **Custom Colors**: Colorize columns and cards
 - 🔍 **Advanced Filters**: Filter by assignee, priority, tags, dates
 - 📊 **Analytics**: View board statistics and insights
 
@@ -134,7 +132,7 @@ If you find this plugin helpful, consider:
 
 💡 Suggesting features
 
-☕ Buy me a coffee
+## ☕ Buy me a coffee
 https://buymeacoffee.com/yagi.toshinori
 
 ## 🙏 Acknowledgments
