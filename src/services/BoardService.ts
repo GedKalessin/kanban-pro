@@ -17,7 +17,8 @@ import {
   BOARD_TEMPLATES,
   StatusGroup,
   StatusCategory,
-  BoardTemplate
+  BoardTemplate,
+  TeamMember
 } from '../models/types';
 import { generateId } from '../utils/helpers';
 
@@ -104,7 +105,8 @@ export class BoardService {
       milestones: [],
       automations: [],
       tags: [],
-      members: []
+      members: [],
+      teamMembers: []
     };
   }
 
@@ -138,7 +140,8 @@ export class BoardService {
       milestones: [],
       automations: [],
       tags: [],
-      members: []
+      members: [],
+      teamMembers: []
     };
 
     return board;
@@ -890,5 +893,43 @@ export class BoardService {
 
     // First column (To Do) as fallback
     return this.board.columns[0] || null;
+  }
+
+  // ==================== TEAM MEMBER OPERATIONS ====================
+
+  getTeamMembers(): TeamMember[] {
+    return this.board.teamMembers || [];
+  }
+
+  addTeamMember(data: Omit<TeamMember, 'id'>): TeamMember {
+    if (!this.board.teamMembers) this.board.teamMembers = [];
+    const member: TeamMember = { id: generateId(), ...data };
+    this.board.teamMembers.push(member);
+    this.board.updatedAt = new Date().toISOString();
+    this.saveToHistory();
+    return member;
+  }
+
+  updateTeamMember(id: string, updates: Partial<Omit<TeamMember, 'id'>>): void {
+    if (!this.board.teamMembers) return;
+    const idx = this.board.teamMembers.findIndex(m => m.id === id);
+    if (idx === -1) return;
+    Object.assign(this.board.teamMembers[idx], updates);
+    this.board.updatedAt = new Date().toISOString();
+    this.saveToHistory();
+  }
+
+  removeTeamMember(id: string): void {
+    if (!this.board.teamMembers) return;
+    this.board.teamMembers = this.board.teamMembers.filter(m => m.id !== id);
+    // Remove from all card assignees
+    this.board.cards.forEach(card => {
+      const member = this.board.teamMembers?.find(m => m.id === id);
+      if (member) {
+        card.assignee = card.assignee.filter(a => a !== member.name);
+      }
+    });
+    this.board.updatedAt = new Date().toISOString();
+    this.saveToHistory();
   }
 }

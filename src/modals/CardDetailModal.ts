@@ -508,23 +508,45 @@ export class CardDetailModal extends Modal {
   }
 
   private editAssignees(): void {
-    const { TextInputModal } = require('./UtilityModals');
-    new TextInputModal(
+    const teamMembers = this.boardService.getTeamMembers();
+
+    if (teamMembers.length === 0) {
+      // No team members defined: prompt to add some first
+      const { ConfirmModal } = require('./UtilityModals');
+      new ConfirmModal(
         this.app,
-        'Edit Assignees',
-        'Assignees (comma-separated)',
-        this.card.assignee.join(', '),
-        (value: string) => {
-          const assignees: string[] = value.split(',').map((a: string) => a.trim()).filter((a: string) => a);
-          this.boardService.updateCard(this.card.id, { assignee: assignees });
-          this.onUpdate();
-          this.close();
-          const updatedCard = this.boardService.getCard(this.card.id);
-          if (updatedCard) {
-            new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
-          }
+        'No Team Members',
+        'No team members have been defined yet. Go to More → Manage Team to add members before assigning.',
+        () => { /* do nothing */ },
+        'OK',
+        '',
+        false
+      ).open();
+      return;
+    }
+
+    const items = teamMembers.map(m => ({
+      display: m.role ? `${m.name} — ${m.role}` : m.name,
+      value: m.name,
+      selected: this.card.assignee.includes(m.name)
+    }));
+
+    const { MultiSelectModal } = require('./UtilityModals');
+    new MultiSelectModal(
+      this.app,
+      'Assign Team Members',
+      'Select who is working on this task',
+      items,
+      (selectedNames: string[]) => {
+        this.boardService.updateCard(this.card.id, { assignee: selectedNames });
+        this.onUpdate();
+        this.close();
+        const updatedCard = this.boardService.getCard(this.card.id);
+        if (updatedCard) {
+          new CardDetailModal(this.app, updatedCard, this.boardService, this.onUpdate).open();
         }
-        ).open();
+      }
+    ).open();
   }
 
   private editTags(): void {

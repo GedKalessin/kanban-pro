@@ -24,6 +24,18 @@ export const TASK_TYPE_ICONS: Record<TaskType, string> = {
 };
 
 // ============================================
+// TEAM MEMBER
+// ============================================
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role?: string;
+  email?: string;
+  color?: string; // hex color for avatar background
+}
+
+// ============================================
 // CHECKLIST
 // ============================================
 
@@ -210,6 +222,7 @@ export interface KanbanBoard {
   automations: AutomationRule[];
   tags: string[];
   members: string[];
+  teamMembers: TeamMember[]; // Structured team members with full info
   statusGroups?: StatusGroup[]; // New field
   savedTemplates?: BoardTemplate[]; // New field
 }

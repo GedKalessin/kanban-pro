@@ -7,6 +7,7 @@ import {
   isDueSoon, 
   hexToRgba 
 } from '../../utils/helpers';
+import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { ViewRendererContext } from './IViewRenderer';
 
 export class CardRenderer {
@@ -246,9 +247,13 @@ export class CardRenderer {
   private renderAssignees(assignees: string[]): HTMLElement {
     const assigneesEl = createElement('div', { className: 'assignees' });
     assignees.slice(0, 3).forEach(assignee => {
-      const avatar = createElement('div', { className: 'assignee-avatar' });
-      avatar.textContent = assignee.charAt(0).toUpperCase();
-      avatar.title = assignee;
+      const avatar = createMemberAvatar(
+        assignee,
+        'assignee-avatar',
+        this.context.boardService,
+        this.context.app,
+        () => { this.context.saveBoard(); this.context.render(); }
+      );
       assigneesEl.appendChild(avatar);
     });
     if (assignees.length > 3) {

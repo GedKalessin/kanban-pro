@@ -6,6 +6,7 @@
 import { setIcon, Notice, Menu } from 'obsidian';
 import { KanbanCard, Priority, PRIORITY_COLORS } from '../../models/types';
 import { createElement, formatDisplayDate } from '../../utils/helpers';
+import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 
 export class ListViewRenderer implements IViewRenderer {
@@ -237,9 +238,15 @@ export class ListViewRenderer implements IViewRenderer {
         const remaining = allAssignees.length - maxVisible;
 
         visibleAssignees.forEach((assignee, index) => {
-          const avatar = assigneesContainer.createDiv({ cls: 'assignee-avatar-stacked' });
-          avatar.textContent = assignee.charAt(0).toUpperCase();
+          const avatar = createMemberAvatar(
+            assignee,
+            'assignee-avatar-stacked',
+            context.boardService,
+            context.app,
+            () => { context.saveBoard(); context.render(); }
+          );
           avatar.style.zIndex = `${visibleAssignees.length - index}`;
+          assigneesContainer.appendChild(avatar);
         });
 
         if (remaining > 0) {

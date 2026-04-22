@@ -196,6 +196,18 @@ export class ToolbarBuilder {
     const menu = new Menu();
 
     menu.addItem(item => {
+      item.setTitle('Manage Team').setIcon('users').onClick(() => {
+        const { TeamModal } = require('../modals/TeamModal');
+        new TeamModal(this.app, this.boardService, () => {
+          this.onSave();
+          this.onRender();
+        }).open();
+      });
+    });
+
+    menu.addSeparator();
+
+    menu.addItem(item => {
       item.setTitle('Edit Status Groups').setIcon('layers').onClick(() => {
         const { StatusGroupsModal } = require('../modals/StatusGroupsModal');
         new StatusGroupsModal(this.app, this.boardService, () => {

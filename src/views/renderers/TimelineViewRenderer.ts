@@ -1,6 +1,7 @@
 import { setIcon } from 'obsidian';
 import { KanbanCard, PRIORITY_COLORS } from '../../models/types';
 import { createElement } from '../../utils/helpers';
+import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 
 interface TimelineConfig {
@@ -323,8 +324,13 @@ export class TimelineViewRenderer implements IViewRenderer {
         const remaining = allAssignees.length - maxVisible;
 
         visibleAssignees.forEach((assignee, index) => {
-          const avatar = createElement('div', { className: 'assignee-avatar-mini' });
-          avatar.textContent = assignee.charAt(0).toUpperCase();
+          const avatar = createMemberAvatar(
+            assignee,
+            'assignee-avatar-mini',
+            context.boardService,
+            context.app,
+            () => { context.saveBoard(); context.render(); }
+          );
           avatar.style.zIndex = `${visibleAssignees.length - index}`;
           assigneesContainer.appendChild(avatar);
         });
