@@ -454,9 +454,9 @@ export class CardDetailModal extends Modal {
           text: notePath.split('/').pop() || notePath,
           cls: 'internal-link'
         });
-        noteLink.addEventListener('click', async (e) => {
+        noteLink.addEventListener('click', (e) => {
           e.preventDefault();
-          await this.app.workspace.openLinkText(notePath, '', false);
+          this.app.workspace.openLinkText(notePath, '', false).catch(console.error);
         });
 
         const removeBtn = noteEl.createEl('button', { cls: 'icon-btn-small' });

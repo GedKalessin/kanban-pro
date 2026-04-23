@@ -162,7 +162,7 @@ export class ToolbarBuilder {
   private showFilters(): void {
     new FilterModal(this.app, this.boardService, () => {
       this.onRender();
-      this.onSave();
+      void this.onSave();
     }).open();
   }
 
@@ -191,7 +191,7 @@ export class ToolbarBuilder {
       this.onRender();
       console.debug('🔄 TOOLBAR Render called');
 
-      this.onSave();
+      void this.onSave();
       console.debug('💾 TOOLBAR Save called');
     }).open();
   }
@@ -202,7 +202,7 @@ export class ToolbarBuilder {
     menu.addItem(item => {
       item.setTitle('Manage team').setIcon('users').onClick(() => {
         new TeamModal(this.app, this.boardService, () => {
-          this.onSave();
+          void this.onSave();
           this.onRender();
         }).open();
       });
@@ -213,7 +213,7 @@ export class ToolbarBuilder {
     menu.addItem(item => {
       item.setTitle('Edit status groups').setIcon('layers').onClick(() => {
         new StatusGroupsModal(this.app, this.boardService, () => {
-          this.onSave();
+          void this.onSave();
           this.onRender();
         }).open();
       });
@@ -289,14 +289,14 @@ export class ToolbarBuilder {
       }
     });
 
-    navigator.clipboard.writeText(markdown);
+    void navigator.clipboard.writeText(markdown);
     new Notice('✓ Markdown copied to clipboard', 2000);
   }
 
   private exportJSON(): void {
     const board = this.boardService.getBoard();
     const json = JSON.stringify(board, null, 2);
-    navigator.clipboard.writeText(json);
+    void navigator.clipboard.writeText(json);
     new Notice('✓ JSON copied to clipboard', 2000);
   }
 
@@ -319,7 +319,7 @@ export class ToolbarBuilder {
       (value: string) => {
         this.boardService.updateBoard({ name: value });
         this.onRender();
-        this.onSave();
+        void this.onSave();
       }
     ).open();
   }
@@ -334,7 +334,7 @@ export class ToolbarBuilder {
         .onClick(() => {
           new StatusManagementModal(this.app, this.boardService, () => {
             this.onRender();
-            this.onSave();
+            void this.onSave();
           }).open();
         })
     );
@@ -376,7 +376,7 @@ export class ToolbarBuilder {
       (value: string) => {
         this.boardService.addSwimLane(value);
         this.onRender();
-        this.onSave();
+        void this.onSave();
         new Notice(`✅ Swim lane "${value}" created`, 2000);
       }
     ).open();
@@ -409,7 +409,7 @@ export class ToolbarBuilder {
 
   private showAutomationsModal(): void {
     new AutomationsModal(this.app, this.boardService, () => {
-      this.onSave();
+      void this.onSave();
     }).open();
   }
 
