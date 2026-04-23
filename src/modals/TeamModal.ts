@@ -109,7 +109,7 @@ export class TeamModal extends Modal {
   private confirmRemove(member: TeamMember): void {
     new ConfirmModal(
       this.app,
-      'Remove Team Member',
+      'Remove team member',
       `Remove "${member.name}" from the team? They will also be unassigned from all cards.`,
       () => {
         this.boardService.removeTeamMember(member.id);

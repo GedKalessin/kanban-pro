@@ -41,7 +41,7 @@ export class FilterModal extends Modal {
       .setName('Priorities')
       .setDesc('Select priorities to show')
       .addDropdown(dropdown => {
-        dropdown.addOption('', 'All Priorities');
+        dropdown.addOption('', 'All priorities');
         const priorities: Priority[] = ['low', 'medium', 'high', 'critical'];
         priorities.forEach(p => {
           dropdown.addOption(p, p.charAt(0).toUpperCase() + p.slice(1));

@@ -324,22 +324,22 @@ export class KanbanSettingsTab extends PluginSettingTab {
       cls: 'external-link' 
     });
     linksDiv.createSpan({ text: ' • ' });
-    linksDiv.createEl('a', { 
-      text: '🐛 Report Bug', 
+    linksDiv.createEl('a', {
+      text: '🐛 Report bug',
       href: '#',
-      cls: 'external-link' 
+      cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
-    linksDiv.createEl('a', { 
-      text: '💡 Request Feature', 
+    linksDiv.createEl('a', {
+      text: '💡 Request feature',
       href: '#',
-      cls: 'external-link' 
+      cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
-    linksDiv.createEl('a', { 
-      text: '☕ Support Development', 
+    linksDiv.createEl('a', {
+      text: '☕ Support development',
       href: '#',
-      cls: 'external-link' 
+      cls: 'external-link'
     });
   }
 

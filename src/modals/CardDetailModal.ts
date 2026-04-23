@@ -143,7 +143,7 @@ export class CardDetailModal extends Modal {
 
     // Linked Notes
     const notesSection = container.createDiv({ cls: 'card-section' });
-    notesSection.createEl('h3', { text: '🔗 Linked Notes' });
+    notesSection.createEl('h3', { text: '🔗 Linked notes' });
 
     this.linkedNotesContainerEl = notesSection.createDiv({ cls: 'linked-notes-content' });
     this.renderLinkedNotes();
@@ -478,7 +478,7 @@ export class CardDetailModal extends Modal {
 
     const addNoteBtn = this.linkedNotesContainerEl.createEl('button', { cls: 'add-note-btn' });
     setIcon(addNoteBtn, 'plus');
-    addNoteBtn.appendChild(document.createTextNode(' Link Note'));
+    addNoteBtn.appendChild(document.createTextNode(' Link note'));
     addNoteBtn.addEventListener('click', () => this.linkNote());
   }
 
@@ -517,8 +517,8 @@ export class CardDetailModal extends Modal {
     if (teamMembers.length === 0) {
       new ConfirmModal(
         this.app,
-        'No Team Members',
-        'No team members have been defined yet. Go to More → Manage Team to add members before assigning.',
+        'No team members',
+        'No team members have been defined yet. Go to More → Manage team to add members before assigning.',
         () => { /* do nothing */ },
         'OK',
         '',
@@ -535,7 +535,7 @@ export class CardDetailModal extends Modal {
 
     new MultiSelectModal(
       this.app,
-      'Assign Team Members',
+      'Assign team members',
       'Select who is working on this task',
       items,
       (selectedNames: string[]) => {
@@ -553,7 +553,7 @@ export class CardDetailModal extends Modal {
   private editTags(): void {
     new TextInputModal(
       this.app,
-      'Edit Tags',
+      'Edit tags',
       'Tags (comma-separated)',
       this.card.tags.join(', '),
       (value: string) => {
@@ -603,7 +603,7 @@ export class CardDetailModal extends Modal {
 
     new MultiSelectModal(
       this.app,
-      'Select Dependencies',
+      'Select dependencies',
       'Select which tasks this card depends on',
       availableCards,
       (selectedIds: string[]) => {
@@ -627,7 +627,7 @@ export class CardDetailModal extends Modal {
     deleteBtn.addEventListener('click', () => {
       new ConfirmModal(
         this.app,
-        'Delete Card',
+        'Delete card',
         `Delete "${this.card.title}"?`,
         () => {
           this.boardService.deleteCard(this.card.id);

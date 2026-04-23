@@ -27,7 +27,7 @@ export default class KanbanProPlugin extends Plugin {
     this.registerExtensions(['kanban'], KANBAN_VIEW_TYPE);
 
     // Add ribbon icon
-    this.addRibbonIcon('layout-grid', 'Create Kanban from Template', () => {
+    this.addRibbonIcon('layout-grid', 'Create Kanban from template', () => {
       this.showTemplateModal();
     });
 
@@ -232,7 +232,7 @@ class CreateBoardModal extends Modal {
       .setDesc('Give your board a meaningful name')
       .addText(text => {
         text
-          .setPlaceholder('My Project Board')
+          .setPlaceholder('My project board')
           .setValue(this.name)
           .onChange(value => this.name = value);
         text.inputEl.focus();
@@ -323,7 +323,7 @@ class TemplateSelectionModal extends Modal {
       .setName('Board name')
       .addText(text => {
         text
-          .setPlaceholder('My Project Board')
+          .setPlaceholder('My project board')
           .setValue(this.name)
           .onChange(value => this.name = value);
       });

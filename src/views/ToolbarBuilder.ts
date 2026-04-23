@@ -121,7 +121,7 @@ export class ToolbarBuilder {
     filterBtn.addEventListener('click', () => this.showFilters());
 
     // Add card
-    const addBtn = this.createActionButton(actions, 'plus', 'Add Card', 'primary');
+    const addBtn = this.createActionButton(actions, 'plus', 'Add card', 'primary');
     addBtn.addEventListener('click', () => this.quickAddCard());
 
     // More menu

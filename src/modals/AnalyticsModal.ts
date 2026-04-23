@@ -15,21 +15,21 @@ export class AnalyticsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-analytics-modal');
 
-    contentEl.createEl('h2', { text: '📊 Board Analytics' });
+    contentEl.createEl('h2', { text: '📊 Board analytics' });
 
     const analytics = this.boardService.getAnalytics();
 
     // Summary Cards
     const summaryGrid = contentEl.createDiv({ cls: 'analytics-summary-grid' });
 
-    this.createSummaryCard(summaryGrid, 'Total Cards', analytics.total.toString(), '#6366f1');
+    this.createSummaryCard(summaryGrid, 'Total cards', analytics.total.toString(), '#6366f1');
     this.createSummaryCard(summaryGrid, 'Completed', analytics.completed.toString(), '#10b981');
-    this.createSummaryCard(summaryGrid, 'In Progress', analytics.inProgress.toString(), '#3b82f6');
+    this.createSummaryCard(summaryGrid, 'In progress', analytics.inProgress.toString(), '#3b82f6');
     this.createSummaryCard(summaryGrid, 'Blocked', analytics.blocked.toString(), '#ef4444');
     this.createSummaryCard(summaryGrid, 'Overdue', analytics.overdue.toString(), '#f97316');
     this.createSummaryCard(
       summaryGrid,
-      'Completion Rate',
+      'Completion rate',
       `${Math.round(analytics.completionRate)}%`,
       '#8b5cf6'
     );

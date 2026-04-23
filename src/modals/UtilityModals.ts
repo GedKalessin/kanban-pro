@@ -98,7 +98,7 @@ class ColorPickerModal extends Modal {
 
     // Hex Input
     new Setting(contentEl)
-      .setName('Hex Color')
+      .setName('Hex color')
       .addText(text => {
         text
           .setValue(this.color)
@@ -171,7 +171,7 @@ class DatePickerModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-date-picker-modal');
 
-    const title = this.dateType === 'start' ? '📅 Set Start Date' : '📅 Set Due Date';
+    const title = this.dateType === 'start' ? '📅 Set start date' : '📅 Set due date';
     contentEl.createEl('h2', { text: title });
 
     // Quick Date Buttons
@@ -180,8 +180,8 @@ class DatePickerModal extends Modal {
     const quickOptions = [
       { label: 'Today', days: 0 },
       { label: 'Tomorrow', days: 1 },
-      { label: 'Next Week', days: 7 },
-      { label: 'Next Month', days: 30 }
+      { label: 'Next week', days: 7 },
+      { label: 'Next month', days: 30 }
     ];
 
     quickOptions.forEach(option => {
@@ -199,7 +199,7 @@ class DatePickerModal extends Modal {
 
     // Custom Date Picker
     new Setting(contentEl)
-      .setName('Custom Date')
+      .setName('Custom date')
       .addText(text => {
         text.inputEl.type = 'date';
         text.setValue(this.date?.split('T')[0] || '');
@@ -210,7 +210,7 @@ class DatePickerModal extends Modal {
 
     // Remove Date Button
     if (this.date) {
-      const removeBtnText = this.dateType === 'start' ? 'Remove Start Date' : 'Remove Due Date';
+      const removeBtnText = this.dateType === 'start' ? 'Remove start date' : 'Remove due date';
       const removeBtn = contentEl.createEl('button', {
         text: removeBtnText,
         cls: 'danger-btn full-width-btn'
@@ -227,7 +227,7 @@ class DatePickerModal extends Modal {
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
     cancelBtn.addEventListener('click', () => this.close());
     
-    const submitBtn = buttonContainer.createEl('button', { text: 'Set Date', cls: 'submit-btn' });
+    const submitBtn = buttonContainer.createEl('button', { text: 'Set date', cls: 'submit-btn' });
     submitBtn.addEventListener('click', () => this.submit());
   }
 
@@ -437,7 +437,7 @@ class QuickAddCardModal extends Modal {
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
     cancelBtn.addEventListener('click', () => this.close());
 
-    const submitBtn = buttonContainer.createEl('button', { text: 'Add Card', cls: 'submit-btn' });
+    const submitBtn = buttonContainer.createEl('button', { text: 'Add card', cls: 'submit-btn' });
     submitBtn.addEventListener('click', () => this.submit());
   }
 
@@ -587,7 +587,7 @@ class StatusManagementModal extends Modal {
     const cancelBtn = footer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
     cancelBtn.addEventListener('click', () => this.close());
 
-    const saveBtn = footer.createEl('button', { text: 'Save Changes', cls: 'submit-btn' });
+    const saveBtn = footer.createEl('button', { text: 'Save changes', cls: 'submit-btn' });
     saveBtn.addEventListener('click', () => this.save());
   }
 
@@ -640,7 +640,7 @@ class StatusManagementModal extends Modal {
     // Add Column Button
     const addColumnBtn = groupEl.createEl('button', { cls: 'add-column-to-group-btn' });
     setIcon(addColumnBtn, 'plus');
-    addColumnBtn.createSpan({ text: 'Add Column' });
+    addColumnBtn.createSpan({ text: 'Add column' });
     addColumnBtn.addEventListener('click', () => this.showAddColumnToGroupModal(group));
 
     return groupEl;
@@ -660,12 +660,12 @@ class StatusManagementModal extends Modal {
 
     const applyBtn = templateActions.createEl('button', { cls: 'template-action-btn' });
     setIcon(applyBtn, 'download');
-    applyBtn.title = 'Apply Template';
+    applyBtn.title = 'Apply template';
     applyBtn.addEventListener('click', () => this.applyTemplate(template));
 
     const deleteBtn = templateActions.createEl('button', { cls: 'template-action-btn danger' });
     setIcon(deleteBtn, 'trash');
-    deleteBtn.title = 'Delete Template';
+    deleteBtn.title = 'Delete template';
     deleteBtn.addEventListener('click', () => this.deleteTemplate(template.id));
 
     return templateItem;
@@ -733,7 +733,7 @@ class StatusManagementModal extends Modal {
   private applyTemplate(template: BoardTemplate): void {
     new ConfirmModal(
       this.app,
-      'Apply Template',
+      'Apply template',
       `This will replace your current board structure with "${template.name}". Continue?`,
       () => {
         const board = this.boardService.getBoard();
@@ -777,7 +777,7 @@ class StatusManagementModal extends Modal {
   private deleteTemplate(templateId: string): void {
     new ConfirmModal(
       this.app,
-      'Delete Template',
+      'Delete template',
       'Are you sure you want to delete this template?',
       () => {
         const board = this.boardService.getBoard();
@@ -831,7 +831,7 @@ class SaveTemplateModal extends Modal {
       .setName('Template name')
       .addText(text => {
         text
-          .setPlaceholder('My Custom Workflow')
+          .setPlaceholder('My custom workflow')
           .setValue(this.name)
           .onChange(value => this.name = value);
         text.inputEl.focus();
@@ -861,7 +861,7 @@ class SaveTemplateModal extends Modal {
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
     cancelBtn.addEventListener('click', () => this.close());
 
-    const saveBtn = buttonContainer.createEl('button', { text: 'Save Template', cls: 'submit-btn' });
+    const saveBtn = buttonContainer.createEl('button', { text: 'Save template', cls: 'submit-btn' });
     saveBtn.addEventListener('click', () => this.submit());
   }
 
