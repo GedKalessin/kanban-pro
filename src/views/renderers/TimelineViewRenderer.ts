@@ -28,7 +28,7 @@ export class TimelineViewRenderer implements IViewRenderer {
       container.appendChild(toolbar);
 
       const filteredCards = context.boardService.getFilteredCards()
-        .filter(c => c.dueDate || (c as any).startDate);
+        .filter(c => c.dueDate || c.startDate);
 
       if (filteredCards.length === 0) {
         container.appendChild(this.renderEmptyState(context));
@@ -76,7 +76,7 @@ export class TimelineViewRenderer implements IViewRenderer {
       groupDropdown.appendChild(option);
     });
     groupDropdown.addEventListener('change', () => {
-      this.config.groupBy = groupDropdown.value as any;
+      this.config.groupBy = groupDropdown.value as TimelineConfig['groupBy'];
       context.render();
     });
     groupBySelector.appendChild(groupDropdown);
@@ -130,7 +130,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     let maxDate = new Date(now);
 
     cards.forEach(card => {
-      const start = (card as any).startDate ? new Date((card as any).startDate) : null;
+      const start = card.startDate ? new Date(card.startDate) : null;
       const due = card.dueDate ? new Date(card.dueDate) : null;
 
       if (start && start < minDate) minDate = new Date(start);
@@ -392,7 +392,7 @@ export class TimelineViewRenderer implements IViewRenderer {
   }
 
   private renderTimelineBar(card: KanbanCard, startDate: Date, _dates: Date[], context: ViewRendererContext): HTMLElement | null {
-    const cardStart = (card as any).startDate ? new Date((card as any).startDate) : (card.dueDate ? new Date(card.dueDate) : null);
+    const cardStart = card.startDate ? new Date(card.startDate) : (card.dueDate ? new Date(card.dueDate) : null);
     const cardEnd = card.dueDate ? new Date(card.dueDate) : cardStart;
 
     if (!cardStart || !cardEnd) return null;

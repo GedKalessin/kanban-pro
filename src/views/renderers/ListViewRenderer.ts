@@ -61,7 +61,7 @@ export class ListViewRenderer implements IViewRenderer {
     });
 
     sortSelect.addEventListener('change', () => {
-      this.sortBy = sortSelect.value as any;
+      this.sortBy = sortSelect.value as ListViewRenderer['sortBy'];
       context.render();
     });
 
@@ -92,7 +92,7 @@ export class ListViewRenderer implements IViewRenderer {
     });
 
     groupSelect.addEventListener('change', () => {
-      this.groupBy = groupSelect.value as any;
+      this.groupBy = groupSelect.value as ListViewRenderer['groupBy'];
       context.render();
     });
 

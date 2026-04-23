@@ -1,5 +1,5 @@
 import { setIcon } from 'obsidian';
-import { KanbanCard, PRIORITY_COLORS, TASK_TYPE_ICONS } from '../../models/types';
+import { KanbanCard, CardDisplayOptions, PRIORITY_COLORS, TASK_TYPE_ICONS } from '../../models/types';
 import {
   createElement,
   formatDisplayDate,
@@ -165,7 +165,7 @@ export class CardRenderer {
     return section;
   }
 
-  private renderHeader(card: KanbanCard, displayOptions: any): HTMLElement {
+  private renderHeader(card: KanbanCard, displayOptions: CardDisplayOptions): HTMLElement {
     const cardHeader = createElement('div', { className: 'card-header' });
 
     if (card.taskType !== 'task') {
@@ -206,7 +206,7 @@ export class CardRenderer {
     return tagsContainer;
   }
 
-  private renderFooter(card: KanbanCard, displayOptions: any): HTMLElement | null {
+  private renderFooter(card: KanbanCard, displayOptions: CardDisplayOptions): HTMLElement | null {
     const cardFooter = createElement('div', { className: 'card-footer' });
     let hasFooterContent = false;
 

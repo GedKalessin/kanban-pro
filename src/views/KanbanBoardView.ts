@@ -100,32 +100,35 @@ export class KanbanBoardView extends ItemView {
   private updateTitleSafe(): void {
     const title = this.boardService.getBoard().name || 'Kanban Board';
 
-    // Aggiorna titolo nella view header
-    const viewAny = this.leaf.view as any;
-    if (viewAny?.titleEl) {
-      if (typeof viewAny.titleEl.setText === 'function') {
-        viewAny.titleEl.setText(title);
+    // Access internal Obsidian view properties not exposed in public types
+    const internalView = this.leaf.view as unknown as {
+      titleEl?: { setText?: (text: string) => void; textContent?: string };
+    };
+    if (internalView?.titleEl) {
+      if (typeof internalView.titleEl.setText === 'function') {
+        internalView.titleEl.setText(title);
       } else {
-        viewAny.titleEl.textContent = title;
+        internalView.titleEl.textContent = title;
       }
     }
 
-    const leafAny = this.leaf as any;
+    const internalLeaf = this.leaf as unknown as {
+      updateHeader?: () => void;
+      tabHeaderInnerTitleEl?: { textContent?: string };
+      tabHeaderEl?: { querySelector: (s: string) => { textContent?: string } | null };
+    };
 
-    // Prova updateHeader() (API interna Obsidian)
-    if (typeof leafAny.updateHeader === 'function') {
-      leafAny.updateHeader();
+    if (typeof internalLeaf.updateHeader === 'function') {
+      internalLeaf.updateHeader();
     }
 
-    // Fallback: aggiorna direttamente il DOM del tab
-    if (leafAny.tabHeaderInnerTitleEl) {
-      leafAny.tabHeaderInnerTitleEl.textContent = title;
-    } else if (leafAny.tabHeaderEl) {
-      const tabTitleEl = leafAny.tabHeaderEl.querySelector('.view-tab-header-inner-title');
+    if (internalLeaf.tabHeaderInnerTitleEl) {
+      internalLeaf.tabHeaderInnerTitleEl.textContent = title;
+    } else if (internalLeaf.tabHeaderEl) {
+      const tabTitleEl = internalLeaf.tabHeaderEl.querySelector('.view-tab-header-inner-title');
       if (tabTitleEl) tabTitleEl.textContent = title;
     }
 
-    // Forza Obsidian ad aggiornare l'header del workspace
     this.app.workspace.trigger('layout-change');
   }
 
@@ -178,11 +181,11 @@ export class KanbanBoardView extends ItemView {
     return Promise.resolve();
   }
 
-  getState(): any {
+  getState(): { file: string } {
     return { file: this.filePath };
   }
 
-  async setState(state: any, result: any): Promise<void> {
+  async setState(state: { file?: string } | null, _result: unknown): Promise<void> {
     if (!state?.file) return;
     // Guard: evita reload inutile se è lo stesso file
     if (this.filePath === state.file) return;

@@ -12,7 +12,7 @@ declare module 'frappe-gantt' {
     end: string;
     progress?: number;
     dependencies?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   }
 
   export interface GanttOptions {
@@ -22,6 +22,6 @@ declare module 'frappe-gantt' {
     on_date_change?: (task: Task, start: Date, end: Date) => void;
     on_progress_change?: (task: Task, progress: number) => void;
     on_view_change?: (mode: string) => void;
-    [key: string]: any;
+    [key: string]: unknown;
   }
 }

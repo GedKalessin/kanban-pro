@@ -227,7 +227,7 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   options?: {
     className?: string;
     id?: string;
-    [key: string]: any;
+    [key: string]: string | undefined;
   },
   children?: (string | Node)[]
 ): HTMLElementTagNameMap[K] {
@@ -266,7 +266,7 @@ export function createChildElement<K extends keyof HTMLElementTagNameMap>(
   options?: {
     className?: string;
     id?: string;
-    [key: string]: any;
+    [key: string]: string | undefined;
   },
   children?: (string | Node)[]
 ): HTMLElementTagNameMap[K] {
@@ -291,7 +291,7 @@ export function toggleClass(element: HTMLElement, className: string, force?: boo
 
 // ==================== PERFORMANCE UTILITIES ====================
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -310,7 +310,7 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -325,7 +325,7 @@ export function throttle<T extends (...args: any[]) => any>(
   };
 }
 
-export function memoize<T extends (...args: any[]) => any>(fn: T): T {
+export function memoize<T extends (...args: unknown[]) => unknown>(fn: T): T {
   const cache = new Map<string, ReturnType<T>>();
   
   return ((...args: Parameters<T>): ReturnType<T> => {
@@ -333,7 +333,7 @@ export function memoize<T extends (...args: any[]) => any>(fn: T): T {
     if (cache.has(key)) {
       return cache.get(key)!;
     }
-    const result = fn(...args);
+    const result = fn(...args) as ReturnType<T>;
     cache.set(key, result);
     return result;
   }) as T;
@@ -464,7 +464,7 @@ export function deepMerge<T extends object>(target: T, ...sources: Partial<T>[])
     for (const key in source) {
       if (isObject(source[key])) {
         if (!target[key]) Object.assign(target, { [key]: {} });
-        deepMerge(target[key] as any, source[key] as any);
+        deepMerge(target[key] as object, source[key] as object);
       } else {
         Object.assign(target, { [key]: source[key] });
       }
@@ -474,8 +474,8 @@ export function deepMerge<T extends object>(target: T, ...sources: Partial<T>[])
   return deepMerge(target, ...sources);
 }
 
-function isObject(item: any): boolean {
-  return item && typeof item === 'object' && !Array.isArray(item);
+function isObject(item: unknown): boolean {
+  return !!item && typeof item === 'object' && !Array.isArray(item);
 }
 
 export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
@@ -519,9 +519,14 @@ export function isValidHexColor(color: string): boolean {
 
 // ==================== LOCAL STORAGE UTILITIES ====================
 
-export function saveToLocalStorage(app: App, key: string, value: any): void {
+interface AppWithLocalStorage {
+  saveLocalStorage(key: string, value: string | undefined): void;
+  loadLocalStorage(key: string): string | null;
+}
+
+export function saveToLocalStorage(app: App, key: string, value: unknown): void {
   try {
-    (app as any).saveLocalStorage(key, JSON.stringify(value));
+    (app as unknown as AppWithLocalStorage).saveLocalStorage(key, JSON.stringify(value));
   } catch (error) {
     console.error('Failed to save to localStorage:', error);
   }
@@ -529,8 +534,8 @@ export function saveToLocalStorage(app: App, key: string, value: any): void {
 
 export function loadFromLocalStorage<T>(app: App, key: string, defaultValue: T): T {
   try {
-    const item = (app as any).loadLocalStorage(key) as string | null;
-    return item !== null ? JSON.parse(item) : defaultValue;
+    const item = (app as unknown as AppWithLocalStorage).loadLocalStorage(key);
+    return item !== null ? JSON.parse(item) as T : defaultValue;
   } catch (error) {
     console.error('Failed to load from localStorage:', error);
     return defaultValue;
@@ -539,7 +544,7 @@ export function loadFromLocalStorage<T>(app: App, key: string, defaultValue: T):
 
 export function removeFromLocalStorage(app: App, key: string): void {
   try {
-    (app as any).saveLocalStorage(key, undefined);
+    (app as unknown as AppWithLocalStorage).saveLocalStorage(key, undefined);
   } catch (error) {
     console.error('Failed to remove from localStorage:', error);
   }
@@ -547,7 +552,7 @@ export function removeFromLocalStorage(app: App, key: string): void {
 
 // ==================== EXPORT UTILITIES ====================
 
-export function downloadAsJson(data: any, filename: string): void {
+export function downloadAsJson(data: unknown, filename: string): void {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);

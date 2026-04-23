@@ -195,17 +195,17 @@ export class BoardViewRenderer implements IViewRenderer {
   private showSwimLaneMenu(lane: SwimLane, event: MouseEvent, context: ViewRendererContext): void {
     const menu = new Menu();
 
-    menu.addItem((item: any) =>
+    menu.addItem(item =>
       item.setTitle('Rename').setIcon('pencil').onClick(() => this.renameLane(lane, context))
     );
 
-    menu.addItem((item: any) =>
+    menu.addItem(item =>
       item.setTitle('Change Color').setIcon('palette').onClick(() => this.changeLaneColor(lane, context))
     );
 
     menu.addSeparator();
 
-    menu.addItem((item: any) =>
+    menu.addItem(item =>
       item.setTitle('Delete').setIcon('trash').onClick(() => this.deleteLane(lane, context))
     );
 

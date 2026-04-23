@@ -218,7 +218,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     if (this.plugin.settings.enableKeyboardShortcuts) {
       const shortcutsInfo = containerEl.createDiv({ cls: 'kanban-shortcuts-info' });
-      shortcutsInfo.createEl('h4', { text: 'Available shortcuts' });
+      new Setting(shortcutsInfo).setName('Available shortcuts').setHeading();
       
       const shortcutsList = shortcutsInfo.createEl('ul');
       const shortcuts = [
@@ -400,7 +400,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
     input.click();
   }
 
-  private validateSettings(settings: any): boolean {
+  private validateSettings(settings: unknown): boolean {
     // Basic validation
     if (typeof settings !== 'object' || settings === null) {
       return false;

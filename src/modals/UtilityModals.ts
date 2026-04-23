@@ -816,7 +816,7 @@ class SaveTemplateModal extends Modal {
   private description: string = '';
   private icon: string = '📋';
 
-  constructor(app: App, _boardService: BoardService, onSave: (data: any) => void) {
+  constructor(app: App, _boardService: BoardService, onSave: (data: { name: string; description: string; icon: string }) => void) {
     super(app);
     this.onSave = onSave;
   }

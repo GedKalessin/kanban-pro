@@ -8,8 +8,34 @@ import * as frappeGanttModule from 'frappe-gantt';
 // Import Frappe Gantt CSS
 import 'frappe-gantt/dist/frappe-gantt.css';
 
+interface GanttTask {
+  id: string;
+  name: string;
+  start: string;
+  end: string;
+  progress: number;
+  dependencies: string;
+  custom_class: string;
+  _start?: string;
+  _end?: string;
+}
+
+interface GanttInstance {
+  change_view_mode: (mode: string) => void;
+}
+
+type FrappeGanttConstructor = new (
+  el: HTMLElement,
+  tasks: GanttTask[],
+  options: Record<string, unknown>
+) => GanttInstance;
+
+interface FrappeGanttModule {
+  default?: FrappeGanttConstructor;
+}
+
 export class GanttViewRenderer implements IViewRenderer {
-  private ganttInstance: any = null;
+  private ganttInstance: GanttInstance | null = null;
   private currentViewMode: string = 'Day';
   private containerElement: HTMLElement | null = null;
   private ganttWrapper: HTMLElement | null = null;
@@ -24,7 +50,7 @@ export class GanttViewRenderer implements IViewRenderer {
       container.appendChild(toolbar);
 
       const filteredCards = context.boardService.getFilteredCards()
-        .filter(c => c.dueDate || (c as any).startDate);
+        .filter(c => c.dueDate || c.startDate);
 
       if (filteredCards.length === 0) {
         container.appendChild(this.renderEmptyState(context));
@@ -32,10 +58,10 @@ export class GanttViewRenderer implements IViewRenderer {
       }
 
       // Try to load Frappe Gantt
-      let FrappeGantt: any = null;
+      let FrappeGantt: FrappeGanttConstructor | null = null;
       try {
-        const ganttMod = frappeGanttModule as any;
-        FrappeGantt = ganttMod.default || ganttMod;
+        const ganttMod = frappeGanttModule as unknown as FrappeGanttModule;
+        FrappeGantt = ganttMod.default ?? (frappeGanttModule as unknown as FrappeGanttConstructor);
         console.debug('Frappe Gantt loaded successfully');
       } catch (e) {
         console.warn('Frappe Gantt not available, using fallback:', e);
@@ -59,7 +85,7 @@ export class GanttViewRenderer implements IViewRenderer {
     container: HTMLElement,
     cards: KanbanCard[],
     context: ViewRendererContext,
-    FrappeGantt: any
+    FrappeGantt: FrappeGanttConstructor
   ): void {
     const ganttContainer = container.createDiv({ cls: 'gantt-container-frappe' });
 
@@ -67,8 +93,8 @@ export class GanttViewRenderer implements IViewRenderer {
       let start: Date;
       let end: Date;
 
-      if ((card as any).startDate) {
-        start = new Date((card as any).startDate);
+      if (card.startDate) {
+        start = new Date(card.startDate);
       } else if (card.dueDate) {
         start = new Date();
       } else {
@@ -150,13 +176,13 @@ export class GanttViewRenderer implements IViewRenderer {
         popup_trigger: 'click',
         language: 'en',
 
-        custom_popup_html: (task: any) => {
+        custom_popup_html: (task: GanttTask) => {
           const card = context.boardService.getCard(task.id);
           if (!card) return '<div class="gantt-popup-wrapper">Task not found</div>';
 
           const column = context.boardService.getColumn(card.columnId);
-          const startDate = new Date(task._start);
-          const endDate = new Date(task._end);
+          const startDate = new Date(task._start ?? task.start);
+          const endDate = new Date(task._end ?? task.end);
           const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
           const priorityBadge = card.priority !== 'none'
@@ -184,7 +210,7 @@ export class GanttViewRenderer implements IViewRenderer {
               </div>
               <div class="popup-progress">
                 <strong>Progress:</strong> ${Math.round(task.progress)}%
-                ${card.checklist.length > 0 ? ` (${card.checklist.filter((i: any) => i.completed).length}/${card.checklist.length} items)` : ''}
+                ${card.checklist.length > 0 ? ` (${card.checklist.filter(i => i.completed).length}/${card.checklist.length} items)` : ''}
               </div>
               ${card.assignee && card.assignee.length > 0 ? `<div class="popup-assignee"><strong>👤 Assignee:</strong> ${this.escapeTagsArray(card.assignee)}</div>` : ''}
               ${card.tags && card.tags.length > 0 ? `<div class="popup-tags"><strong>🏷️ Tags:</strong> ${this.escapeTagsArray(card.tags)}</div>` : ''}
@@ -193,12 +219,12 @@ export class GanttViewRenderer implements IViewRenderer {
           `;
         },
 
-        on_click: (task: any) => {
+        on_click: (task: GanttTask) => {
           console.debug('Task clicked:', task);
           context.onCardClick(task.id);
         },
 
-        on_date_change: (task: any, start: Date, end: Date) => {
+        on_date_change: (task: GanttTask, start: Date, end: Date) => {
           console.debug('Date changed:', task.id, start, end);
 
           const startISO = new Date(start.getFullYear(), start.getMonth(), start.getDate()).toISOString();
@@ -212,7 +238,7 @@ export class GanttViewRenderer implements IViewRenderer {
           new Notice('Dates updated successfully', 1500);
         },
 
-        on_progress_change: (task: any, progress: number) => {
+        on_progress_change: (task: GanttTask, progress: number) => {
           console.debug('Progress changed:', task.id, progress);
 
           const card = context.boardService.getCard(task.id);
@@ -349,7 +375,7 @@ export class GanttViewRenderer implements IViewRenderer {
       title.addEventListener('click', () => context.onCardClick(card.id));
 
       const dates = item.createDiv({ cls: 'item-dates' });
-      const start = (card as any).startDate || card.dueDate;
+      const start = card.startDate || card.dueDate;
       const end = card.dueDate;
       if (start && end) {
         const startDate = new Date(start);

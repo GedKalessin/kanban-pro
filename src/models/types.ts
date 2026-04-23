@@ -73,7 +73,7 @@ export interface KanbanCard {
   linkedNotes?: string[];
   estimatedHours?: number;
   timeTracked?: number;
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
   dependencies?: string[]; // Array of card IDs that this card depends on
 }
 
@@ -166,11 +166,11 @@ export interface AutomationRule {
   enabled: boolean;
   trigger: {
     type: 'card_moved' | 'card_created' | 'date_reached' | 'checklist_completed';
-    conditions: Record<string, any>;
+    conditions: Record<string, unknown>;
   };
   actions: {
     type: 'set_field' | 'notify' | 'create_card' | 'move_card';
-    params: Record<string, any>;
+    params: Record<string, unknown>;
   }[];
 }
 
@@ -370,7 +370,7 @@ export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 
-export interface BoardUpdate extends DeepPartial<KanbanBoard> {}
-export interface ColumnUpdate extends DeepPartial<KanbanColumn> {}
-export interface CardUpdate extends DeepPartial<KanbanCard> {}
-export interface SwimLaneUpdate extends DeepPartial<SwimLane> {}
+export type BoardUpdate = DeepPartial<KanbanBoard>;
+export type ColumnUpdate = DeepPartial<KanbanColumn>;
+export type CardUpdate = DeepPartial<KanbanCard>;
+export type SwimLaneUpdate = DeepPartial<SwimLane>;
