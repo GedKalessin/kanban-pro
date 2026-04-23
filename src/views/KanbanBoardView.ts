@@ -205,7 +205,7 @@ export class KanbanBoardView extends ItemView {
     const existingLeaf = this.app.workspace.getLeavesOfType(KANBAN_VIEW_TYPE)
       .find(leaf => leaf !== this.leaf && (leaf.view as KanbanBoardView).getFilePath() === filePath);
     if (existingLeaf) {
-      this.app.workspace.revealLeaf(existingLeaf);
+      void this.app.workspace.revealLeaf(existingLeaf);
       setTimeout(() => this.leaf.detach(), 0);
       return;
     }

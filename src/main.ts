@@ -82,7 +82,7 @@ export default class KanbanProPlugin extends Plugin {
         const board = this.createEmptyBoard(name);
         const filePath = await this.saveBoardToFile(board, name, folderPath);
         await this.openKanbanBoardByPath(filePath);
-        new Notice(`✅ Created board "${name}"`, 3000);
+        new Notice(`✅ created board "${name}"`, 3000);
       } catch (error) {
         console.error('Failed to create board:', error);
         new Notice('❌ failed to create board', 3000);
