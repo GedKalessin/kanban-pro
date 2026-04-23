@@ -303,23 +303,31 @@ export class ListViewRenderer implements IViewRenderer {
       let comparison = 0;
 
       switch (this.sortBy) {
-        case 'dueDate':
+        case 'dueDate': {
           const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
           const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
           comparison = dateA - dateB;
           break;
-        case 'priority':
+        }
+        case 'priority': {
           const priorityOrder: Record<Priority, number> = { critical: 0, high: 1, medium: 2, low: 3, none: 4 };
           const prioA = a.priority ? priorityOrder[a.priority] : 4;
           const prioB = b.priority ? priorityOrder[b.priority] : 4;
           comparison = prioA - prioB;
           break;
-        case 'created':
+        }
+        case 'created': {
           comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
-        case 'column':
-        default:
+        }
+        case 'column': {
           comparison = a.columnId.localeCompare(b.columnId);
+          break;
+        }
+        default: {
+          comparison = a.columnId.localeCompare(b.columnId);
+          break;
+        }
       }
 
       return this.sortOrder === 'asc' ? comparison : -comparison;

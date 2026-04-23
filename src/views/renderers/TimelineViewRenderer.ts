@@ -460,18 +460,22 @@ export class TimelineViewRenderer implements IViewRenderer {
     cards.forEach(card => {
       let key: string;
       switch (this.config.groupBy) {
-        case 'assignee':
+        case 'assignee': {
           key = card.assignee.length > 0 ? card.assignee[0] : 'Unassigned';
           break;
-        case 'priority':
+        }
+        case 'priority': {
           key = card.priority.charAt(0).toUpperCase() + card.priority.slice(1);
           break;
-        case 'column':
+        }
+        case 'column': {
           const col = context.boardService.getColumn(card.columnId);
           key = col?.name || 'Unknown';
           break;
-        default:
+        }
+        default: {
           key = 'All Cards';
+        }
       }
 
       if (!groups.has(key)) groups.set(key, []);
