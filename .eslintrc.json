@@ -5,12 +5,14 @@
     "node": true
   },
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "no-unsanitized"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:no-unsanitized/recommended-legacy"
   ],
   "parserOptions": {
     "sourceType": "module"
@@ -26,6 +28,8 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "no-prototype-builtins": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-unsanitized/method": "error",
+    "no-unsanitized/property": "error"
   }
 }
