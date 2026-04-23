@@ -1,11 +1,12 @@
 import { setIcon } from 'obsidian';
 import { KanbanCard, PRIORITY_COLORS, TASK_TYPE_ICONS } from '../../models/types';
-import { 
-  createElement, 
-  formatDisplayDate, 
-  isOverdue, 
-  isDueSoon, 
-  hexToRgba 
+import {
+  createElement,
+  formatDisplayDate,
+  isOverdue,
+  isDueSoon,
+  hexToRgba,
+  setCssProps
 } from '../../utils/helpers';
 import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { ViewRendererContext } from './IViewRenderer';
@@ -28,8 +29,8 @@ export class CardRenderer {
     });
 
     if (card.color) {
-      cardEl.style.borderLeftColor = card.color;
-      cardEl.style.borderLeftWidth = '4px';
+      setCssProps(cardEl, { '--kp-color': card.color });
+      cardEl.addClass('has-card-color');
     }
 
     // Header
@@ -85,7 +86,7 @@ export class CardRenderer {
     const updateProgress = () => {
       const completed = getCompleted();
       const pct = items.length > 0 ? (completed / items.length) * 100 : 0;
-      progressFill.style.width = `${pct}%`;
+      setCssProps(progressFill, { '--kp-width': `${pct}%` });
       progressFill.className = `subtask-progress-fill${pct === 100 ? ' complete' : ''}`;
       countEl.textContent = `${completed}/${items.length} subtasks`;
     };
@@ -177,8 +178,10 @@ export class CardRenderer {
       const priorityBadge = createElement('span', {
         className: `priority-badge priority-${card.priority}`
       });
-      priorityBadge.style.backgroundColor = hexToRgba(PRIORITY_COLORS[card.priority], 0.2);
-      priorityBadge.style.color = PRIORITY_COLORS[card.priority];
+      setCssProps(priorityBadge, {
+        '--kp-priority-bg': hexToRgba(PRIORITY_COLORS[card.priority], 0.2),
+        '--kp-priority-color': PRIORITY_COLORS[card.priority]
+      });
       priorityBadge.textContent = card.priority.charAt(0).toUpperCase() + card.priority.slice(1);
       cardHeader.appendChild(priorityBadge);
     }

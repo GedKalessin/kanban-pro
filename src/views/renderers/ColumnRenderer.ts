@@ -1,6 +1,6 @@
 import { Menu, setIcon } from 'obsidian';
 import { KanbanColumn, KanbanCard } from '../../models/types';
-import { createElement } from '../../utils/helpers';
+import { createElement, setCssProps } from '../../utils/helpers';
 import { ViewRendererContext } from './IViewRenderer';
 import { CardRenderer } from './CardRenderer';
 import { TextInputModal, QuickAddCardModal, ColorPickerModal, ConfirmModal } from '../../modals/UtilityModals';
@@ -51,7 +51,7 @@ export class ColumnRenderer {
   private renderHeader(column: KanbanColumn, cardCount: number): HTMLElement {
     const board = this.context.boardService.getBoard();
     const header = createElement('div', { className: 'column-header' });
-    header.style.borderTopColor = column.color;
+    setCssProps(header, { '--kp-color': column.color });
 
     // Left section
     const headerLeft = createElement('div', { className: 'header-left' });
@@ -67,7 +67,7 @@ export class ColumnRenderer {
 
     const titleWrapper = createElement('div', { className: 'column-title-wrapper' });
     const colorDot = createElement('span', { className: 'color-dot' });
-    colorDot.style.backgroundColor = column.color;
+    setCssProps(colorDot, { '--kp-color': column.color });
     titleWrapper.appendChild(colorDot);
 
     const title = createElement('span', { className: 'column-title' }, [column.name]);

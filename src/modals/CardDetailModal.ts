@@ -1,7 +1,7 @@
 import { App, Modal, Setting, Notice, setIcon, MarkdownRenderer } from 'obsidian';
 import { KanbanCard, Priority, TaskType, PRIORITY_COLORS, TASK_TYPE_ICONS } from '../models/types';
 import { BoardService } from '../services/BoardService';
-import { formatDisplayDate, generateId } from '../utils/helpers';
+import { formatDisplayDate, generateId, setCssProps } from '../utils/helpers';
 import {
   DatePickerModal,
   ColorPickerModal,
@@ -314,7 +314,7 @@ export class CardDetailModal extends Modal {
 
     const track = this.checklistProgressEl.createDiv({ cls: 'subtask-modal-progress-track' });
     const fill = track.createDiv({ cls: `subtask-modal-progress-fill${pct === 100 ? ' complete' : ''}` });
-    fill.style.width = `${pct}%`;
+    setCssProps(fill, { '--kp-width': `${pct}%` });
   }
 
   private renderChecklist(): void {

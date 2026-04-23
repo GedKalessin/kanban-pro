@@ -1,6 +1,6 @@
 import { setIcon } from 'obsidian';
 import { KanbanCard, PRIORITY_COLORS } from '../../models/types';
-import { createElement } from '../../utils/helpers';
+import { createElement, setCssProps } from '../../utils/helpers';
 import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 import { QuickAddCardModal } from '../../modals/UtilityModals';
@@ -225,7 +225,7 @@ export class TimelineViewRenderer implements IViewRenderer {
 
     dates.forEach(date => {
       const dayCell = createElement('div', { className: 'day-cell' });
-      dayCell.style.width = `${cellWidth}px`;
+      setCssProps(dayCell, { '--kp-cell-width': `${cellWidth}px` });
 
       if (this.config.viewMode === 'day') {
         const isToday = date.getTime() === today.getTime();
@@ -295,7 +295,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     const cardInfo = createElement('div', { className: 'card-info' });
 
     const priorityDot = createElement('span', { className: `priority-dot priority-${card.priority}` });
-    priorityDot.style.backgroundColor = PRIORITY_COLORS[card.priority];
+    setCssProps(priorityDot, { '--kp-color': PRIORITY_COLORS[card.priority] });
     cardInfo.appendChild(priorityDot);
 
     const title = createElement('span', { className: 'card-title' }, [card.title]);
@@ -331,14 +331,13 @@ export class TimelineViewRenderer implements IViewRenderer {
             context.app,
             () => { context.saveBoard(); context.render(); }
           );
-          avatar.style.zIndex = `${visibleAssignees.length - index}`;
+          setCssProps(avatar, { '--kp-z': `${visibleAssignees.length - index}` });
           assigneesContainer.appendChild(avatar);
         });
 
         if (remaining > 0) {
           const moreAvatar = createElement('div', { className: 'assignee-avatar-mini assignee-more' });
           moreAvatar.textContent = `+${remaining}`;
-          moreAvatar.style.zIndex = '0';
           assigneesContainer.appendChild(moreAvatar);
         }
 
@@ -356,9 +355,8 @@ export class TimelineViewRenderer implements IViewRenderer {
 
   private renderTimelineCells(dates: Date[], card: KanbanCard, startDate: Date, context: ViewRendererContext): HTMLElement {
     const cellsContainer = createElement('div', { className: 'timeline-cells' });
-    cellsContainer.style.position = 'relative';
     const cellWidth = this.getCellWidth();
-    cellsContainer.style.width = `${dates.length * cellWidth}px`;
+    setCssProps(cellsContainer, { '--kp-cells-width': `${dates.length * cellWidth}px` });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -381,15 +379,12 @@ export class TimelineViewRenderer implements IViewRenderer {
       const cell = createElement('div', {
         className: `timeline-cell ${isWeekend ? 'weekend' : ''} ${isCurrentPeriod ? 'today' : ''}`
       });
-      cell.style.width = `${cellWidth}px`;
-      cell.style.position = 'relative';
+      setCssProps(cell, { '--kp-cell-width': `${cellWidth}px` });
       cellsContainer.appendChild(cell);
     });
 
     const bar = this.renderTimelineBar(card, startDate, dates, context);
     if (bar) {
-      bar.style.position = 'absolute';
-      bar.style.top = '12px';
       cellsContainer.appendChild(bar);
     }
 
@@ -433,16 +428,18 @@ export class TimelineViewRenderer implements IViewRenderer {
       className: `timeline-bar ${card.blocked ? 'blocked' : ''} ${card.completedAt ? 'completed' : ''}`,
       'data-card-id': card.id
     });
-    bar.style.left = `${startOffset * cellWidth}px`;
-    bar.style.width = `${Math.max(20, duration * cellWidth - 8)}px`;
-    bar.style.backgroundColor = barColor;
+    setCssProps(bar, {
+      '--kp-bar-left': `${startOffset * cellWidth}px`,
+      '--kp-bar-width': `${Math.max(20, duration * cellWidth - 8)}px`,
+      '--kp-color': barColor
+    });
 
     // Progress bar
     if (card.checklist.length > 0) {
       const completed = card.checklist.filter(i => i.completed).length;
       const progress = (completed / card.checklist.length) * 100;
       const progressEl = createElement('div', { className: 'bar-progress' });
-      progressEl.style.width = `${progress}%`;
+      setCssProps(progressEl, { '--kp-width': `${progress}%` });
       bar.appendChild(progressEl);
     }
 

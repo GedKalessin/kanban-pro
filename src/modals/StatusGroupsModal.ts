@@ -1,6 +1,7 @@
 import { App, Modal, Setting, Notice, setIcon } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { StatusGroup } from '../models/types';
+import { setCssProps } from '../utils/helpers';
 
 export class StatusGroupsModal extends Modal {
   private boardService: BoardService;
@@ -36,7 +37,6 @@ export class StatusGroupsModal extends Modal {
 
     // Add group button
     const addBtn = contentEl.createEl('button', { text: '+ Add Status Group', cls: 'primary-btn full-width-btn' });
-    addBtn.style.marginTop = '16px';
     addBtn.addEventListener('click', () => this.addStatusGroup());
 
     // Buttons
@@ -56,7 +56,7 @@ export class StatusGroupsModal extends Modal {
 
     // Color indicator
     const colorIndicator = header.createDiv({ cls: 'color-indicator' });
-    colorIndicator.style.backgroundColor = group.color;
+    setCssProps(colorIndicator, { '--kp-color': group.color });
 
     // Name
     const nameInput = header.createEl('input', {
@@ -101,16 +101,12 @@ export class StatusGroupsModal extends Modal {
         text.setValue(group.color);
         text.onChange(value => {
           group.color = value;
-          colorIndicator.style.backgroundColor = value;
+          setCssProps(colorIndicator, { '--kp-color': value });
         });
       });
 
     // Columns
-    const columnsLabel = groupEl.createEl('label', { text: 'Columns in this group:' });
-    columnsLabel.style.fontWeight = '600';
-    columnsLabel.style.fontSize = '13px';
-    columnsLabel.style.marginTop = '12px';
-    columnsLabel.style.display = 'block';
+    const columnsLabel = groupEl.createEl('label', { text: 'Columns in this group:', cls: 'group-columns-label' });
 
     const columnsContainer = groupEl.createDiv({ cls: 'group-columns' });
 
@@ -131,7 +127,6 @@ export class StatusGroupsModal extends Modal {
       });
 
       const label = columnCheckbox.createEl('label', { text: column.name });
-      label.style.cursor = 'pointer';
       label.addEventListener('click', () => {
         checkbox.checked = !checkbox.checked;
         checkbox.dispatchEvent(new Event('change'));

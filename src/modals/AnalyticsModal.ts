@@ -1,6 +1,7 @@
 import { App, Modal } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { PRIORITY_COLORS } from '../models/types';
+import { setCssProps } from '../utils/helpers';
 
 export class AnalyticsModal extends Modal {
   private boardService: BoardService;
@@ -45,8 +46,10 @@ export class AnalyticsModal extends Modal {
 
         const barFill = bar.createDiv({ cls: 'bar-fill' });
         const percentage = (count / analytics.total) * 100;
-        barFill.style.width = `${percentage}%`;
-        barFill.style.backgroundColor = PRIORITY_COLORS[priority as keyof typeof PRIORITY_COLORS];
+        setCssProps(barFill, {
+          '--kp-width': `${percentage}%`,
+          '--kp-color': PRIORITY_COLORS[priority as keyof typeof PRIORITY_COLORS]
+        });
       }
     });
 
@@ -62,8 +65,7 @@ export class AnalyticsModal extends Modal {
 
         const barFill = bar.createDiv({ cls: 'bar-fill' });
         const percentage = (col.count / analytics.total) * 100;
-        barFill.style.width = `${percentage}%`;
-        barFill.style.backgroundColor = '#3b82f6';
+        setCssProps(barFill, { '--kp-width': `${percentage}%`, '--kp-color': '#3b82f6' });
       }
     });
 
@@ -74,11 +76,11 @@ export class AnalyticsModal extends Modal {
 
   private createSummaryCard(container: HTMLElement, label: string, value: string, color: string): void {
     const card = container.createDiv({ cls: 'summary-card' });
-    card.style.borderTopColor = color;
+    setCssProps(card, { '--kp-color': color });
 
     const valueEl = card.createDiv({ cls: 'summary-value' });
     valueEl.textContent = value;
-    valueEl.style.color = color;
+    setCssProps(valueEl, { '--kp-color': color });
 
     const labelEl = card.createDiv({ cls: 'summary-label' });
     labelEl.textContent = label;

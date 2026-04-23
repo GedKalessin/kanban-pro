@@ -1,6 +1,6 @@
 import { Menu, Notice, setIcon } from 'obsidian';
 import { Milestone, KanbanCard } from '../../models/types';
-import { createElement } from '../../utils/helpers';
+import { createElement, setCssProps } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 import { MilestoneModal } from '../../modals/MilestoneModal';
 import { SuggesterModal, ConfirmModal } from '../../modals/UtilityModals';
@@ -209,16 +209,16 @@ export class RoadmapViewRenderer implements IViewRenderer {
         'data-milestone-id': milestone.id
       });
 
-      milestoneEl.style.borderLeft = `4px solid ${color}`;
+      setCssProps(milestoneEl, { '--kp-color': color });
 
       // Header
       const header = createElement('div', { className: 'milestone-header' });
-      header.style.backgroundColor = `${color}15`;
+      setCssProps(header, { '--kp-color-alpha': `${color}15` });
 
       const headerLeft = createElement('div', { className: 'header-left' });
 
       const iconWrapper = createElement('div', { className: 'milestone-icon-wrapper' });
-      iconWrapper.style.backgroundColor = color;
+      setCssProps(iconWrapper, { '--kp-color': color });
       const icon = createElement('span', { className: 'milestone-icon' });
       setIcon(icon, milestone.completed ? 'check-circle' : 'target');
       iconWrapper.appendChild(icon);
@@ -247,8 +247,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       const progressBadge = createElement('span', { className: 'progress-badge' });
       progressBadge.textContent = `${completedCards}/${totalCards}`;
-      progressBadge.style.backgroundColor = color;
-      progressBadge.style.color = 'white';
+      setCssProps(progressBadge, { '--kp-color': color });
       headerRight.appendChild(progressBadge);
 
       const menuBtn = createElement('button', { className: 'milestone-menu-btn clickable-icon' });
@@ -274,8 +273,10 @@ export class RoadmapViewRenderer implements IViewRenderer {
       const progressSection = createElement('div', { className: 'milestone-progress' });
       const progressBar = createElement('div', { className: 'progress-bar-container' });
       const progressFill = createElement('div', { className: 'progress-fill' });
-      progressFill.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
-      progressFill.style.backgroundColor = color;
+      setCssProps(progressFill, {
+        '--kp-width': `${Math.min(Math.max(progress, 0), 100)}%`,
+        '--kp-color': color
+      });
       progressBar.appendChild(progressFill);
       progressSection.appendChild(progressBar);
       progressSection.appendChild(createElement('span', { className: 'progress-text' },
@@ -350,7 +351,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     if (column) {
       const status = createElement('span', { className: 'card-status' });
       status.textContent = column.name;
-      status.style.backgroundColor = column.color || '#94a3b8';
+      setCssProps(status, { '--kp-color': column.color || '#94a3b8' });
       cardContent.appendChild(status);
     }
 
@@ -451,7 +452,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     if (column) {
       const status = createElement('span', { className: 'card-status' });
       status.textContent = column.name;
-      status.style.backgroundColor = column.color || '#94a3b8';
+      setCssProps(status, { '--kp-color': column.color || '#94a3b8' });
       cardContent.appendChild(status);
     }
 

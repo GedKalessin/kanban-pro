@@ -4,6 +4,12 @@
 
 import { Priority, PRIORITY_COLORS } from '../models/types';
 
+export function setCssProps(el: HTMLElement, props: Record<string, string>): void {
+  for (const [key, value] of Object.entries(props)) {
+    el.style.setProperty(key, value);
+  }
+}
+
 // ==================== ID GENERATION ====================
 
 export function generateId(): string {
@@ -560,8 +566,7 @@ export function copyToClipboard(text: string): Promise<void> {
     // Fallback for older browsers
     const textArea = document.createElement('textarea');
     textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
+    textArea.className = 'clipboard-helper';
     document.body.appendChild(textArea);
     textArea.select();
     try {

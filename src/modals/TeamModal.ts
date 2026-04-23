@@ -2,6 +2,7 @@ import { App, Modal, Setting, Notice, setIcon } from 'obsidian';
 import { TeamMember } from '../models/types';
 import { BoardService } from '../services/BoardService';
 import { ConfirmModal } from './UtilityModals';
+import { setCssProps } from '../utils/helpers';
 
 // ============================================
 // TEAM MODAL - Manage board team members
@@ -63,7 +64,7 @@ export class TeamModal extends Modal {
     // Avatar
     const avatar = row.createDiv({ cls: 'team-avatar' });
     avatar.textContent = member.name.charAt(0).toUpperCase();
-    if (member.color) avatar.style.backgroundColor = member.color;
+    if (member.color) setCssProps(avatar, { '--kp-color': member.color });
 
     // Info
     const info = row.createDiv({ cls: 'team-member-info' });
@@ -168,11 +169,11 @@ class MemberFormModal extends Modal {
     const previewRow = contentEl.createDiv({ cls: 'member-form-preview' });
     const avatarPreview = previewRow.createDiv({ cls: 'team-avatar-preview' });
     avatarPreview.textContent = this.nameVal.charAt(0).toUpperCase() || '?';
-    avatarPreview.style.backgroundColor = this.colorVal;
+    setCssProps(avatarPreview, { '--kp-color': this.colorVal });
 
     const updatePreview = () => {
       avatarPreview.textContent = this.nameVal.charAt(0).toUpperCase() || '?';
-      avatarPreview.style.backgroundColor = this.colorVal;
+      setCssProps(avatarPreview, { '--kp-color': this.colorVal });
     };
 
     // Name
@@ -214,7 +215,7 @@ class MemberFormModal extends Modal {
     const colorContainer = colorSetting.controlEl.createDiv({ cls: 'member-color-picker' });
     this.colorPalette.forEach(color => {
       const swatch = colorContainer.createDiv({ cls: 'member-color-swatch' });
-      swatch.style.backgroundColor = color;
+      setCssProps(swatch, { '--kp-color': color });
       if (color === this.colorVal) swatch.addClass('selected');
       swatch.addEventListener('click', () => {
         colorContainer.querySelectorAll('.member-color-swatch').forEach(s => s.removeClass('selected'));
@@ -286,7 +287,7 @@ export class MemberDetailModal extends Modal {
     const header = contentEl.createDiv({ cls: 'member-detail-header' });
     const avatar = header.createDiv({ cls: 'member-detail-avatar' });
     avatar.textContent = this.member.name.charAt(0).toUpperCase();
-    if (this.member.color) avatar.style.backgroundColor = this.member.color;
+    if (this.member.color) setCssProps(avatar, { '--kp-color': this.member.color });
 
     const headerInfo = header.createDiv({ cls: 'member-detail-header-info' });
     headerInfo.createEl('h2', { text: this.member.name, cls: 'member-detail-name' });
@@ -326,7 +327,7 @@ export class MemberDetailModal extends Modal {
         const cardRow = cardsList.createDiv({ cls: 'member-detail-card-row' });
         const col = board.columns.find(c => c.id === card.columnId);
         const dot = cardRow.createSpan({ cls: 'member-detail-card-dot' });
-        if (col) dot.style.backgroundColor = col.color;
+        if (col) setCssProps(dot, { '--kp-color': col.color });
         cardRow.createEl('span', { text: card.title, cls: 'member-detail-card-title' });
       });
       if (assignedCards.length > 5) {

@@ -1,6 +1,7 @@
 import { App } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { MemberDetailModal } from '../modals/TeamModal';
+import { setCssProps } from './helpers';
 
 /**
  * Creates an avatar HTMLElement for a team member.
@@ -23,7 +24,7 @@ export function createMemberAvatar(
   avatar.title = memberName;
 
   if (member?.color) {
-    avatar.style.background = member.color;
+    setCssProps(avatar, { '--kp-color': member.color });
   }
 
   if (member) {

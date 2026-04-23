@@ -327,7 +327,7 @@
   justify-content: space-between;
   padding: var(--kp-space-md) var(--kp-space-lg);
   border-bottom: 1px solid var(--kp-border);
-  border-top: 3px solid currentColor;
+  border-top: 3px solid var(--kp-color, currentColor);
   border-top-left-radius: var(--kp-radius-lg);
   border-top-right-radius: var(--kp-radius-lg);
   background: var(--kp-bg-secondary);
@@ -377,6 +377,7 @@
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+  background-color: var(--kp-color);
 }
 
 .column-title {
@@ -468,6 +469,7 @@
   border: 2px dashed rgba(99, 102, 241, 0.4);
   border-radius: var(--kp-radius-lg);
   flex-shrink: 0;
+  height: var(--kp-height, 60px);
   /* GPU acceleration for smooth insertion */
   transform: translateZ(0);
   will-change: transform, opacity;
@@ -863,7 +865,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--kp-primary-light) 0%, var(--kp-primary) 100%);
+  background: var(--kp-color, linear-gradient(135deg, var(--kp-primary-light) 0%, var(--kp-primary) 100%));
   color: white;
   display: flex;
   align-items: center;
@@ -947,7 +949,7 @@
   gap: var(--kp-space-md);
   padding: var(--kp-space-md) var(--kp-space-lg);
   background: var(--kp-bg-secondary);
-  border-left: 4px solid currentColor;
+  border-left: 4px solid var(--kp-color, currentColor);
   border-radius: var(--kp-radius-md);
   margin-bottom: var(--kp-space-md);
   cursor: pointer;
@@ -1281,6 +1283,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background-color: var(--kp-color, var(--interactive-accent));
 }
 
 .cell-priority {
@@ -1295,6 +1298,7 @@
   color: white;
   text-transform: capitalize;
   white-space: nowrap;
+  background-color: var(--kp-priority-bg, var(--interactive-accent));
 }
 
 .cell-assignee {
@@ -1305,7 +1309,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--interactive-accent);
+  background: var(--kp-color, var(--interactive-accent));
   color: white;
   display: flex;
   align-items: center;
@@ -1332,7 +1336,7 @@
   height: 28px;
   min-width: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--interactive-accent) 0%, var(--interactive-accent-hover) 100%);
+  background: var(--kp-color, linear-gradient(135deg, var(--interactive-accent) 0%, var(--interactive-accent-hover) 100%));
   color: white;
   display: flex;
   align-items: center;
@@ -1344,6 +1348,7 @@
   border: 2px solid var(--background-primary);
   margin-left: -8px;
   position: relative;
+  z-index: var(--kp-z, auto);
 }
 
 .assignee-avatar-stacked:first-child {
@@ -1360,6 +1365,7 @@
   color: var(--text-muted);
   font-size: 10px;
   font-weight: 700;
+  z-index: 0;
 }
 
 /* Responsive sizing based on count */
@@ -1435,6 +1441,7 @@
   background: var(--interactive-accent);
   border-radius: 3px;
   transition: width 0.3s ease;
+  width: var(--kp-width, 0%);
 }
 
 .progress-text-mini {
@@ -1680,6 +1687,7 @@
   border-right: 1px solid var(--kp-border);
   min-height: 60px;
   position: relative;
+  width: var(--kp-cell-width);
 }
 
 .day-cell.weekend {
@@ -1794,7 +1802,7 @@
   height: 22px;
   min-width: 22px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--interactive-accent) 0%, var(--interactive-accent-hover) 100%);
+  background: var(--kp-color, linear-gradient(135deg, var(--interactive-accent) 0%, var(--interactive-accent-hover) 100%));
   color: white;
   display: flex;
   align-items: center;
@@ -1807,6 +1815,7 @@
   margin-left: -6px;
   position: relative;
   text-transform: uppercase;
+  z-index: var(--kp-z, auto);
 }
 
 .assignee-avatar-mini:first-child {
@@ -1823,6 +1832,7 @@
   color: var(--text-muted);
   font-size: 8px;
   font-weight: 700;
+  z-index: 0;
 }
 
 /* Responsive sizing based on count for timeline mini avatars */
@@ -1846,11 +1856,14 @@
   display: flex;
   flex: 1;
   position: relative;
+  width: var(--kp-cells-width);
 }
 
 .timeline-cell {
   border-right: 1px solid var(--kp-border);
   min-height: 50px;
+  position: relative;
+  width: var(--kp-cell-width);
 }
 
 .timeline-cell.weekend {
@@ -1871,6 +1884,10 @@
 /* Timeline Bar - Modern */
 .timeline-bar {
   position: absolute;
+  top: 12px;
+  left: var(--kp-bar-left, 0);
+  width: var(--kp-bar-width, 100px);
+  background-color: var(--kp-color, var(--kp-primary));
   height: 28px;
   border-radius: var(--kp-radius-sm);
   display: flex;
@@ -1908,6 +1925,7 @@
   left: 0;
   top: 0;
   bottom: 0;
+  width: var(--kp-width, 0%);
   background: rgba(255, 255, 255, 0.3);
   border-radius: var(--kp-radius-sm);
   transition: width var(--kp-transition-base);
@@ -3128,6 +3146,7 @@
   box-shadow: var(--kp-shadow-lg);
   border: 4px solid var(--kp-bg-primary);
   transition: all var(--kp-transition-base);
+  background-color: var(--kp-color, var(--kp-primary));
 }
 
 .color-grid {
@@ -3145,6 +3164,7 @@
   transition: all var(--kp-transition-fast);
   border: 3px solid transparent;
   position: relative;
+  background-color: var(--kp-color);
 }
 
 .color-swatch:hover {
@@ -3325,6 +3345,7 @@
 .roadmap-milestone {
   background: var(--kp-bg-secondary);
   border: 2px solid var(--kp-border);
+  border-left: 4px solid var(--kp-color, var(--kp-primary));
   border-radius: var(--kp-radius-lg);
   overflow: visible;
   transition: all var(--kp-transition-base);
@@ -3371,7 +3392,7 @@
   justify-content: space-between;
   gap: var(--kp-space-md);
   padding: var(--kp-space-lg) var(--kp-space-xl);
-  background: var(--kp-bg-primary);
+  background: var(--kp-color-alpha, var(--kp-bg-primary));
   border-bottom: 1px solid var(--kp-border);
 }
 
@@ -3396,6 +3417,7 @@
   justify-content: center;
   border-radius: var(--kp-radius-md);
   flex-shrink: 0;
+  background-color: var(--kp-color, var(--kp-primary));
 }
 
 .milestone-icon-wrapper .milestone-icon {
@@ -3440,6 +3462,8 @@
   border-radius: var(--kp-radius-full);
   font-size: 13px;
   font-weight: var(--kp-font-weight-semibold);
+  background-color: var(--kp-color, var(--kp-primary));
+  color: white;
 }
 
 .milestone-menu-btn {
@@ -3539,7 +3563,8 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--kp-primary), var(--kp-success));
+  width: var(--kp-width, 0%);
+  background: var(--kp-color, linear-gradient(90deg, var(--kp-primary), var(--kp-success)));
   border-radius: var(--kp-radius-full);
   transition: width var(--kp-transition-base);
 }
@@ -3673,6 +3698,7 @@
   font-weight: var(--kp-font-weight-semibold);
   color: white;
   white-space: nowrap;
+  background-color: var(--kp-color, #94a3b8);
 }
 
 .milestone-cards .milestone-card .remove-card-btn {
@@ -3882,7 +3908,7 @@
   font-size: 11px;
   font-weight: var(--kp-font-weight-semibold);
   color: white;
-  background: var(--kp-text-muted);
+  background: var(--kp-color, var(--kp-text-muted));
   border-radius: var(--kp-radius-full);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -4625,7 +4651,7 @@
   height: 38px;
   min-width: 38px;
   border-radius: 50%;
-  background: var(--interactive-accent);
+  background: var(--kp-color, var(--interactive-accent));
   color: white;
   display: flex;
   align-items: center;
@@ -4700,7 +4726,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--interactive-accent);
+  background: var(--kp-color, var(--interactive-accent));
   color: white;
   display: flex;
   align-items: center;
@@ -4725,6 +4751,7 @@
   cursor: pointer;
   border: 2px solid transparent;
   transition: transform 0.15s, border-color 0.15s;
+  background-color: var(--kp-color);
 }
 
 .member-color-swatch:hover {
@@ -4856,7 +4883,7 @@
   height: 8px;
   min-width: 8px;
   border-radius: 50%;
-  background: var(--kp-text-muted);
+  background: var(--kp-color, var(--kp-text-muted));
 }
 
 .member-detail-card-title {
@@ -5263,6 +5290,7 @@
   color: white;
   flex-shrink: 0;
   box-shadow: var(--kp-shadow-sm);
+  background-color: var(--kp-color, var(--kp-primary));
 }
 
 .group-icon svg {
@@ -5329,6 +5357,7 @@
   height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
+  background-color: var(--kp-color);
 }
 
 .column-name {
@@ -7889,6 +7918,7 @@
   border-radius: 6px;
   flex-shrink: 0;
   border: 2px solid var(--background-modifier-border);
+  background-color: var(--kp-color);
 }
 
 .group-name-input {
@@ -8024,4 +8054,83 @@
     max-height: 300px;
     padding: var(--kp-space-sm);
   }
+}
+
+/* ============================================
+   DYNAMIC CSS CUSTOM PROPERTIES UTILITIES
+   ============================================ */
+
+/* Column drag cursor applied to body */
+.kp-grabbing,
+.kp-grabbing * {
+  cursor: grabbing !important;
+}
+
+/* Card with user-assigned color accent */
+.kanban-card.has-card-color {
+  border-left: 4px solid var(--kp-color);
+}
+
+/* Priority badge inside kanban card (overrides list-view default) */
+.kanban-card .priority-badge {
+  background-color: var(--kp-priority-bg, transparent);
+  color: var(--kp-priority-color, inherit);
+}
+
+/* Clipboard off-screen helper textarea */
+.clipboard-helper {
+  position: fixed;
+  left: -999999px;
+}
+
+/* StatusGroupsModal - add group button spacing */
+.kanban-status-groups-modal .primary-btn.full-width-btn {
+  margin-top: 16px;
+}
+
+/* StatusGroupsModal - columns label */
+.group-columns-label {
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 12px;
+  display: block;
+}
+
+/* StatusGroupsModal - column checkbox clickable label */
+.column-checkbox label {
+  cursor: pointer;
+}
+
+/* Analytics bar fills */
+.bar-fill {
+  height: 8px;
+  background-color: var(--kp-color, var(--kp-primary));
+  width: var(--kp-width, 0%);
+  border-radius: 3px;
+  transition: width var(--kp-transition-base);
+}
+
+/* Analytics summary card accent border */
+.summary-card {
+  border-top: 3px solid var(--kp-color, var(--kp-primary));
+}
+
+/* Analytics summary value color */
+.summary-value {
+  color: var(--kp-color, var(--kp-primary));
+}
+
+/* Priority dot (timeline sidebar) */
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--kp-color, var(--kp-text-muted));
+}
+
+/* Gantt popup: force hidden when not .is-visible (overrides Frappe inline style) */
+.gantt-container-frappe .popup-wrapper:not(.is-visible) {
+  opacity: 0 !important;
+  visibility: hidden !important;
 }

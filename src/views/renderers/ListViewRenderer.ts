@@ -5,7 +5,7 @@
 
 import { setIcon, Notice, Menu } from 'obsidian';
 import { KanbanCard, Priority, PRIORITY_COLORS } from '../../models/types';
-import { createElement, formatDisplayDate } from '../../utils/helpers';
+import { createElement, formatDisplayDate, setCssProps } from '../../utils/helpers';
 import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 import { ConfirmModal } from '../../modals/UtilityModals';
@@ -206,7 +206,7 @@ export class ListViewRenderer implements IViewRenderer {
     if (column) {
       const columnBadge = columnCell.createDiv({ cls: 'column-badge' });
       columnBadge.textContent = column.name;
-      columnBadge.style.backgroundColor = column.color;
+      setCssProps(columnBadge, { '--kp-color': column.color });
     }
 
     // Priority
@@ -214,7 +214,7 @@ export class ListViewRenderer implements IViewRenderer {
     if (card.priority) {
       const priorityBadge = priorityCell.createDiv({ cls: 'priority-badge' });
       priorityBadge.textContent = card.priority;
-      priorityBadge.style.backgroundColor = PRIORITY_COLORS[card.priority];
+      setCssProps(priorityBadge, { '--kp-priority-bg': PRIORITY_COLORS[card.priority] });
     }
 
     // Assignee - show all assignees responsively
@@ -246,14 +246,13 @@ export class ListViewRenderer implements IViewRenderer {
             context.app,
             () => { context.saveBoard(); context.render(); }
           );
-          avatar.style.zIndex = `${visibleAssignees.length - index}`;
+          setCssProps(avatar, { '--kp-z': `${visibleAssignees.length - index}` });
           assigneesContainer.appendChild(avatar);
         });
 
         if (remaining > 0) {
           const moreAvatar = assigneesContainer.createDiv({ cls: 'assignee-avatar-stacked assignee-more' });
           moreAvatar.textContent = `+${remaining}`;
-          moreAvatar.style.zIndex = '0';
         }
       }
     }
@@ -282,7 +281,7 @@ export class ListViewRenderer implements IViewRenderer {
 
       const progressBar = progressCell.createDiv({ cls: 'progress-bar-mini' });
       const progressFill = progressBar.createDiv({ cls: 'progress-fill-mini' });
-      progressFill.style.width = `${percent}%`;
+      setCssProps(progressFill, { '--kp-width': `${percent}%` });
 
       const progressText = progressCell.createDiv({ cls: 'progress-text-mini' });
       progressText.textContent = `${completed}/${total}`;

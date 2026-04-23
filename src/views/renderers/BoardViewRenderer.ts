@@ -1,6 +1,6 @@
 import { setIcon, Menu } from 'obsidian';
 import { SwimLane, KanbanColumn, KanbanCard } from '../../models/types';
-import { createElement } from '../../utils/helpers';
+import { createElement, setCssProps } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 import { ColumnRenderer } from './ColumnRenderer';
 import { TextInputModal, ColorPickerModal, ConfirmModal } from '../../modals/UtilityModals';
@@ -106,7 +106,7 @@ export class BoardViewRenderer implements IViewRenderer {
 
   private renderSwimLaneHeader(lane: SwimLane, allCards: KanbanCard[], context: ViewRendererContext): HTMLElement {
     const laneHeader = createElement('div', { className: 'swim-lane-header' });
-    laneHeader.style.borderLeftColor = lane.color;
+    setCssProps(laneHeader, { '--kp-color': lane.color });
 
     const collapseBtn = createElement('button', { className: 'collapse-btn clickable-icon' });
     setIcon(collapseBtn, lane.collapsed ? 'chevron-right' : 'chevron-down');

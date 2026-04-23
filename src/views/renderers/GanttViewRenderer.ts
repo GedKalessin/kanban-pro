@@ -436,7 +436,6 @@ export class GanttViewRenderer implements IViewRenderer {
 
           if (!isClickOnBar && !isClickOnPopup && popupWrapper.classList.contains('is-visible')) {
             popupWrapper.classList.remove('is-visible');
-            popupWrapper.style.opacity = '0';
           }
         });
       } else {

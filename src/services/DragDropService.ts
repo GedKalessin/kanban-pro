@@ -1,5 +1,6 @@
 import { Notice } from 'obsidian';
 import { BoardService } from './BoardService';
+import { setCssProps } from '../utils/helpers';
 
 export class DragDropService {
   private boardService: BoardService;
@@ -65,7 +66,7 @@ export class DragDropService {
   private createPlaceholder(height: number): HTMLElement {
     const placeholder = document.createElement('div');
     placeholder.className = 'kanban-card-placeholder';
-    placeholder.style.height = `${height}px`;
+    setCssProps(placeholder, { '--kp-height': `${height}px` });
     return placeholder;
   }
 
@@ -277,8 +278,7 @@ export class DragDropService {
       if (!this.isDraggingColumn && deltaX > 10) {
         this.isDraggingColumn = true;
         this.draggedColumn.classList.add('dragging-column');
-        this.draggedColumn.style.opacity = '0.5';
-        document.body.style.cursor = 'grabbing';
+        document.body.classList.add('kp-grabbing');
       }
 
       if (!this.isDraggingColumn) return;
@@ -318,10 +318,9 @@ export class DragDropService {
         }
 
         this.draggedColumn.classList.remove('dragging-column');
-        this.draggedColumn.style.opacity = '';
       }
 
-      document.body.style.cursor = '';
+      document.body.classList.remove('kp-grabbing');
       this.isDraggingColumn = false;
       this.draggedColumn = null;
     };

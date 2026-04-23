@@ -1,7 +1,7 @@
 import { App, Modal, Setting, FuzzySuggestModal, Notice, setIcon } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { StatusGroup, BoardTemplate } from '../models/types';
-import { generateId } from '../utils/helpers';
+import { generateId, setCssProps } from '../utils/helpers';
 
 // Text Input Modal
 class TextInputModal extends Modal {
@@ -94,7 +94,7 @@ class ColorPickerModal extends Modal {
     // Color Preview
     const previewContainer = contentEl.createDiv({ cls: 'color-preview-container' });
     this.previewEl = previewContainer.createDiv({ cls: 'color-preview' });
-    this.previewEl.style.backgroundColor = this.color;
+    setCssProps(this.previewEl, { '--kp-color': this.color });
 
     // Hex Input
     new Setting(contentEl)
@@ -106,7 +106,7 @@ class ColorPickerModal extends Modal {
             if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
               this.color = value;
               if (this.previewEl) {
-                this.previewEl.style.backgroundColor = value;
+                setCssProps(this.previewEl, { '--kp-color': value });
               }
             }
           });
@@ -117,7 +117,7 @@ class ColorPickerModal extends Modal {
     
     this.colorPalette.forEach(color => {
       const swatch = colorGrid.createDiv({ cls: 'color-swatch' });
-      swatch.style.backgroundColor = color;
+      setCssProps(swatch, { '--kp-color': color });
       
       if (color.toLowerCase() === this.color.toLowerCase()) {
         swatch.addClass('selected');
@@ -126,7 +126,7 @@ class ColorPickerModal extends Modal {
       swatch.addEventListener('click', () => {
         this.color = color;
         if (this.previewEl) {
-          this.previewEl.style.backgroundColor = color;
+          setCssProps(this.previewEl, { '--kp-color': color });
         }
         
         // Update selection
@@ -599,7 +599,7 @@ class StatusManagementModal extends Modal {
     const groupHeader = groupEl.createDiv({ cls: 'status-group-header' });
 
     const groupIcon = groupHeader.createDiv({ cls: 'group-icon' });
-    groupIcon.style.backgroundColor = group.color;
+    setCssProps(groupIcon, { '--kp-color': group.color });
 
     const icons = {
       'not-started': 'circle',
@@ -624,7 +624,7 @@ class StatusManagementModal extends Modal {
         const columnItem = columnsContainer.createDiv({ cls: 'column-item' });
 
         const colorDot = columnItem.createDiv({ cls: 'column-color-dot' });
-        colorDot.style.backgroundColor = column.color;
+        setCssProps(colorDot, { '--kp-color': column.color });
 
         columnItem.createSpan({ text: column.name, cls: 'column-name' });
 
