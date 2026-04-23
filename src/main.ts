@@ -62,9 +62,6 @@ export default class KanbanProPlugin extends Plugin {
     // Clear all auto-save intervals
     this.autoSaveIntervals.forEach(interval => clearInterval(interval));
     this.autoSaveIntervals.clear();
-
-    // Detach all Kanban views
-    this.app.workspace.detachLeavesOfType(KANBAN_VIEW_TYPE);
   }
 
   // ==================== SETTINGS ====================
@@ -228,7 +225,7 @@ class CreateBoardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-create-board-modal');
 
-    contentEl.createEl('h2', { text: '✨ Create New Kanban Board' });
+    contentEl.createEl('h2', { text: '✨ Create new Kanban board' });
 
     new Setting(contentEl)
       .setName('Board name')
@@ -262,7 +259,7 @@ class CreateBoardModal extends Modal {
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'mod-cancel' });
     cancelBtn.addEventListener('click', () => this.close());
 
-    const createBtn = buttonContainer.createEl('button', { text: 'Create Board', cls: 'mod-cta' });
+    const createBtn = buttonContainer.createEl('button', { text: 'Create board', cls: 'mod-cta' });
     createBtn.addEventListener('click', () => this.submit());
   }
 
@@ -296,7 +293,7 @@ class TemplateSelectionModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-template-modal');
 
-    contentEl.createEl('h2', { text: '🎨 Choose a Template' });
+    contentEl.createEl('h2', { text: '🎨 Choose a template' });
 
     const templatesGrid = contentEl.createDiv({ cls: 'template-grid' });
 
@@ -320,7 +317,7 @@ class TemplateSelectionModal extends Modal {
       });
     });
 
-    contentEl.createEl('h3', { text: 'Board Details' });
+    new Setting(contentEl).setHeading().setName('Board details');
 
     new Setting(contentEl)
       .setName('Board name')
@@ -345,7 +342,7 @@ class TemplateSelectionModal extends Modal {
     const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel', cls: 'mod-cancel' });
     cancelBtn.addEventListener('click', () => this.close());
 
-    const createBtn = buttonContainer.createEl('button', { text: 'Create from Template', cls: 'mod-cta' });
+    const createBtn = buttonContainer.createEl('button', { text: 'Create from template', cls: 'mod-cta' });
     createBtn.addEventListener('click', () => this.submit());
   }
 
@@ -378,7 +375,7 @@ class OpenBoardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-open-board-modal');
 
-    contentEl.createEl('h2', { text: '📋 Open Kanban Board' });
+    contentEl.createEl('h2', { text: '📋 Open Kanban board' });
 
     const boardsList = contentEl.createDiv({ cls: 'boards-list' });
 

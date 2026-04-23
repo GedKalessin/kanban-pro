@@ -93,10 +93,10 @@ export class FilterModal extends Modal {
       });
 
     // Date Range
-    contentEl.createEl('h3', { text: 'Date Range' });
+    new Setting(contentEl).setHeading().setName('Date range');
 
     new Setting(contentEl)
-      .setName('Start Date')
+      .setName('Start date')
       .addText(text => {
         text.inputEl.type = 'date';
         if (filters.dateRange?.start) {
@@ -111,7 +111,7 @@ export class FilterModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('End Date')
+      .setName('End date')
       .addText(text => {
         text.inputEl.type = 'date';
         if (filters.dateRange?.end) {
@@ -126,10 +126,10 @@ export class FilterModal extends Modal {
       });
 
     // Show/Hide Options
-    contentEl.createEl('h3', { text: 'Visibility' });
+    new Setting(contentEl).setHeading().setName('Visibility');
 
     new Setting(contentEl)
-      .setName('Show Completed')
+      .setName('Show completed')
       .addToggle(toggle => {
         toggle
           .setValue(filters.showCompleted)
@@ -140,7 +140,7 @@ export class FilterModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Show Blocked')
+      .setName('Show blocked')
       .addToggle(toggle => {
         toggle
           .setValue(filters.showBlocked)
@@ -153,7 +153,7 @@ export class FilterModal extends Modal {
     // Actions
     const buttonContainer = contentEl.createDiv({ cls: 'button-container' });
 
-    const clearBtn = buttonContainer.createEl('button', { text: 'Clear All Filters', cls: 'secondary-btn' });
+    const clearBtn = buttonContainer.createEl('button', { text: 'Clear all filters', cls: 'secondary-btn' });
     clearBtn.addEventListener('click', () => {
       this.boardService.clearFilters();
       this.onUpdate();

@@ -31,7 +31,7 @@ export class MilestoneModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-milestone-modal');
 
-    contentEl.createEl('h2', { text: this.milestone ? 'Edit Milestone' : 'Create Milestone' });
+    contentEl.createEl('h2', { text: this.milestone ? 'Edit milestone' : 'Create milestone' });
 
     // Name
     new Setting(contentEl)
@@ -60,7 +60,7 @@ export class MilestoneModal extends Modal {
 
     // Due Date
     new Setting(contentEl)
-      .setName('Due Date')
+      .setName('Due date')
       .addText(text => {
         text.inputEl.type = 'date';
         if (this.formData.dueDate) {
@@ -75,7 +75,7 @@ export class MilestoneModal extends Modal {
     new Setting(contentEl)
       .setName('Color')
       .addButton(btn => {
-        btn.setButtonText('Choose Color');
+        btn.setButtonText('Choose color');
         btn.onClick(() => {
           new ColorPickerModal(
             this.app,

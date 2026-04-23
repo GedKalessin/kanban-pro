@@ -20,16 +20,16 @@ export class BoardSettingsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-board-settings-modal');
 
-    contentEl.createEl('h2', { text: '⚙️ Board Settings' });
+    contentEl.createEl('h2', { text: '⚙️ Board settings' });
 
     const board = this.boardService.getBoard();
     const settings = board.settings;
 
     // General Settings
-    contentEl.createEl('h3', { text: 'General' });
+    new Setting(contentEl).setHeading().setName('General');
 
     new Setting(contentEl)
-      .setName('Board Description')
+      .setName('Board description')
       .addTextArea(text => {
         text
           .setValue(board.description)
@@ -40,7 +40,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Default View')
+      .setName('Default view')
       .addDropdown(dropdown => {
         const views: ViewType[] = ['board', 'list', 'timeline', 'roadmap'];
         views.forEach(view => {
@@ -55,10 +55,10 @@ export class BoardSettingsModal extends Modal {
       });
 
     // Features
-    contentEl.createEl('h3', { text: 'Features' });
+    new Setting(contentEl).setHeading().setName('Features');
 
     new Setting(contentEl)
-      .setName('Enable WIP Limits')
+      .setName('Enable WIP limits')
       .setDesc('Limit the number of cards per column')
       .addToggle(toggle => {
         toggle
@@ -71,7 +71,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Enable Swim Lanes')
+      .setName('Enable swim lanes')
       .setDesc('Organize cards in horizontal swim lanes')
       .addToggle(toggle => {
         toggle
@@ -84,7 +84,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Enable Time Tracking')
+      .setName('Enable time tracking')
       .setDesc('Track time spent on cards')
       .addToggle(toggle => {
         toggle
@@ -97,7 +97,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Enable Automations')
+      .setName('Enable automations')
       .setDesc('Automatically perform actions based on triggers')
       .addToggle(toggle => {
         toggle
@@ -110,7 +110,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Show Card Numbers')
+      .setName('Show card numbers')
       .setDesc('Display sequential card numbers')
       .addToggle(toggle => {
         toggle
@@ -123,12 +123,12 @@ export class BoardSettingsModal extends Modal {
       });
 
     // Card Display Options
-    contentEl.createEl('h3', { text: 'Card Display' });
+    new Setting(contentEl).setHeading().setName('Card display');
 
     const displayOptions = settings.cardDisplayOptions;
 
     new Setting(contentEl)
-      .setName('Show Assignee')
+      .setName('Show assignee')
       .addToggle(toggle => {
         toggle.setValue(displayOptions.showAssignee).onChange(value => {
           displayOptions.showAssignee = value;
@@ -138,7 +138,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Show Due Date')
+      .setName('Show due date')
       .addToggle(toggle => {
         toggle.setValue(displayOptions.showDueDate).onChange(value => {
           displayOptions.showDueDate = value;
@@ -148,7 +148,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Show Tags')
+      .setName('Show tags')
       .addToggle(toggle => {
         toggle.setValue(displayOptions.showTags).onChange(value => {
           displayOptions.showTags = value;
@@ -158,7 +158,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Show Priority')
+      .setName('Show priority')
       .addToggle(toggle => {
         toggle.setValue(displayOptions.showPriority).onChange(value => {
           displayOptions.showPriority = value;
@@ -168,7 +168,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Show Checklist Progress')
+      .setName('Show checklist progress')
       .addToggle(toggle => {
         toggle.setValue(displayOptions.showChecklist).onChange(value => {
           displayOptions.showChecklist = value;
@@ -178,7 +178,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Compact Mode')
+      .setName('Compact mode')
       .setDesc('Reduce card size for more cards on screen')
       .addToggle(toggle => {
         toggle.setValue(displayOptions.compactMode).onChange(value => {
@@ -189,10 +189,10 @@ export class BoardSettingsModal extends Modal {
       });
 
     // Auto-Archive
-    contentEl.createEl('h3', { text: 'Auto-Archive' });
+    new Setting(contentEl).setHeading().setName('Auto-archive');
 
     new Setting(contentEl)
-      .setName('Auto-Archive Completed')
+      .setName('Auto-archive completed')
       .setDesc('Automatically archive completed cards after a certain number of days')
       .addToggle(toggle => {
         toggle
@@ -205,7 +205,7 @@ export class BoardSettingsModal extends Modal {
       });
 
     new Setting(contentEl)
-      .setName('Archive After (days)')
+      .setName('Archive after (days)')
       .addText(text => {
         text
           .setValue(settings.autoArchiveDays.toString())

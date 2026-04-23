@@ -242,10 +242,8 @@ export class GanttViewRenderer implements IViewRenderer {
       console.error('Frappe Gantt initialization error:', error);
       ganttContainer.empty();
       const errorMsg = ganttContainer.createDiv({ cls: 'gantt-error' });
-      errorMsg.innerHTML = `
-        <h3>⚠️ Error loading Gantt chart</h3>
-        <p>Using fallback view...</p>
-      `;
+      errorMsg.createEl('h3', { text: '⚠️ Error loading Gantt chart' });
+      errorMsg.createEl('p', { text: 'Using fallback view...' });
       setTimeout(() => this.renderFallback(container, cards, context), 100);
     }
   }
@@ -277,7 +275,7 @@ export class GanttViewRenderer implements IViewRenderer {
     const toolbar = createElement('div', { className: 'gantt-toolbar' });
 
     const leftSection = toolbar.createDiv({ cls: 'toolbar-left' });
-    leftSection.createEl('h3', { text: 'Gantt Chart', cls: 'gantt-title' });
+    leftSection.createEl('h3', { text: 'Gantt chart', cls: 'gantt-title' });
 
     const rightSection = toolbar.createDiv({ cls: 'toolbar-right' });
 
@@ -337,10 +335,10 @@ export class GanttViewRenderer implements IViewRenderer {
     const fallbackContainer = container.createDiv({ cls: 'gantt-fallback' });
 
     const warning = fallbackContainer.createDiv({ cls: 'gantt-warning' });
-    warning.innerHTML = `
-      <strong>⚠️ Frappe Gantt not available</strong><br>
-      Install it with: <code>npm install frappe-gantt</code>
-    `;
+    warning.createEl('strong', { text: '⚠️ Frappe Gantt not available' });
+    warning.createEl('br');
+    warning.appendText('Install it with: ');
+    warning.createEl('code', { text: 'npm install frappe-gantt' });
 
     const list = fallbackContainer.createDiv({ cls: 'gantt-simple-list' });
     cards.forEach(card => {

@@ -131,19 +131,11 @@ export class RoadmapViewRenderer implements IViewRenderer {
       console.error('CRITICAL ERROR in RoadmapViewRenderer.render():', error);
       container.empty();
       const errorDiv = container.createDiv({ cls: 'critical-error' });
-      errorDiv.innerHTML = `
-        <h3>⚠️ Error Loading Roadmap</h3>
-        <p>An error occurred while loading the roadmap view.</p>
-        <p style="color: var(--text-muted); font-size: 12px;">Check console for details.</p>
-        <button class="primary-btn" style="margin-top: 16px;">Back to Board</button>
-      `;
-
-      const backBtn = errorDiv.querySelector('button');
-      if (backBtn) {
-        backBtn.addEventListener('click', () => {
-          context.render();
-        });
-      }
+      errorDiv.createEl('h3', { text: '⚠️ Error loading roadmap' });
+      errorDiv.createEl('p', { text: 'An error occurred while loading the roadmap view.' });
+      errorDiv.createEl('p', { text: 'Check console for details.', cls: 'error-detail' });
+      const backBtn = errorDiv.createEl('button', { text: 'Back to board', cls: 'primary-btn' });
+      backBtn.addEventListener('click', () => context.render());
     } finally {
       // Always reset the rendering flag
       this.isRendering = false;

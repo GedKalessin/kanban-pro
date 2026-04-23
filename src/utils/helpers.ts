@@ -2,6 +2,7 @@
 // KANBAN PRO - UTILITY HELPERS
 // ============================================
 
+import { App } from 'obsidian';
 import { Priority, PRIORITY_COLORS } from '../models/types';
 
 export function setCssProps(el: HTMLElement, props: Record<string, string>): void {
@@ -13,7 +14,7 @@ export function setCssProps(el: HTMLElement, props: Record<string, string>): voi
 // ==================== ID GENERATION ====================
 
 export function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
 
 // ==================== DATE UTILITIES ====================
@@ -388,9 +389,7 @@ export function escapeHtml(text: string): string {
 }
 
 export function unescapeHtml(html: string): string {
-  const div = document.createElement('div');
-  div.innerHTML = html;
-  return div.textContent || '';
+  return new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '';
 }
 
 export function extractHashtags(text: string): string[] {
@@ -520,27 +519,27 @@ export function isValidHexColor(color: string): boolean {
 
 // ==================== LOCAL STORAGE UTILITIES ====================
 
-export function saveToLocalStorage(key: string, value: any): void {
+export function saveToLocalStorage(app: App, key: string, value: any): void {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    (app as any).saveLocalStorage(key, JSON.stringify(value));
   } catch (error) {
     console.error('Failed to save to localStorage:', error);
   }
 }
 
-export function loadFromLocalStorage<T>(key: string, defaultValue: T): T {
+export function loadFromLocalStorage<T>(app: App, key: string, defaultValue: T): T {
   try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
+    const item = (app as any).loadLocalStorage(key) as string | null;
+    return item !== null ? JSON.parse(item) : defaultValue;
   } catch (error) {
     console.error('Failed to load from localStorage:', error);
     return defaultValue;
   }
 }
 
-export function removeFromLocalStorage(key: string): void {
+export function removeFromLocalStorage(app: App, key: string): void {
   try {
-    localStorage.removeItem(key);
+    (app as any).saveLocalStorage(key, undefined);
   } catch (error) {
     console.error('Failed to remove from localStorage:', error);
   }
@@ -560,24 +559,7 @@ export function downloadAsJson(data: any, filename: string): void {
 }
 
 export function copyToClipboard(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    return navigator.clipboard.writeText(text);
-  } else {
-    // Fallback for older browsers
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.className = 'clipboard-helper';
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    } finally {
-      document.body.removeChild(textArea);
-    }
-  }
+  return navigator.clipboard.writeText(text);
 }
 
 // ==================== TIME TRACKING UTILITIES ====================

@@ -197,7 +197,7 @@ export class CardDetailModal extends Modal {
 
     // Start Date
     new Setting(container)
-        .setName('Start Date')
+        .setName('Start date')
         .addButton(btn => {
         btn.setButtonText(this.card.startDate ? formatDisplayDate(this.card.startDate) : 'Set start date');
         btn.onClick(() => {
@@ -221,7 +221,7 @@ export class CardDetailModal extends Modal {
 
     // Due Date
     new Setting(container)
-      .setName('Due Date')
+      .setName('Due date')
       .addButton(btn => {
         btn.setButtonText(this.card.dueDate ? formatDisplayDate(this.card.dueDate) : 'Set date');
         btn.onClick(() => {
@@ -270,7 +270,7 @@ export class CardDetailModal extends Modal {
 
     // Color
     new Setting(container)
-      .setName('Card Color')
+      .setName('Card color')
       .addButton(btn => {
         btn.setButtonText('Choose');
         btn.onClick(() => {
@@ -623,7 +623,7 @@ export class CardDetailModal extends Modal {
     const footer = contentEl.createDiv({ cls: 'modal-footer' });
 
     // Delete Card
-    const deleteBtn = footer.createEl('button', { cls: 'danger-btn', text: 'Delete Card' });
+    const deleteBtn = footer.createEl('button', { cls: 'danger-btn', text: 'Delete card' });
     deleteBtn.addEventListener('click', () => {
       new ConfirmModal(
         this.app,

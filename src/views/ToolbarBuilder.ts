@@ -149,7 +149,7 @@ export class ToolbarBuilder {
   private showSearch(): void {
     new TextInputModal(
       this.app,
-      'Search Cards',
+      'Search cards',
       'Search',
       '',
       (query: string) => {
@@ -200,7 +200,7 @@ export class ToolbarBuilder {
     const menu = new Menu();
 
     menu.addItem(item => {
-      item.setTitle('Manage Team').setIcon('users').onClick(() => {
+      item.setTitle('Manage team').setIcon('users').onClick(() => {
         new TeamModal(this.app, this.boardService, () => {
           this.onSave();
           this.onRender();
@@ -211,7 +211,7 @@ export class ToolbarBuilder {
     menu.addSeparator();
 
     menu.addItem(item => {
-      item.setTitle('Edit Status Groups').setIcon('layers').onClick(() => {
+      item.setTitle('Edit status groups').setIcon('layers').onClick(() => {
         new StatusGroupsModal(this.app, this.boardService, () => {
           this.onSave();
           this.onRender();
@@ -234,7 +234,7 @@ export class ToolbarBuilder {
     });
 
     menu.addItem(item => {
-      item.setTitle('Board Settings').setIcon('settings').onClick(() => {
+      item.setTitle('Board settings').setIcon('settings').onClick(() => {
         this.showSettingsModal();
       });
     });
@@ -313,7 +313,7 @@ export class ToolbarBuilder {
     const board = this.boardService.getBoard();
     new TextInputModal(
       this.app,
-      'Rename Board',
+      'Rename board',
       'Board name',
       board.name,
       (value: string) => {
@@ -329,7 +329,7 @@ export class ToolbarBuilder {
 
     menu.addItem((item) =>
       item
-        .setTitle('Edit Statuses')
+        .setTitle('Edit statuses')
         .setIcon('settings')
         .onClick(() => {
           new StatusManagementModal(this.app, this.boardService, () => {
@@ -343,14 +343,14 @@ export class ToolbarBuilder {
 
     menu.addItem((item) =>
       item
-        .setTitle('Add Swim Lane')
+        .setTitle('Add swim lane')
         .setIcon('columns')
         .onClick(() => this.addSwimLane())
     );
 
     menu.addItem((item) =>
       item
-        .setTitle('Export Board')
+        .setTitle('Export board')
         .setIcon('download')
         .onClick(() => this.exportBoard())
     );
@@ -359,7 +359,7 @@ export class ToolbarBuilder {
 
     menu.addItem((item) =>
       item
-        .setTitle('Board Settings')
+        .setTitle('Board settings')
         .setIcon('sliders-horizontal')
         .onClick(() => this.showSettingsModal())
     );
@@ -370,7 +370,7 @@ export class ToolbarBuilder {
   private addSwimLane(): void {
     new TextInputModal(
       this.app,
-      'Add Swim Lane',
+      'Add swim lane',
       'Swim lane name',
       '',
       (value: string) => {

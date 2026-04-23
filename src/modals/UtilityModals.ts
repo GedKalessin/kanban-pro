@@ -89,7 +89,7 @@ class ColorPickerModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-color-picker-modal');
 
-    contentEl.createEl('h2', { text: '🎨 Choose Color' });
+    contentEl.createEl('h2', { text: '🎨 Choose color' });
 
     // Color Preview
     const previewContainer = contentEl.createDiv({ cls: 'color-preview-container' });
@@ -352,7 +352,7 @@ class QuickAddCardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-quick-add-modal');
 
-    contentEl.createEl('h2', { text: '✨ Quick Add Card' });
+    contentEl.createEl('h2', { text: '✨ Quick add card' });
 
     // Title
     new Setting(contentEl)
@@ -375,7 +375,7 @@ class QuickAddCardModal extends Modal {
 
     // Start Date
     new Setting(contentEl)
-      .setName('Start Date')
+      .setName('Start date')
       .setDesc('When work begins (optional)')
       .addText(text => {
         text.inputEl.type = 'date';
@@ -387,7 +387,7 @@ class QuickAddCardModal extends Modal {
 
     // Due Date
     new Setting(contentEl)
-      .setName('Due Date')
+      .setName('Due date')
       .setDesc('When work should be done (optional)')
       .addText(text => {
         text.inputEl.type = 'date';
@@ -399,15 +399,15 @@ class QuickAddCardModal extends Modal {
 
     // Quick date buttons
     const quickDatesSection = contentEl.createDiv({ cls: 'quick-dates-section' });
-    quickDatesSection.createEl('h4', { text: 'Quick Dates' });
+    quickDatesSection.createEl('h4', { text: 'Quick dates' });
 
     const quickDatesContainer = quickDatesSection.createDiv({ cls: 'quick-dates-buttons' });
 
     const quickDates = [
       { label: 'Today', days: 0 },
       { label: 'Tomorrow', days: 1 },
-      { label: 'This Week', days: 7 },
-      { label: 'Next Week', days: 14 }
+      { label: 'This week', days: 7 },
+      { label: 'Next week', days: 14 }
     ];
 
     quickDates.forEach(({ label, days }) => {
@@ -535,7 +535,7 @@ class StatusManagementModal extends Modal {
     const header = contentEl.createDiv({ cls: 'modal-header-premium' });
     const headerTop = header.createDiv({ cls: 'header-top' });
 
-    headerTop.createEl('h2', { text: '⚙️ Edit Statuses' });
+    headerTop.createEl('h2', { text: '⚙️ Edit statuses' });
 
     const closeBtn = headerTop.createEl('button', { cls: 'modal-close-btn' });
     setIcon(closeBtn, 'x');
@@ -556,7 +556,7 @@ class StatusManagementModal extends Modal {
 
     // Save Template Section
     const templateSection = contentEl.createDiv({ cls: 'template-section' });
-    templateSection.createEl('h3', { text: '💾 Save as Template' });
+    templateSection.createEl('h3', { text: '💾 Save as template' });
     templateSection.createEl('p', {
       text: 'Save your current board structure as a reusable template',
       cls: 'section-description'
@@ -564,14 +564,14 @@ class StatusManagementModal extends Modal {
 
     const saveTemplateBtn = templateSection.createEl('button', { cls: 'add-button' });
     setIcon(saveTemplateBtn, 'save');
-    saveTemplateBtn.createSpan({ text: 'Save Current Board as Template' });
+    saveTemplateBtn.createSpan({ text: 'Save current board as template' });
     saveTemplateBtn.addEventListener('click', () => this.showSaveTemplateModal());
 
     // Saved Templates List
     const board = this.boardService.getBoard();
     if (board.savedTemplates && board.savedTemplates.length > 0) {
       const templatesHeader = templateSection.createDiv({ cls: 'templates-header' });
-      templatesHeader.createEl('h4', { text: 'Saved Templates' });
+      templatesHeader.createEl('h4', { text: 'Saved templates' });
 
       const templatesList = templateSection.createDiv({ cls: 'saved-templates-list' });
       board.savedTemplates.forEach(template => {
@@ -825,10 +825,10 @@ class SaveTemplateModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-save-template-modal');
 
-    contentEl.createEl('h2', { text: '💾 Save Board as Template' });
+    contentEl.createEl('h2', { text: '💾 Save board as template' });
 
     new Setting(contentEl)
-      .setName('Template Name')
+      .setName('Template name')
       .addText(text => {
         text
           .setPlaceholder('My Custom Workflow')

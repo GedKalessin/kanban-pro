@@ -1,4 +1,4 @@
-import { App, Modal } from 'obsidian';
+import { App, Modal, Setting } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 import { PRIORITY_COLORS } from '../models/types';
 import { setCssProps } from '../utils/helpers';
@@ -35,7 +35,7 @@ export class AnalyticsModal extends Modal {
     );
 
     // Priority Distribution
-    contentEl.createEl('h3', { text: 'Priority Distribution', cls: 'analytics-section-title' });
+    new Setting(contentEl).setHeading().setName('Priority distribution');
     const prioritySection = contentEl.createDiv({ cls: 'analytics-chart' });
 
     Object.entries(analytics.byPriority).forEach(([priority, count]) => {
@@ -54,7 +54,7 @@ export class AnalyticsModal extends Modal {
     });
 
     // Column Distribution
-    contentEl.createEl('h3', { text: 'Cards by Status', cls: 'analytics-section-title' });
+    new Setting(contentEl).setHeading().setName('Cards by status');
     const columnSection = contentEl.createDiv({ cls: 'analytics-chart' });
 
     analytics.byColumn.forEach(col => {

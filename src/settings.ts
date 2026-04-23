@@ -53,11 +53,11 @@ export class KanbanSettingsTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl('h1', { text: '⚙️ Kanban Pro Settings' });
+    new Setting(containerEl).setHeading().setName('Kanban Pro settings');
 
     // ==================== GENERAL SETTINGS ====================
-    
-    containerEl.createEl('h2', { text: 'General' });
+
+    new Setting(containerEl).setHeading().setName('General');
 
     new Setting(containerEl)
       .setName('Auto-save')
@@ -124,7 +124,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     // ==================== DISPLAY SETTINGS ====================
 
-    containerEl.createEl('h2', { text: 'Display' });
+    new Setting(containerEl).setHeading().setName('Display');
 
     new Setting(containerEl)
       .setName('Compact mode')
@@ -177,7 +177,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     // ==================== NOTIFICATIONS ====================
 
-    containerEl.createEl('h2', { text: 'Notifications & Sounds' });
+    new Setting(containerEl).setHeading().setName('Notifications & sounds');
 
     new Setting(containerEl)
       .setName('Enable notifications')
@@ -203,7 +203,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     // ==================== KEYBOARD SHORTCUTS ====================
 
-    containerEl.createEl('h2', { text: 'Keyboard Shortcuts' });
+    new Setting(containerEl).setHeading().setName('Keyboard shortcuts');
 
     new Setting(containerEl)
       .setName('Enable keyboard shortcuts')
@@ -218,7 +218,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     if (this.plugin.settings.enableKeyboardShortcuts) {
       const shortcutsInfo = containerEl.createDiv({ cls: 'kanban-shortcuts-info' });
-      shortcutsInfo.createEl('h4', { text: 'Available Shortcuts' });
+      shortcutsInfo.createEl('h4', { text: 'Available shortcuts' });
       
       const shortcutsList = shortcutsInfo.createEl('ul');
       const shortcuts = [
@@ -240,7 +240,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     // ==================== ADVANCED ====================
 
-    containerEl.createEl('h2', { text: 'Advanced' });
+    new Setting(containerEl).setHeading().setName('Advanced');
 
     new Setting(containerEl)
       .setName('Maximum history size')
@@ -268,7 +268,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     // ==================== DATA MANAGEMENT ====================
 
-    containerEl.createEl('h2', { text: 'Data Management' });
+    new Setting(containerEl).setHeading().setName('Data management');
 
     new Setting(containerEl)
       .setName('Export settings')
@@ -311,7 +311,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     // ==================== ABOUT ====================
 
-    containerEl.createEl('h2', { text: 'About' });
+    new Setting(containerEl).setHeading().setName('About');
 
     const aboutSection = containerEl.createDiv({ cls: 'kanban-about' });
     aboutSection.createEl('p', { text: '🎯 Kanban Pro - Advanced project management for Obsidian' });
@@ -435,7 +435,7 @@ class ConfirmResetModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-confirm-modal');
 
-    contentEl.createEl('h2', { text: '⚠️ Reset Settings' });
+    contentEl.createEl('h2', { text: '⚠️ Reset settings' });
     contentEl.createEl('p', { 
       text: 'Are you sure you want to reset all settings to their defaults? This action cannot be undone.',
       cls: 'confirm-message'

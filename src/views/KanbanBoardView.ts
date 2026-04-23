@@ -342,16 +342,13 @@ export class KanbanBoardView extends ItemView {
   private buildToolbar(): HTMLElement {
     console.debug('🔧 buildToolbar() for board:', this.boardService.getBoard().id);
 
-    // Capture the current view instance to ensure callbacks are bound correctly
-    const self = this;
-
     const toolbarBuilder = new ToolbarBuilder(
       this.app,
       this.boardService,
       this.currentView,
-      (view) => self.switchView(view),
-      async () => { await self.saveBoard(); },
-      () => { self.render(); }
+      (view) => this.switchView(view),
+      async () => { await this.saveBoard(); },
+      () => { this.render(); }
     );
 
     return toolbarBuilder.build();

@@ -26,7 +26,7 @@ export class AutomationsModal extends Modal {
     }
 
     // Add Automation Button
-    const addBtn = contentEl.createEl('button', { text: '+ Add Automation', cls: 'primary-btn full-width-btn' });
+    const addBtn = contentEl.createEl('button', { text: '+ Add automation', cls: 'primary-btn full-width-btn' });
     addBtn.addEventListener('click', () => {
       new Notice('⚠️ Automation creation - Coming soon!', 2000);
     });

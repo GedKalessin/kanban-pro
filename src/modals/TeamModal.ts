@@ -25,7 +25,7 @@ export class TeamModal extends Modal {
 
     // Header
     const header = contentEl.createDiv({ cls: 'team-modal-header' });
-    header.createEl('h2', { text: '👥 Team Members' });
+    header.createEl('h2', { text: '👥 Team members' });
     header.createEl('p', {
       text: 'Manage your board team. Only listed members can be assigned to tasks.',
       cls: 'team-modal-desc'
@@ -36,7 +36,7 @@ export class TeamModal extends Modal {
     this.renderList();
 
     // Add member button
-    const addBtn = contentEl.createEl('button', { cls: 'team-add-btn', text: '+ Add Member' });
+    const addBtn = contentEl.createEl('button', { cls: 'team-add-btn', text: '+ Add member' });
     addBtn.addEventListener('click', () => this.openAddMemberForm());
   }
 
@@ -163,7 +163,7 @@ class MemberFormModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-member-form-modal');
 
-    contentEl.createEl('h2', { text: this.member ? '✏️ Edit Member' : '➕ Add Member' });
+    contentEl.createEl('h2', { text: this.member ? '✏️ Edit member' : '➕ Add member' });
 
     // Preview avatar
     const previewRow = contentEl.createDiv({ cls: 'member-form-preview' });
@@ -209,7 +209,7 @@ class MemberFormModal extends Modal {
 
     // Color picker
     const colorSetting = new Setting(contentEl)
-      .setName('Avatar Color')
+      .setName('Avatar color')
       .setDesc('Color used for the avatar');
 
     const colorContainer = colorSetting.controlEl.createDiv({ cls: 'member-color-picker' });
@@ -231,7 +231,7 @@ class MemberFormModal extends Modal {
     cancelBtn.addEventListener('click', () => this.close());
 
     const submitBtn = btnRow.createEl('button', {
-      text: this.member ? 'Save Changes' : 'Add Member',
+      text: this.member ? 'Save changes' : 'Add member',
       cls: 'submit-btn'
     });
     submitBtn.addEventListener('click', () => this.submit());
@@ -321,7 +321,7 @@ export class MemberDetailModal extends Modal {
     const assignedCards = board.cards.filter(c => c.assignee.includes(this.member.name));
     if (assignedCards.length > 0) {
       const cardsSection = contentEl.createDiv({ cls: 'member-detail-cards' });
-      cardsSection.createEl('h3', { text: `📋 Assigned Tasks (${assignedCards.length})` });
+      cardsSection.createEl('h3', { text: `📋 Assigned tasks (${assignedCards.length})` });
       const cardsList = cardsSection.createDiv({ cls: 'member-detail-cards-list' });
       assignedCards.slice(0, 5).forEach(card => {
         const cardRow = cardsList.createDiv({ cls: 'member-detail-card-row' });

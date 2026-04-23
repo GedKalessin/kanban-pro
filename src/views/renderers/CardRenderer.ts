@@ -123,7 +123,7 @@ export class CardRenderer {
         if (newCompleted) {
           setIcon(cbIcon, 'check');
         } else {
-          cbIcon.innerHTML = '';
+          cbIcon.empty();
         }
         updateProgress();
       });
