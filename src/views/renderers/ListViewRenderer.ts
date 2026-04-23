@@ -3,7 +3,7 @@
 // List View Moderna e Funzionale
 // ============================================
 
-import { setIcon, Notice, Menu } from 'obsidian';
+import { setIcon, Menu } from 'obsidian';
 import { KanbanCard, Priority, PRIORITY_COLORS } from '../../models/types';
 import { createElement, formatDisplayDate, setCssProps } from '../../utils/helpers';
 import { createMemberAvatar } from '../../utils/memberAvatarHelper';
