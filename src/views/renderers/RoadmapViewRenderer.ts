@@ -552,7 +552,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
         }
 
         context.render();
-        context.saveBoard();
+        void context.saveBoard();
       } catch (error) {
         console.error('Error dropping card:', error);
         new Notice('⚠️ Error moving card', 2000);
@@ -596,7 +596,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
           console.debug('✅ context.render() completed');
 
           console.debug('💾 Calling context.saveBoard()...');
-          context.saveBoard();
+          void context.saveBoard();
           console.debug('✅ context.saveBoard() completed');
 
           new Notice('✓ Milestone created', 1500);
@@ -631,7 +631,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
       (item: { display: string; value: string }) => {
         milestone.cardIds.push(item.value);
         context.render();
-        context.saveBoard();
+        void context.saveBoard();
         new Notice('✓ Card added', 1500);
       },
       'Select a card',
@@ -642,7 +642,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
   private removeCardFromMilestone(cardId: string, milestone: Milestone, context: ViewRendererContext): void {
     milestone.cardIds = milestone.cardIds.filter(id => id !== cardId);
     context.render();
-    context.saveBoard();
+    void context.saveBoard();
     new Notice('✓ Card removed', 1500);
   }
 
@@ -659,7 +659,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
           try {
             context.render();
-            context.saveBoard();
+            void context.saveBoard();
             new Notice('✓ Milestone updated', 1500);
           } catch (error) {
             console.error('Error updating milestone:', error);
@@ -676,7 +676,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
         .onClick(() => {
           milestone.completed = !milestone.completed;
           context.render();
-          context.saveBoard();
+          void context.saveBoard();
         });
     });
 
@@ -692,7 +692,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
             const board = context.boardService.getBoard();
             board.milestones = board.milestones.filter(m => m.id !== milestone.id);
             context.render();
-            context.saveBoard();
+            void context.saveBoard();
             new Notice('✓ Milestone deleted', 1500);
           },
           'Delete',

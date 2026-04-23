@@ -61,7 +61,7 @@ export class ColumnRenderer {
     collapseBtn.addEventListener('click', () => {
       this.context.boardService.updateColumn(column.id, { collapsed: !column.collapsed });
       this.context.render();
-      this.context.saveBoard();
+      void this.context.saveBoard();
     });
     headerLeft.appendChild(collapseBtn);
 
@@ -143,7 +143,7 @@ export class ColumnRenderer {
       (value: string) => {
         this.context.boardService.updateColumn(column.id, { name: value });
         this.context.render();
-        this.context.saveBoard();
+        void this.context.saveBoard();
       }
     ).open();
   }
@@ -184,7 +184,7 @@ export class ColumnRenderer {
         this.context.render();
         console.debug('🔄 Render completed');
 
-        this.context.saveBoard();
+        void this.context.saveBoard();
         console.debug('💾 Save completed');
       }
     ).open();
@@ -223,7 +223,7 @@ export class ColumnRenderer {
       (color: string) => {
         this.context.boardService.updateColumn(column.id, { color });
         this.context.render();
-        this.context.saveBoard();
+        void this.context.saveBoard();
       }
     ).open();
   }
@@ -238,7 +238,7 @@ export class ColumnRenderer {
         const limit: number = parseInt(value);
         this.context.boardService.updateColumn(column.id, { wipLimit: isNaN(limit) ? null : limit });
         this.context.render();
-        this.context.saveBoard();
+        void this.context.saveBoard();
       }
     ).open();
   }
@@ -251,7 +251,7 @@ export class ColumnRenderer {
       () => {
         this.context.boardService.deleteColumn(column.id);
         this.context.render();
-        this.context.saveBoard();
+        void this.context.saveBoard();
       },
       'Delete',
       'Cancel',

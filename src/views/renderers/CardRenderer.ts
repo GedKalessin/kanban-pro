@@ -117,7 +117,7 @@ export class CardRenderer {
         const newCompleted = !item.completed;
         item.completed = newCompleted;
         this.context.boardService.updateChecklistItem(card.id, item.id, { completed: newCompleted });
-        this.context.saveBoard();
+        void this.context.saveBoard();
         cb.classList.toggle('checked', newCompleted);
         row.classList.toggle('completed', newCompleted);
         if (newCompleted) {
@@ -255,7 +255,7 @@ export class CardRenderer {
         'assignee-avatar',
         this.context.boardService,
         this.context.app,
-        () => { this.context.saveBoard(); this.context.render(); }
+        () => { void this.context.saveBoard(); this.context.render(); }
       );
       assigneesEl.appendChild(avatar);
     });

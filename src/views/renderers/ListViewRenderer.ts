@@ -182,7 +182,7 @@ export class ListViewRenderer implements IViewRenderer {
         completedAt: checkbox.checked ? new Date().toISOString() : null
       });
       context.render();
-      context.saveBoard();
+      void context.saveBoard();
     });
 
     const titleLink = titleCell.createDiv({ cls: 'card-title-link' });
@@ -244,7 +244,7 @@ export class ListViewRenderer implements IViewRenderer {
             'assignee-avatar-stacked',
             context.boardService,
             context.app,
-            () => { context.saveBoard(); context.render(); }
+            () => { void context.saveBoard(); context.render(); }
           );
           setCssProps(avatar, { '--kp-z': `${visibleAssignees.length - index}` });
           assigneesContainer.appendChild(avatar);
@@ -418,7 +418,7 @@ export class ListViewRenderer implements IViewRenderer {
             completedAt: card.completedAt ? null : new Date().toISOString()
           });
           context.render();
-          context.saveBoard();
+          void context.saveBoard();
         });
     });
 
@@ -433,7 +433,7 @@ export class ListViewRenderer implements IViewRenderer {
           () => {
             context.boardService.deleteCard(card.id);
             context.render();
-            context.saveBoard();
+            void context.saveBoard();
           },
           'Delete',
           'Cancel',

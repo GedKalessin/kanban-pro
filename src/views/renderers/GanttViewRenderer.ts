@@ -208,7 +208,7 @@ export class GanttViewRenderer implements IViewRenderer {
             startDate: startISO,
             dueDate: endISO
           });
-          context.saveBoard();
+          void context.saveBoard();
           new Notice('Dates updated successfully', 1500);
         },
 
@@ -223,7 +223,7 @@ export class GanttViewRenderer implements IViewRenderer {
                 completed: idx < itemsToComplete
               });
             });
-            context.saveBoard();
+            void context.saveBoard();
             new Notice('Progress updated successfully', 1500);
           }
         },
@@ -383,7 +383,7 @@ export class GanttViewRenderer implements IViewRenderer {
               dueDate: dueDate ?? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
             });
             context.render();
-            context.saveBoard();
+            void context.saveBoard();
           }
         ).open();
       }

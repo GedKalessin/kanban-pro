@@ -115,7 +115,7 @@ export class BoardViewRenderer implements IViewRenderer {
       if (lane.id !== '__no_lane__') {
         context.boardService.updateSwimLane(lane.id, { collapsed: !lane.collapsed });
         context.render();
-        context.saveBoard();
+        void context.saveBoard();
       }
     });
     laneHeader.appendChild(collapseBtn);
@@ -187,7 +187,7 @@ export class BoardViewRenderer implements IViewRenderer {
       (value: string) => {
         context.boardService.addColumn(value);
         context.render();
-        context.saveBoard();
+        void context.saveBoard();
       }
     ).open();
   }
@@ -221,7 +221,7 @@ export class BoardViewRenderer implements IViewRenderer {
       (value: string) => {
         context.boardService.updateSwimLane(lane.id, { name: value });
         context.render();
-        context.saveBoard();
+        void context.saveBoard();
       }
     ).open();
   }
@@ -230,7 +230,7 @@ export class BoardViewRenderer implements IViewRenderer {
     new ColorPickerModal(context.app, lane.color, (color: string) => {
       context.boardService.updateSwimLane(lane.id, { color });
       context.render();
-      context.saveBoard();
+      void context.saveBoard();
     }).open();
   }
 
@@ -242,7 +242,7 @@ export class BoardViewRenderer implements IViewRenderer {
       () => {
         context.boardService.deleteSwimLane(lane.id);
         context.render();
-        context.saveBoard();
+        void context.saveBoard();
       },
       'Delete',
       'Cancel',

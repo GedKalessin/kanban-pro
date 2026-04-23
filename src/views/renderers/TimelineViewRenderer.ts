@@ -115,7 +115,7 @@ export class TimelineViewRenderer implements IViewRenderer {
             dueDate: dueDate ?? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
           });
           context.render();
-          context.saveBoard();
+          void context.saveBoard();
         }).open();
       }
     });
@@ -329,7 +329,7 @@ export class TimelineViewRenderer implements IViewRenderer {
             'assignee-avatar-mini',
             context.boardService,
             context.app,
-            () => { context.saveBoard(); context.render(); }
+            () => { void context.saveBoard(); context.render(); }
           );
           setCssProps(avatar, { '--kp-z': `${visibleAssignees.length - index}` });
           assigneesContainer.appendChild(avatar);

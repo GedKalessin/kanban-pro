@@ -66,12 +66,12 @@ export class KanbanBoardView extends ItemView {
       onColumnUpdate: (columnId) => {
         console.debug('🔄 onColumnUpdate callback for board:', this.boardService.getBoard().id);
         this.render();
-        this.saveBoard();
+        void this.saveBoard();
       },
       onCardUpdate: (cardId) => {
         console.debug('🔄 onCardUpdate callback for board:', this.boardService.getBoard().id);
         this.render();
-        this.saveBoard();
+        void this.saveBoard();
       },
       saveBoard: () => this.saveBoard(),
       render: () => {
@@ -172,9 +172,10 @@ export class KanbanBoardView extends ItemView {
     }
   }
 
-  async onClose(): Promise<void> {
+  onClose(): Promise<void> {
     this.contentEl.empty();
     this.dragDropService.cleanup();
+    return Promise.resolve();
   }
 
   getState(): any {
@@ -415,7 +416,7 @@ export class KanbanBoardView extends ItemView {
       this.boardService,
       () => {
         this.render();
-        this.saveBoard();
+        void this.saveBoard();
       }
     ).open();
   }
@@ -467,7 +468,7 @@ export class KanbanBoardView extends ItemView {
 
     this.selectedCards.clear();
     this.render();
-    this.saveBoard();
+    void this.saveBoard();
     new Notice(`✅ Moved ${cards.length} card(s)`, 2000);
   }
 
@@ -489,7 +490,7 @@ export class KanbanBoardView extends ItemView {
 
         this.selectedCards.clear();
         this.render();
-        this.saveBoard();
+        void this.saveBoard();
         new Notice(`🗑️ Deleted ${cards.length} card(s)`, 2000);
       },
       'Delete',
