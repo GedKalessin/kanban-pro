@@ -50,7 +50,7 @@ export class ListViewRenderer implements IViewRenderer {
     const sortSelect = sortSection.createEl('select', { cls: 'sort-select' });
     const sortOptions = [
       { value: 'column', label: 'Column' },
-      { value: 'dueDate', label: 'Due Date' },
+      { value: 'dueDate', label: 'Due date' },
       { value: 'priority', label: 'Priority' },
       { value: 'created', label: 'Created' }
     ];
@@ -156,7 +156,7 @@ export class ListViewRenderer implements IViewRenderer {
       { key: 'column', label: 'Column', width: '15%' },
       { key: 'priority', label: 'Priority', width: '10%' },
       { key: 'assignee', label: 'Assignee', width: '15%' },
-      { key: 'dueDate', label: 'Due Date', width: '15%' },
+      { key: 'dueDate', label: 'Due date', width: '15%' },
       { key: 'progress', label: 'Progress', width: '10%' },
       { key: 'actions', label: '', width: '5%' }
     ];
@@ -357,7 +357,7 @@ export class ListViewRenderer implements IViewRenderer {
         }
         case 'priority': {
           const key = card.priority || 'none';
-          const name = card.priority ? card.priority.charAt(0).toUpperCase() + card.priority.slice(1) : 'No Priority';
+          const name = card.priority ? card.priority.charAt(0).toUpperCase() + card.priority.slice(1) : 'No priority';
           addToGroup(key, name, card);
           break;
         }
@@ -419,7 +419,7 @@ export class ListViewRenderer implements IViewRenderer {
     });
 
     menu.addItem(item => {
-      item.setTitle(card.completedAt ? 'Mark Incomplete' : 'Mark Complete')
+      item.setTitle(card.completedAt ? 'Mark incomplete' : 'Mark complete')
         .setIcon(card.completedAt ? 'circle' : 'check-circle')
         .onClick(() => {
           context.boardService.updateCard(card.id, {
@@ -436,7 +436,7 @@ export class ListViewRenderer implements IViewRenderer {
       item.setTitle('Delete').setIcon('trash-2').onClick(() => {
         new ConfirmModal(
           context.app,
-          'Delete Card',
+          'Delete card',
           `Delete "${card.title}"?`,
           () => {
             context.boardService.deleteCard(card.id);

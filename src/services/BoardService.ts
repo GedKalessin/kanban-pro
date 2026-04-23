@@ -274,7 +274,7 @@ export class BoardService {
     
     const newCard: KanbanCard = {
       id: generateId(),
-      title: cardData.title || 'New Card',
+      title: cardData.title || 'New card',
       description: cardData.description || '',
       columnId,
       swimLaneId: cardData.swimLaneId,
@@ -364,7 +364,7 @@ export class BoardService {
 
     const newCard = this.addCard(card.columnId, {
       ...card,
-      title: `${card.title} (Copy)`,
+      title: `${card.title} (copy)`,
       createdAt: undefined,
       updatedAt: undefined,
       completedAt: null

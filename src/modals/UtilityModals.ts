@@ -726,7 +726,7 @@ class StatusManagementModal extends Modal {
 
       board.savedTemplates.push(newTemplate);
       this.onOpen();
-      new Notice(`✅ Template "${templateData.name}" saved`, 2000);
+      new Notice(`✅ template "${templateData.name}" saved`, 2000);
     });
     modal.open();
   }
