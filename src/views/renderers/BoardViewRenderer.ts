@@ -200,7 +200,7 @@ export class BoardViewRenderer implements IViewRenderer {
     );
 
     menu.addItem(item =>
-      item.setTitle('Change Color').setIcon('palette').onClick(() => this.changeLaneColor(lane, context))
+      item.setTitle('Change color').setIcon('palette').onClick(() => this.changeLaneColor(lane, context))
     );
 
     menu.addSeparator();
@@ -215,7 +215,7 @@ export class BoardViewRenderer implements IViewRenderer {
   private renameLane(lane: SwimLane, context: ViewRendererContext): void {
     new TextInputModal(
       context.app,
-      'Rename Swim Lane',
+      'Rename swim lane',
       'Lane name',
       lane.name,
       (value: string) => {
@@ -237,8 +237,8 @@ export class BoardViewRenderer implements IViewRenderer {
   private deleteLane(lane: SwimLane, context: ViewRendererContext): void {
     new ConfirmModal(
       context.app,
-      'Delete Swim Lane',
-      `Delete "${lane.name}"? Cards will be moved to Unassigned.`,
+      'Delete swim lane',
+      `Delete "${lane.name}"? cards will be moved to unassigned.`,
       () => {
         context.boardService.deleteSwimLane(lane.id);
         context.render();

@@ -26,9 +26,9 @@ export class AutomationsModal extends Modal {
     }
 
     // Add Automation Button
-    const addBtn = contentEl.createEl('button', { text: '+ Add automation', cls: 'primary-btn full-width-btn' });
+    const addBtn = contentEl.createEl('button', { text: '+ add automation', cls: 'primary-btn full-width-btn' });
     addBtn.addEventListener('click', () => {
-      new Notice('⚠️ Automation creation - Coming soon!', 2000);
+      new Notice('⚠️ automation creation - Coming soon!', 2000);
     });
   }
 
@@ -58,7 +58,7 @@ export class AutomationsModal extends Modal {
       toggle.addEventListener('change', () => {
         automation.enabled = toggle.checked;
         this.onSave();
-        new Notice(automation.enabled ? '✅ Automation enabled' : '⏸️ Automation disabled', 2000);
+        new Notice(automation.enabled ? '✅ automation enabled' : '⏸️ automation disabled', 2000);
       });
 
       const deleteBtn = header.createEl('button', { text: '×', cls: 'delete-automation-btn' });

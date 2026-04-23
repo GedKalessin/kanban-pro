@@ -17,7 +17,7 @@ export class StatusGroupsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-status-groups-modal');
 
-    contentEl.createEl('h2', { text: '📊 Edit status groups' });
+    contentEl.createEl('h2', { text: '📊 edit status groups' });
 
     const description = contentEl.createEl('p', { cls: 'modal-description' });
     description.textContent = 'Organize your columns into status groups. This helps with analytics and workflow automation.';
@@ -36,7 +36,7 @@ export class StatusGroupsModal extends Modal {
     });
 
     // Add group button
-    const addBtn = contentEl.createEl('button', { text: '+ Add status group', cls: 'primary-btn full-width-btn' });
+    const addBtn = contentEl.createEl('button', { text: '+ add status group', cls: 'primary-btn full-width-btn' });
     addBtn.addEventListener('click', () => this.addStatusGroup());
 
     // Buttons
@@ -153,7 +153,7 @@ export class StatusGroupsModal extends Modal {
     return [
       {
         category: 'not-started',
-        name: 'Not Started',
+        name: 'Not started',
         description: 'Tasks that haven\'t been started yet',
         columnIds: [],
         color: '#94a3b8'
@@ -178,7 +178,7 @@ export class StatusGroupsModal extends Modal {
   private save(): void {
     this.onSave();
     this.close();
-    new Notice('✓ Status groups saved', 1500);
+    new Notice('✓ status groups saved', 1500);
   }
 
   onClose(): void {

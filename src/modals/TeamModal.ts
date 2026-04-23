@@ -25,7 +25,7 @@ export class TeamModal extends Modal {
 
     // Header
     const header = contentEl.createDiv({ cls: 'team-modal-header' });
-    header.createEl('h2', { text: '👥 Team members' });
+    header.createEl('h2', { text: '👥 team members' });
     header.createEl('p', {
       text: 'Manage your board team. Only listed members can be assigned to tasks.',
       cls: 'team-modal-desc'
@@ -36,7 +36,7 @@ export class TeamModal extends Modal {
     this.renderList();
 
     // Add member button
-    const addBtn = contentEl.createEl('button', { cls: 'team-add-btn', text: '+ Add member' });
+    const addBtn = contentEl.createEl('button', { cls: 'team-add-btn', text: '+ add member' });
     addBtn.addEventListener('click', () => this.openAddMemberForm());
   }
 
@@ -163,7 +163,7 @@ class MemberFormModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-member-form-modal');
 
-    contentEl.createEl('h2', { text: this.member ? '✏️ Edit member' : '➕ Add member' });
+    contentEl.createEl('h2', { text: this.member ? '✏️ edit member' : '➕ add member' });
 
     // Preview avatar
     const previewRow = contentEl.createDiv({ cls: 'member-form-preview' });
@@ -181,7 +181,7 @@ class MemberFormModal extends Modal {
       .setName('Name *')
       .setDesc('Full name of the team member')
       .addText(text => {
-        text.setValue(this.nameVal).setPlaceholder('e.g. Alice Johnson');
+        text.setValue(this.nameVal).setPlaceholder('e.g. alice johnson');
         text.inputEl.focus();
         text.onChange(v => { this.nameVal = v; updatePreview(); });
         text.inputEl.addEventListener('keydown', e => {
@@ -194,7 +194,7 @@ class MemberFormModal extends Modal {
       .setName('Role')
       .setDesc('Job title or role in the project')
       .addText(text => {
-        text.setValue(this.roleVal).setPlaceholder('e.g. Frontend Developer');
+        text.setValue(this.roleVal).setPlaceholder('e.g. frontend developer');
         text.onChange(v => { this.roleVal = v; });
       });
 
@@ -240,7 +240,7 @@ class MemberFormModal extends Modal {
   private submit(): void {
     const name = this.nameVal.trim();
     if (!name) {
-      new Notice('⚠️ Name is required', 2000);
+      new Notice('⚠️ name is required', 2000);
       return;
     }
     this.onSubmit({
@@ -321,7 +321,7 @@ export class MemberDetailModal extends Modal {
     const assignedCards = board.cards.filter(c => c.assignee.includes(this.member.name));
     if (assignedCards.length > 0) {
       const cardsSection = contentEl.createDiv({ cls: 'member-detail-cards' });
-      cardsSection.createEl('h3', { text: `📋 Assigned tasks (${assignedCards.length})` });
+      cardsSection.createEl('h3', { text: `📋 assigned tasks (${assignedCards.length})` });
       const cardsList = cardsSection.createDiv({ cls: 'member-detail-cards-list' });
       assignedCards.slice(0, 5).forEach(card => {
         const cardRow = cardsList.createDiv({ cls: 'member-detail-card-row' });

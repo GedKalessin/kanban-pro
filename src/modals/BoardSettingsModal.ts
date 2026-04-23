@@ -20,7 +20,7 @@ export class BoardSettingsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-board-settings-modal');
 
-    contentEl.createEl('h2', { text: '⚙️ Board settings' });
+    contentEl.createEl('h2', { text: '⚙️ board settings' });
 
     const board = this.boardService.getBoard();
     const settings = board.settings;
@@ -58,7 +58,7 @@ export class BoardSettingsModal extends Modal {
     new Setting(contentEl).setHeading().setName('Features');
 
     new Setting(contentEl)
-      .setName('Enable WIP limits')
+      .setName('Enable wip limits')
       .setDesc('Limit the number of cards per column')
       .addToggle(toggle => {
         toggle

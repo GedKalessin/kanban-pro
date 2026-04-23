@@ -361,7 +361,7 @@ export class GanttViewRenderer implements IViewRenderer {
     const fallbackContainer = container.createDiv({ cls: 'gantt-fallback' });
 
     const warning = fallbackContainer.createDiv({ cls: 'gantt-warning' });
-    warning.createEl('strong', { text: '⚠️ Frappe Gantt not available' });
+    warning.createEl('strong', { text: '⚠️ frappe gantt not available' });
     warning.createEl('br');
     warning.appendText('Install it with: ');
     warning.createEl('code', { text: 'npm install frappe-gantt' });
@@ -392,9 +392,9 @@ export class GanttViewRenderer implements IViewRenderer {
     setIcon(emptyIcon, 'gantt-chart');
     emptyState.appendChild(emptyIcon);
     emptyState.appendChild(createElement('h3', {}, ['No tasks with dates']));
-    emptyState.appendChild(createElement('p', {}, ['Add start and due dates to cards to see them in Gantt view.']));
+    emptyState.appendChild(createElement('p', {}, ['Add start and due dates to cards to see them in gantt view.']));
 
-    const createBtn = createElement('button', { className: 'primary-btn' }, ['Create Task']);
+    const createBtn = createElement('button', { className: 'primary-btn' }, ['Create task']);
     createBtn.addEventListener('click', () => {
       const board = context.boardService.getBoard();
       if (board.columns.length > 0) {
@@ -420,10 +420,10 @@ export class GanttViewRenderer implements IViewRenderer {
   private renderError(container: HTMLElement, message: string, context: ViewRendererContext): void {
     const errorDiv = container.createDiv({ cls: 'view-error' });
     setIcon(errorDiv.createDiv({ cls: 'error-icon' }), 'alert-triangle');
-    errorDiv.createEl('h3', { text: '⚠️ Gantt Error' });
+    errorDiv.createEl('h3', { text: '⚠️ gantt error' });
     errorDiv.createEl('p', { text: message });
 
-    const backBtn = errorDiv.createEl('button', { text: 'Back to Board', cls: 'primary-btn' });
+    const backBtn = errorDiv.createEl('button', { text: 'Back to board', cls: 'primary-btn' });
     backBtn.addEventListener('click', () => context.render());
   }
 

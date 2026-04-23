@@ -480,7 +480,7 @@ export class KanbanBoardView extends ItemView {
 
     new ConfirmModal(
       this.app,
-      'Delete Cards',
+      'Delete cards',
       `Delete ${this.selectedCards.size} selected card(s)?`,
       () => {
         const cards = Array.from(this.selectedCards);

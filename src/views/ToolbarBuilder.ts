@@ -172,7 +172,7 @@ export class ToolbarBuilder {
     console.debug('📊 Board ID:', board.id, 'Total cards:', board.cards.length);
 
     if (board.columns.length === 0) {
-      new Notice('⚠️ Create a column first', 2000);
+      new Notice('⚠️ create a column first', 2000);
       return;
     }
 
@@ -377,7 +377,7 @@ export class ToolbarBuilder {
         this.boardService.addSwimLane(value);
         this.onRender();
         void this.onSave();
-        new Notice(`✅ Swim lane "${value}" created`, 2000);
+        new Notice(`✅ swim lane "${value}" created`, 2000);
       }
     ).open();
   }
@@ -394,7 +394,7 @@ export class ToolbarBuilder {
     link.click();
 
     URL.revokeObjectURL(url);
-    new Notice('✅ Board exported', 2000);
+    new Notice('✅ board exported', 2000);
   }
 
   private showFilterModal(): void {

@@ -137,7 +137,7 @@ export class ColumnRenderer {
   private editColumnName(column: KanbanColumn): void {
     new TextInputModal(
       this.context.app,
-      'Rename Column',
+      'Rename column',
       'Column name',
       column.name,
       (value: string) => {
@@ -198,11 +198,11 @@ export class ColumnRenderer {
     );
 
     menu.addItem((item) =>
-      item.setTitle('Change Color').setIcon('palette').onClick(() => this.changeColumnColor(column))
+      item.setTitle('Change color').setIcon('palette').onClick(() => this.changeColumnColor(column))
     );
 
     menu.addItem((item) =>
-      item.setTitle(column.wipLimit ? 'Edit WIP Limit' : 'Set WIP Limit')
+      item.setTitle(column.wipLimit ? 'Edit WIP limit' : 'Set WIP limit')
         .setIcon('hash')
         .onClick(() => this.setWipLimit(column))
     );
@@ -210,7 +210,7 @@ export class ColumnRenderer {
     menu.addSeparator();
 
     menu.addItem((item) =>
-      item.setTitle('Delete Column').setIcon('trash').onClick(() => this.deleteColumn(column))
+      item.setTitle('Delete column').setIcon('trash').onClick(() => this.deleteColumn(column))
     );
 
     menu.showAtMouseEvent(event);
@@ -231,7 +231,7 @@ export class ColumnRenderer {
   private setWipLimit(column: KanbanColumn): void {
     new TextInputModal(
       this.context.app,
-      'Set WIP Limit',
+      'Set WIP limit',
       'Maximum cards in this column',
       column.wipLimit?.toString() || '',
       (value: string) => {
@@ -246,7 +246,7 @@ export class ColumnRenderer {
   private deleteColumn(column: KanbanColumn): void {
     new ConfirmModal(
       this.context.app,
-      'Delete Column',
+      'Delete column',
       `Delete "${column.name}" and all its cards?`,
       () => {
         this.context.boardService.deleteColumn(column.id);

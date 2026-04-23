@@ -39,8 +39,8 @@ export class TimelineViewRenderer implements IViewRenderer {
       const timelineContainer = this.renderTimelineContainer(dates, filteredCards, startDate, context);
       container.appendChild(timelineContainer);
     } catch (error) {
-      console.error('Timeline View Error:', error);
-      this.renderError(container, 'Failed to render Timeline view', context);
+      console.error('Timeline view error:', error);
+      this.renderError(container, 'Failed to render timeline view', context);
     }
   }
 
@@ -104,7 +104,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     emptyState.appendChild(createElement('p', {}, ['Add start or due dates to cards to see them in timeline view.']));
 
     // Button to create a card with dates
-    const createBtn = createElement('button', { className: 'primary-btn' }, ['Create Card with Dates']);
+    const createBtn = createElement('button', { className: 'primary-btn' }, ['Create card with dates']);
     createBtn.addEventListener('click', () => {
       const board = context.boardService.getBoard();
       if (board.columns.length > 0) {
@@ -453,7 +453,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     const groups = new Map<string, KanbanCard[]>();
 
     if (this.config.groupBy === 'none') {
-      groups.set('All Cards', cards);
+      groups.set('All cards', cards);
       return groups;
     }
 
@@ -474,7 +474,7 @@ export class TimelineViewRenderer implements IViewRenderer {
           break;
         }
         default: {
-          key = 'All Cards';
+          key = 'All cards';
         }
       }
 
@@ -492,11 +492,11 @@ export class TimelineViewRenderer implements IViewRenderer {
     const errorIcon = errorDiv.createDiv({ cls: 'error-icon' });
     setIcon(errorIcon, 'alert-triangle');
 
-    errorDiv.createEl('h3', { text: '⚠️ View Error' });
+    errorDiv.createEl('h3', { text: '⚠️ View error' });
     errorDiv.createEl('p', { text: message });
 
     const backBtn = errorDiv.createEl('button', {
-      text: 'Back to Board',
+      text: 'Back to board',
       cls: 'primary-btn'
     });
     backBtn.addEventListener('click', () => {

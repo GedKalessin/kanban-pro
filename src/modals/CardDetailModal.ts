@@ -78,13 +78,13 @@ export class CardDetailModal extends Modal {
   private renderMainContent(container: HTMLElement): void {
     // Description
     const descSection = container.createDiv({ cls: 'card-section' });
-    descSection.createEl('h3', { text: '📝 Description' });
+    descSection.createEl('h3', { text: '📝 description' });
 
     // Get the current card from BoardService to ensure we have the latest data
     const currentCard = this.boardService.getCard(this.card.id);
     const descriptionValue = currentCard?.description || this.card.description || '';
 
-    console.debug('🔍 Rendering description field:', {
+    console.debug('🔍 rendering description field:', {
       cardId: this.card.id,
       descriptionValue,
       cardDescriptionDirect: this.card.description,
@@ -125,13 +125,13 @@ export class CardDetailModal extends Modal {
     const checklistTitle = checklistHeader.createDiv({ cls: 'subtask-modal-title' });
     const titleIcon = checklistTitle.createSpan({ cls: 'icon' });
     setIcon(titleIcon, 'square-check-big');
-    checklistTitle.createEl('h3', { text: 'Subtasks' });
+    checklistTitle.createEl('h3', { text: 'subtasks' });
 
     const addChecklistBtn = checklistHeader.createEl('button', { cls: 'subtask-add-btn' });
     const addBtnIcon = addChecklistBtn.createSpan({ cls: 'icon' });
     setIcon(addBtnIcon, 'plus');
-    addChecklistBtn.createSpan({ text: 'Add' });
-    addChecklistBtn.title = 'Add subtask';
+    addChecklistBtn.createSpan({ text: 'add' });
+    addChecklistBtn.title = 'add subtask';
     addChecklistBtn.addEventListener('click', () => this.addChecklistItem());
 
     // Progress bar
@@ -143,7 +143,7 @@ export class CardDetailModal extends Modal {
 
     // Linked Notes
     const notesSection = container.createDiv({ cls: 'card-section' });
-    notesSection.createEl('h3', { text: '🔗 Linked notes' });
+    notesSection.createEl('h3', { text: '🔗 linked notes' });
 
     this.linkedNotesContainerEl = notesSection.createDiv({ cls: 'linked-notes-content' });
     this.renderLinkedNotes();
@@ -503,7 +503,7 @@ export class CardDetailModal extends Modal {
           this.onUpdate();
           this.renderLinkedNotes();
         } else {
-          new Notice('⚠️ Note already linked', 2000);
+          new Notice('⚠️ note already linked', 2000);
         }
       },
       'Search notes...',
@@ -633,7 +633,7 @@ export class CardDetailModal extends Modal {
           this.boardService.deleteCard(this.card.id);
           this.onUpdate();
           this.close();
-          new Notice('🗑️ Card deleted', 2000);
+          new Notice('🗑️ card deleted', 2000);
         },
         'Delete',
         'Cancel',
@@ -646,7 +646,7 @@ export class CardDetailModal extends Modal {
     duplicateBtn.addEventListener('click', () => {
       this.boardService.duplicateCard(this.card.id);
       this.onUpdate();
-      new Notice('✅ Card duplicated', 2000);
+      new Notice('✅ card duplicated', 2000);
       this.close();
     });
   }

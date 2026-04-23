@@ -53,7 +53,7 @@ class TextInputModal extends Modal {
       this.onSubmit(this.value);
       this.close();
     } else {
-      new Notice('⚠️ Please enter a value', 2000);
+      new Notice('⚠️ please enter a value', 2000);
     }
   }
 
@@ -145,7 +145,7 @@ class ColorPickerModal extends Modal {
     submitBtn.addEventListener('click', () => {
       this.onSubmit(this.color);
       this.close();
-      new Notice('✓ Color applied', 1500);
+      new Notice('✓ color applied', 1500);
     });
   }
 
@@ -443,7 +443,7 @@ class QuickAddCardModal extends Modal {
 
   private submit(): void {
     if (!this.formData.title.trim()) {
-      new Notice('⚠️ Please enter a title', 2000);
+      new Notice('⚠️ please enter a title', 2000);
       return;
     }
 
@@ -676,7 +676,7 @@ class StatusManagementModal extends Modal {
     const availableColumns = board.columns.filter(col => !group.columnIds.includes(col.id));
 
     if (availableColumns.length === 0) {
-      new Notice('⚠️ All columns are already assigned', 2000);
+      new Notice('⚠️ all columns are already assigned', 2000);
       return;
     }
 
@@ -766,7 +766,7 @@ class StatusManagementModal extends Modal {
 
         this.onSave();
         this.close();
-        new Notice(`✅ Template "${template.name}" applied`, 2000);
+        new Notice(`✅ template "${template.name}" applied`, 2000);
       },
       'Apply',
       'Cancel',
@@ -785,7 +785,7 @@ class StatusManagementModal extends Modal {
           board.savedTemplates = board.savedTemplates.filter(t => t.id !== templateId);
         }
         this.onOpen();
-        new Notice('✅ Template deleted', 2000);
+        new Notice('✅ template deleted', 2000);
       },
       'Delete',
       'Cancel',
@@ -798,7 +798,7 @@ class StatusManagementModal extends Modal {
     board.statusGroups = this.statusGroups;
     this.onSave();
     this.close();
-    new Notice('✅ Status configuration saved', 2000);
+    new Notice('✅ status configuration saved', 2000);
   }
 
   onClose(): void {
@@ -874,7 +874,7 @@ class SaveTemplateModal extends Modal {
       });
       this.close();
     } else {
-      new Notice('⚠️ Please enter a template name', 2000);
+      new Notice('⚠️ please enter a template name', 2000);
     }
   }
 
