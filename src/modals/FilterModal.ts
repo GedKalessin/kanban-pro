@@ -16,7 +16,7 @@ export class FilterModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-filter-modal');
 
-    contentEl.createEl('h2', { text: '🔍 filters' });
+    contentEl.createEl('h2', { text: '🔍 Filters' });
 
     const board = this.boardService.getBoard();
     const filters = board.filters;
@@ -24,11 +24,11 @@ export class FilterModal extends Modal {
     // Assignees
     new Setting(contentEl)
       .setName('Assignees')
-      .setDesc('filter by assignees (comma-separated)')
+      .setDesc('Filter by assignees (comma-separated)')
       .addText(text => {
         text
           .setValue(filters.assignees.join(', '))
-          .setPlaceholder('john, jane, bob')
+          .setPlaceholder('John, Jane, Bob')
           .onChange(value => {
             const assignees = value.split(',').map(a => a.trim()).filter(a => a);
             this.boardService.setFilters({ assignees });
@@ -39,7 +39,7 @@ export class FilterModal extends Modal {
     // Priorities
     new Setting(contentEl)
       .setName('Priorities')
-      .setDesc('select priorities to show')
+      .setDesc('Select priorities to show')
       .addDropdown(dropdown => {
         dropdown.addOption('', 'All priorities');
         const priorities: Priority[] = ['low', 'medium', 'high', 'critical'];
@@ -80,7 +80,7 @@ export class FilterModal extends Modal {
     // Tags
     new Setting(contentEl)
       .setName('Tags')
-      .setDesc('filter by tags (comma-separated)')
+      .setDesc('Filter by tags (comma-separated)')
       .addText(text => {
         text
           .setValue(filters.tags.join(', '))
@@ -158,7 +158,7 @@ export class FilterModal extends Modal {
       this.boardService.clearFilters();
       this.onUpdate();
       this.close();
-      new Notice('🧹 filters cleared', 2000);
+      new Notice('🧹 Filters cleared', 2000);
     });
 
     const closeBtn = buttonContainer.createEl('button', { text: 'Close', cls: 'primary-btn' });

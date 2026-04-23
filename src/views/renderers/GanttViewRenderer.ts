@@ -268,8 +268,8 @@ export class GanttViewRenderer implements IViewRenderer {
       console.error('Frappe Gantt initialization error:', error);
       ganttContainer.empty();
       const errorMsg = ganttContainer.createDiv({ cls: 'gantt-error' });
-      errorMsg.createEl('h3', { text: '⚠️ error loading gantt chart' });
-      errorMsg.createEl('p', { text: 'using fallback view...' });
+      errorMsg.createEl('h3', { text: '⚠️ Error loading Gantt chart' });
+      errorMsg.createEl('p', { text: 'Using fallback view...' });
       setTimeout(() => this.renderFallback(container, cards, context), 100);
     }
   }
@@ -361,7 +361,7 @@ export class GanttViewRenderer implements IViewRenderer {
     const fallbackContainer = container.createDiv({ cls: 'gantt-fallback' });
 
     const warning = fallbackContainer.createDiv({ cls: 'gantt-warning' });
-    warning.createEl('strong', { text: '⚠️ frappe gantt not available' });
+    warning.createEl('strong', { text: '⚠️ Frappe Gantt not available' });
     warning.createEl('br');
     warning.appendText('Install it with: ');
     warning.createEl('code', { text: 'npm install frappe-gantt' });
@@ -420,7 +420,7 @@ export class GanttViewRenderer implements IViewRenderer {
   private renderError(container: HTMLElement, message: string, context: ViewRendererContext): void {
     const errorDiv = container.createDiv({ cls: 'view-error' });
     setIcon(errorDiv.createDiv({ cls: 'error-icon' }), 'alert-triangle');
-    errorDiv.createEl('h3', { text: '⚠️ gantt error' });
+    errorDiv.createEl('h3', { text: '⚠️ Gantt error' });
     errorDiv.createEl('p', { text: message });
 
     const backBtn = errorDiv.createEl('button', { text: 'Back to board', cls: 'primary-btn' });

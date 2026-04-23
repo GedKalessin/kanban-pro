@@ -247,7 +247,7 @@ export class KanbanBoardView extends ItemView {
       }
     } catch (error) {
       console.error('Kanban Pro: Error loading file:', error);
-      new Notice('⚠️ failed to load kanban board', 3000);
+      new Notice('⚠️ Failed to load kanban board', 3000);
       this.render();
     }
   }
@@ -291,7 +291,7 @@ export class KanbanBoardView extends ItemView {
       }
     } catch (error) {
       console.error('Kanban Pro: Error saving board:', error);
-      new Notice('⚠️ failed to save kanban board', 3000);
+      new Notice('⚠️ Failed to save kanban board', 3000);
     }
   }
 
@@ -380,8 +380,8 @@ export class KanbanBoardView extends ItemView {
       console.error('Kanban Pro: Error rendering view:', error);
       container.empty();
       const errorDiv = container.createDiv({ cls: 'view-error' });
-      errorDiv.createEl('h3', { text: '⚠️ error rendering view' });
-      errorDiv.createEl('p', { text: 'switch to another view or check the console for details.' });
+      errorDiv.createEl('h3', { text: '⚠️ Error rendering view' });
+      errorDiv.createEl('p', { text: 'Switch to another view or check the console for details.' });
 
       // Non bloccare la navigazione - l'utente può ancora cambiare view
     }
@@ -399,7 +399,7 @@ export class KanbanBoardView extends ItemView {
   private openCardModal(cardId: string): void {
     const card = this.boardService.getCard(cardId);
     if (!card) {
-      new Notice('⚠️ card not found', 2000);
+      new Notice('⚠️ Card not found', 2000);
       return;
     }
 

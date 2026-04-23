@@ -97,7 +97,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Default board folder')
-      .setDesc('where new boards are created by default')
+      .setDesc('Where new boards are created by default')
       .addText(text => text
         .setPlaceholder('Kanban boards')
         .setValue(this.plugin.settings.defaultBoardFolder)
@@ -109,11 +109,11 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Theme')
-      .setDesc('choose the appearance theme')
+      .setDesc('Choose the appearance theme')
       .addDropdown(dropdown => dropdown
-        .addOption('auto', 'auto (follow Obsidian)')
-        .addOption('light', 'light')
-        .addOption('dark', 'dark')
+        .addOption('auto', 'Auto (follow Obsidian)')
+        .addOption('light', 'Light')
+        .addOption('dark', 'Dark')
         .setValue(this.plugin.settings.theme)
         .onChange(async (value: 'auto' | 'light' | 'dark') => {
           this.plugin.settings.theme = value;
@@ -128,7 +128,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Compact mode')
-      .setDesc('show cards in a more compact layout')
+      .setDesc('Show cards in a more compact layout')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.compactMode)
         .onChange(async (value) => {
@@ -140,7 +140,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Show card numbers')
-      .setDesc('display card numbers for easy reference')
+      .setDesc('Display card numbers for easy reference')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.showCardNumbers)
         .onChange(async (value) => {
@@ -151,10 +151,10 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Date format')
-      .setDesc('how to display dates on cards')
+      .setDesc('How to display dates on cards')
       .addDropdown(dropdown => dropdown
-        .addOption('relative', 'relative (today, tomorrow, etc.)')
-        .addOption('absolute', 'absolute (jan 1, 2024)')
+        .addOption('relative', 'Relative (today, tomorrow, etc.)')
+        .addOption('absolute', 'Absolute (Jan 1, 2024)')
         .setValue(this.plugin.settings.dateFormat)
         .onChange(async (value: 'relative' | 'absolute') => {
           this.plugin.settings.dateFormat = value;
@@ -164,10 +164,10 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('First day of week')
-      .setDesc('choose which day starts the week')
+      .setDesc('Choose which day starts the week')
       .addDropdown(dropdown => dropdown
-        .addOption('0', 'sunday')
-        .addOption('1', 'monday')
+        .addOption('0', 'Sunday')
+        .addOption('1', 'Monday')
         .setValue(this.plugin.settings.firstDayOfWeek.toString())
         .onChange(async (value) => {
           this.plugin.settings.firstDayOfWeek = parseInt(value) as 0 | 1;
@@ -181,7 +181,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Enable notifications')
-      .setDesc('show notifications for important events')
+      .setDesc('Show notifications for important events')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableNotifications)
         .onChange(async (value) => {
@@ -192,7 +192,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Enable sound effects')
-      .setDesc('play sounds for actions (experimental)')
+      .setDesc('Play sounds for actions (experimental)')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableSoundEffects)
         .onChange(async (value) => {
@@ -207,7 +207,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Enable keyboard shortcuts')
-      .setDesc('use keyboard shortcuts for quick actions')
+      .setDesc('Use keyboard shortcuts for quick actions')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableKeyboardShortcuts)
         .onChange(async (value) => {
@@ -244,7 +244,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Maximum history size')
-      .setDesc('number of undo/redo states to keep')
+      .setDesc('Number of undo/redo states to keep')
       .addSlider(slider => slider
         .setLimits(10, 100, 5)
         .setValue(this.plugin.settings.maxHistorySize)
@@ -257,7 +257,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Enable telemetry')
-      .setDesc('help improve kanban pro by sharing anonymous usage data')
+      .setDesc('Help improve Kanban Pro by sharing anonymous usage data')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableTelemetry)
         .onChange(async (value) => {
@@ -272,7 +272,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Export settings')
-      .setDesc('export your plugin settings to a file')
+      .setDesc('Export your plugin settings to a file')
       .addButton(button => button
         .setButtonText('Export')
         .setIcon('download')
@@ -283,7 +283,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Import settings')
-      .setDesc('import plugin settings from a file')
+      .setDesc('Import plugin settings from a file')
       .addButton(button => button
         .setButtonText('Import')
         .setIcon('upload')
@@ -294,7 +294,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Reset to defaults')
-      .setDesc('reset all settings to their default values')
+      .setDesc('Reset all settings to their default values')
       .addButton(button => button
         .setButtonText('Reset')
         .setWarning()
@@ -304,7 +304,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
             this.plugin.settings = { ...DEFAULT_SETTINGS };
             await this.plugin.saveSettings();
             this.display();
-            new Notice('✅ settings reset to defaults', 3000);
+            new Notice('✅ Settings reset to defaults', 3000);
           }
         })
       );
@@ -314,30 +314,30 @@ export class KanbanSettingsTab extends PluginSettingTab {
     new Setting(containerEl).setHeading().setName('About');
 
     const aboutSection = containerEl.createDiv({ cls: 'kanban-about' });
-    aboutSection.createEl('p', { text: 'kanban pro - advanced project management for obsidian' });
-    aboutSection.createEl('p', { text: 'version: 1.0.0' });
+    aboutSection.createEl('p', { text: 'Kanban Pro - advanced project management for Obsidian' });
+    aboutSection.createEl('p', { text: 'Version: 1.0.0' });
     
     const linksDiv = aboutSection.createDiv({ cls: 'kanban-links' });
-    linksDiv.createEl('a', { 
-      text: '📖 documentation', 
-      href: '#',
-      cls: 'external-link' 
-    });
-    linksDiv.createSpan({ text: ' • ' });
     linksDiv.createEl('a', {
-      text: '🐛 report bug',
+      text: '📖 Documentation',
       href: '#',
       cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
     linksDiv.createEl('a', {
-      text: '💡 request feature',
+      text: '🐛 Report bug',
       href: '#',
       cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
     linksDiv.createEl('a', {
-      text: '☕ support development',
+      text: '💡 Request feature',
+      href: '#',
+      cls: 'external-link'
+    });
+    linksDiv.createSpan({ text: ' • ' });
+    linksDiv.createEl('a', {
+      text: '☕ Support development',
       href: '#',
       cls: 'external-link'
     });
@@ -365,7 +365,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
     link.click();
     
     URL.revokeObjectURL(url);
-    new Notice('✅ settings exported successfully', 3000);
+    new Notice('✅ Settings exported successfully', 3000);
   }
 
   private importSettings(): void {
@@ -384,17 +384,17 @@ export class KanbanSettingsTab extends PluginSettingTab {
           
           // Validate settings
           if (!this.validateSettings(settings)) {
-            new Notice('❌ invalid settings file', 3000);
+            new Notice('❌ Invalid settings file', 3000);
             return;
           }
 
           this.plugin.settings = { ...DEFAULT_SETTINGS, ...settings };
           await this.plugin.saveSettings();
           this.display();
-          new Notice('✅ settings imported successfully', 3000);
+          new Notice('✅ Settings imported successfully', 3000);
         } catch (error) {
           console.error('Failed to import settings:', error);
-          new Notice('❌ failed to import settings', 3000);
+          new Notice('❌ Failed to import settings', 3000);
         }
       })();
     });
@@ -437,9 +437,9 @@ class ConfirmResetModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-confirm-modal');
 
-    contentEl.createEl('h2', { text: '⚠️ reset settings' });
+    contentEl.createEl('h2', { text: '⚠️ Reset settings' });
     contentEl.createEl('p', { 
-      text: 'Are you sure you want to reset all settings to their defaults? this action cannot be undone.',
+      text: 'Are you sure you want to reset all settings to their defaults? This action cannot be undone.',
       cls: 'confirm-message'
     });
 
