@@ -286,7 +286,7 @@ export class DragDropService {
       const columnsContainer = this.draggedColumn.parentElement;
       if (!columnsContainer) return;
 
-      const columns = Array.from(columnsContainer.querySelectorAll('.kanban-column:not(.dragging-column)')) as HTMLElement[];
+      const columns = Array.from(columnsContainer.querySelectorAll<HTMLElement>('.kanban-column:not(.dragging-column)'));
       for (const col of columns) {
         const rect = col.getBoundingClientRect();
         const midpoint = rect.left + rect.width / 2;
@@ -307,7 +307,7 @@ export class DragDropService {
         const columnsContainer = this.draggedColumn.parentElement;
 
         if (columnId && columnsContainer) {
-          const columns = Array.from(columnsContainer.querySelectorAll('.kanban-column')) as HTMLElement[];
+          const columns = Array.from(columnsContainer.querySelectorAll<HTMLElement>('.kanban-column'));
           const newIndex = columns.indexOf(this.draggedColumn);
           if (newIndex >= 0) {
             this.boardService.moveColumn(columnId, newIndex);

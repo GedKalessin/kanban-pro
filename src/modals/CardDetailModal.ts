@@ -427,7 +427,7 @@ export class CardDetailModal extends Modal {
 
   private addChecklistItem(): void {
     if (!this.checklistContainerEl) return;
-    const input = this.checklistContainerEl.querySelector('.subtask-add-input') as HTMLInputElement | null;
+    const input = this.checklistContainerEl.querySelector<HTMLInputElement>('.subtask-add-input');
     if (input) {
       input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       input.focus();

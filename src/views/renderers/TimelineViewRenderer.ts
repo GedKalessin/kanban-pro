@@ -64,14 +64,14 @@ export class TimelineViewRenderer implements IViewRenderer {
     // Group By Selector
     const groupBySelector = createElement('div', { className: 'group-by-selector' });
     groupBySelector.appendChild(createElement('span', { className: 'group-label' }, ['Group by:']));
-    const groupDropdown = createElement('select', { className: 'group-dropdown' }) as HTMLSelectElement;
+    const groupDropdown = createElement('select', { className: 'group-dropdown' });
     [
       { v: 'none', l: 'None' },
       { v: 'assignee', l: 'Assignee' },
       { v: 'priority', l: 'Priority' },
       { v: 'column', l: 'Status' }
     ].forEach(opt => {
-      const option = createElement('option', { value: opt.v }, [opt.l]) as HTMLOptionElement;
+      const option = createElement('option', { value: opt.v }, [opt.l]);
       if (this.config.groupBy === opt.v) option.selected = true;
       groupDropdown.appendChild(option);
     });

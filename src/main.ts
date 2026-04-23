@@ -190,7 +190,7 @@ export default class KanbanProPlugin extends Plugin {
   setupAutoSave(filePath: string, view: KanbanBoardView) {
     // Clear existing interval if any
     if (this.autoSaveIntervals.has(filePath)) {
-      clearInterval(this.autoSaveIntervals.get(filePath)!);
+      clearInterval(this.autoSaveIntervals.get(filePath));
     }
 
     if (this.settings.autoSave && this.settings.autoSaveInterval > 0) {

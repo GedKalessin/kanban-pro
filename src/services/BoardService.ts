@@ -6,10 +6,7 @@ import {
   ChecklistItem,
   BoardFilters,
   BoardSettings,
-  BoardUpdate,
-  ColumnUpdate,
-  CardUpdate,
-  SwimLaneUpdate,
+  DeepPartial,
   BOARD_TEMPLATES,
   StatusGroup,
   StatusCategory,
@@ -47,7 +44,7 @@ export class BoardService {
     this.saveToHistory();
   }
 
-  updateBoard(updates: BoardUpdate): void {
+  updateBoard(updates: DeepPartial<KanbanBoard>): void {
     Object.assign(this.board, updates);
     this.board.updatedAt = new Date().toISOString();
     this.saveToHistory();
@@ -192,7 +189,7 @@ export class BoardService {
     return newColumn;
   }
 
-  updateColumn(columnId: string, updates: ColumnUpdate): void {
+  updateColumn(columnId: string, updates: DeepPartial<KanbanColumn>): void {
     const index = this.board.columns.findIndex(c => c.id === columnId);
     if (index !== -1) {
       this.board.columns[index] = { ...this.board.columns[index], ...updates };
@@ -307,7 +304,7 @@ export class BoardService {
     return newCard;
   }
 
-  updateCard(cardId: string, updates: CardUpdate): void {
+  updateCard(cardId: string, updates: DeepPartial<KanbanCard>): void {
     const index = this.board.cards.findIndex(c => c.id === cardId);
     if (index !== -1) {
       const card = this.board.cards[index];
@@ -530,7 +527,7 @@ export class BoardService {
     return newLane;
   }
 
-  updateSwimLane(laneId: string, updates: SwimLaneUpdate): void {
+  updateSwimLane(laneId: string, updates: DeepPartial<SwimLane>): void {
     const index = this.board.swimLanes.findIndex(l => l.id === laneId);
     if (index !== -1) {
       const { tags, ...restUpdates } = updates;

@@ -370,7 +370,4 @@ export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 
-export type BoardUpdate = DeepPartial<KanbanBoard>;
-export type ColumnUpdate = DeepPartial<KanbanColumn>;
-export type CardUpdate = DeepPartial<KanbanCard>;
-export type SwimLaneUpdate = DeepPartial<SwimLane>;
+
