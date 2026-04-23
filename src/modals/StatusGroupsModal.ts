@@ -106,8 +106,6 @@ export class StatusGroupsModal extends Modal {
       });
 
     // Columns
-    const columnsLabel = groupEl.createEl('label', { text: 'Columns in this group:', cls: 'group-columns-label' });
-
     const columnsContainer = groupEl.createDiv({ cls: 'group-columns' });
 
     const board = this.boardService.getBoard();

@@ -1,4 +1,4 @@
-import { App, Modal, Setting, Notice } from 'obsidian';
+import { App, Modal, Notice } from 'obsidian';
 import { BoardService } from '../services/BoardService';
 
 export class AutomationsModal extends Modal {
@@ -60,8 +60,6 @@ export class AutomationsModal extends Modal {
         this.onSave();
         new Notice(automation.enabled ? '✅ Automation enabled' : '⏸️ Automation disabled', 2000);
       });
-
-      const name = header.createEl('span', { text: automation.name, cls: 'automation-name' });
 
       const deleteBtn = header.createEl('button', { text: '×', cls: 'delete-automation-btn' });
       deleteBtn.addEventListener('click', () => {

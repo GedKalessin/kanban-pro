@@ -1,7 +1,7 @@
-import { App, Modal, Setting, Notice, setIcon, MarkdownRenderer } from 'obsidian';
-import { KanbanCard, Priority, TaskType, PRIORITY_COLORS, TASK_TYPE_ICONS } from '../models/types';
+import { App, Modal, Setting, Notice, setIcon } from 'obsidian';
+import { KanbanCard, Priority, TaskType, TASK_TYPE_ICONS } from '../models/types';
 import { BoardService } from '../services/BoardService';
-import { formatDisplayDate, generateId, setCssProps } from '../utils/helpers';
+import { formatDisplayDate, setCssProps } from '../utils/helpers';
 import {
   DatePickerModal,
   ColorPickerModal,

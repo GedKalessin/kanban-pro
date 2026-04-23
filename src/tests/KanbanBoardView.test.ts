@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { BoardService } from '../services/BoardService';
-import { KanbanBoard, KanbanCard } from '../models/types';
+import { KanbanBoard } from '../models/types';
 
 describe('Kanban Pro - Bug Fixes Verification', () => {
   let boardService: BoardService;
