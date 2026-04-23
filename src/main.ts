@@ -1,7 +1,8 @@
-import { Plugin, TFile, Notice, WorkspaceLeaf } from 'obsidian';
+import { Plugin, TFile, Notice, App, Modal, Setting } from 'obsidian';
 import { KanbanBoardView, KANBAN_VIEW_TYPE } from './views/KanbanBoardView';
 import { KanbanBoard, BOARD_TEMPLATES } from './models/types';
 import { KanbanSettingsTab, KanbanPluginSettings, DEFAULT_SETTINGS } from './settings';
+import { BoardService } from './services/BoardService';
 
 // ============================================
 // KANBAN PRO PLUGIN - Main Entry Point
@@ -12,7 +13,7 @@ export default class KanbanProPlugin extends Plugin {
   private autoSaveIntervals: Map<string, number> = new Map();
 
   async onload() {
-    console.log('🚀 Loading Kanban Pro Plugin');
+    console.debug('🚀 Loading Kanban Pro Plugin');
 
     await this.loadSettings();
 
@@ -52,16 +53,16 @@ export default class KanbanProPlugin extends Plugin {
     // Add settings tab
     this.addSettingTab(new KanbanSettingsTab(this.app, this));
 
-    console.log('✅ Kanban Pro Plugin loaded successfully');
+    console.debug('✅ Kanban Pro Plugin loaded successfully');
   }
 
   onunload() {
-    console.log('👋 Unloading Kanban Pro Plugin');
-    
+    console.debug('👋 Unloading Kanban Pro Plugin');
+
     // Clear all auto-save intervals
     this.autoSaveIntervals.forEach(interval => clearInterval(interval));
     this.autoSaveIntervals.clear();
-    
+
     // Detach all Kanban views
     this.app.workspace.detachLeavesOfType(KANBAN_VIEW_TYPE);
   }
@@ -122,7 +123,6 @@ export default class KanbanProPlugin extends Plugin {
   }
 
   private createEmptyBoard(name: string): KanbanBoard {
-    const BoardService = require('./services/BoardService').BoardService;
     const service = new BoardService();
     const board = service.createDefaultBoard();
     board.name = name;
@@ -130,7 +130,6 @@ export default class KanbanProPlugin extends Plugin {
   }
 
   private createBoardFromTemplate(templateId: string, name: string): KanbanBoard {
-    const BoardService = require('./services/BoardService').BoardService;
     const service = new BoardService();
     return service.createBoardFromTemplate(templateId, name);
   }
@@ -138,7 +137,7 @@ export default class KanbanProPlugin extends Plugin {
   private async saveBoardToFile(board: KanbanBoard, name: string, folderPath: string): Promise<string> {
     const fileName = `${name}.kanban`;
     const filePath = folderPath ? `${folderPath}/${fileName}` : fileName;
-    
+
     // Ensure folder exists
     if (folderPath) {
       const folder = this.app.vault.getAbstractFileByPath(folderPath);
@@ -214,8 +213,6 @@ export default class KanbanProPlugin extends Plugin {
 // ============================================
 // MODAL COMPONENTS
 // ============================================
-
-import { App, Modal, Setting } from 'obsidian';
 
 class CreateBoardModal extends Modal {
   private onSubmit: (name: string, folderPath: string) => void;
@@ -304,8 +301,8 @@ class TemplateSelectionModal extends Modal {
     const templatesGrid = contentEl.createDiv({ cls: 'template-grid' });
 
     BOARD_TEMPLATES.forEach(template => {
-      const templateCard = templatesGrid.createDiv({ 
-        cls: `template-card ${this.selectedTemplate === template.id ? 'selected' : ''}` 
+      const templateCard = templatesGrid.createDiv({
+        cls: `template-card ${this.selectedTemplate === template.id ? 'selected' : ''}`
       });
 
       const icon = templateCard.createDiv({ cls: 'template-icon' });
@@ -387,10 +384,10 @@ class OpenBoardModal extends Modal {
 
     this.boards.forEach(board => {
       const boardItem = boardsList.createDiv({ cls: 'board-item' });
-      
+
       const iconEl = boardItem.createDiv({ cls: 'board-icon' });
       iconEl.textContent = '📋';
-      
+
       const infoEl = boardItem.createDiv({ cls: 'board-info' });
       infoEl.createEl('div', { text: board.basename, cls: 'board-name' });
       infoEl.createEl('div', { text: board.path, cls: 'board-path' });

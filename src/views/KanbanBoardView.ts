@@ -16,6 +16,7 @@ import { RoadmapViewRenderer } from './renderers/RoadmapViewRenderer';
 
 // Modals
 import { CardDetailModal } from '../modals/CardDetailModal';
+import { ConfirmModal } from '../modals/UtilityModals';
 
 export const KANBAN_VIEW_TYPE = 'kanban-pro-view';
 
@@ -39,7 +40,7 @@ export class KanbanBoardView extends ItemView {
     super(leaf);
     this.plugin = plugin;
     this.boardService = new BoardService();
-    console.log('🏗️ KanbanBoardView constructor - Board ID:', this.boardService.getBoard().id);  // ✅ Debug
+    console.debug('🏗️ KanbanBoardView constructor - Board ID:', this.boardService.getBoard().id);
 
     this.dragDropService = new DragDropService(
       this.boardService,
@@ -63,18 +64,18 @@ export class KanbanBoardView extends ItemView {
       boardService: this.boardService,
       onCardClick: (cardId) => this.openCardModal(cardId),
       onColumnUpdate: (columnId) => {
-        console.log('🔄 onColumnUpdate callback for board:', this.boardService.getBoard().id);  // ✅ Debug
+        console.debug('🔄 onColumnUpdate callback for board:', this.boardService.getBoard().id);
         this.render();
         this.saveBoard();
       },
       onCardUpdate: (cardId) => {
-        console.log('🔄 onCardUpdate callback for board:', this.boardService.getBoard().id);  // ✅ Debug
+        console.debug('🔄 onCardUpdate callback for board:', this.boardService.getBoard().id);
         this.render();
         this.saveBoard();
       },
       saveBoard: () => this.saveBoard(),
       render: () => {
-        console.log('🔄 render callback from context for board:', this.boardService.getBoard().id);  // ✅ Debug
+        console.debug('🔄 render callback from context for board:', this.boardService.getBoard().id);
         this.render();
       }
     };
@@ -206,15 +207,15 @@ export class KanbanBoardView extends ItemView {
     }
 
     try {
-      console.log('📂 loadFile: Loading file from', filePath);
+      console.debug('📂 loadFile: Loading file from', filePath);
 
       const abstractFile = this.app.vault.getAbstractFileByPath(filePath);
       if (abstractFile && abstractFile instanceof TFile) {
         const content = await this.app.vault.read(abstractFile);
-        console.log('📂 loadFile: Read', content.length, 'bytes from file');
+        console.debug('📂 loadFile: Read', content.length, 'bytes from file');
 
         const board = JSON.parse(content) as KanbanBoard;
-        console.log('📂 loadFile: Parsed board', board.id, 'with', board.cards.length, 'cards');
+        console.debug('📂 loadFile: Parsed board', board.id, 'with', board.cards.length, 'cards');
 
         // Se il file è stato rinominato esternamente, sincronizza il nome interno
         const fileBasename = abstractFile.basename;
@@ -226,7 +227,7 @@ export class KanbanBoardView extends ItemView {
         this.boardService.setBoard(board);
         this.filePath = filePath;
 
-        console.log('✅ Loaded board into existing BoardService:', this.boardService.getBoard().id);
+        console.debug('✅ Loaded board into existing BoardService:', this.boardService.getBoard().id);
 
         this.render();
         this.updateTitleSafe();
@@ -248,11 +249,10 @@ export class KanbanBoardView extends ItemView {
   }
 
   setBoard(board: KanbanBoard, filePath: string): void {
-    // ✅ CRITICAL FIX: Use setBoard() instead of creating new BoardService
     this.boardService.setBoard(board);
     this.filePath = filePath;
 
-    console.log('✅ Set board via setBoard():', this.boardService.getBoard().id);
+    console.debug('✅ Set board via setBoard():', this.boardService.getBoard().id);
 
     this.render();
   }
@@ -269,17 +269,17 @@ export class KanbanBoardView extends ItemView {
 
     try {
       const board = this.boardService.getBoard();
-      console.log('💾 saveBoard: Saving board', board.id, 'with', board.cards.length, 'cards to', this.filePath);
+      console.debug('💾 saveBoard: Saving board', board.id, 'with', board.cards.length, 'cards to', this.filePath);
 
       board.updatedAt = new Date().toISOString();
       const content = JSON.stringify(board, null, 2);
 
-      console.log('💾 saveBoard: JSON content length:', content.length, 'bytes');
+      console.debug('💾 saveBoard: JSON content length:', content.length, 'bytes');
 
       const file = this.app.vault.getAbstractFileByPath(this.filePath);
       if (file instanceof TFile) {
         await this.app.vault.modify(file, content);
-        console.log('✅ saveBoard: File successfully modified');
+        console.debug('✅ saveBoard: File successfully modified');
 
         // Niente updateTitle qui: evita re-init/loop durante save.
       } else {
@@ -294,14 +294,14 @@ export class KanbanBoardView extends ItemView {
   // ==================== RENDERING ====================
 
   render(): void {
-    console.log('🔄 KanbanBoardView.render() called for board:', this.boardService.getBoard().id);  // ✅ Debug
+    console.debug('🔄 KanbanBoardView.render() called for board:', this.boardService.getBoard().id);
 
     // Save scroll position BEFORE clearing the DOM
     let savedScrollTop = 0;
     const roadmapContent = this.contentEl.querySelector('.roadmap-content') as HTMLElement;
     if (roadmapContent) {
       savedScrollTop = roadmapContent.scrollTop;
-      console.log('📜 Saved roadmap scroll position:', savedScrollTop);
+      console.debug('📜 Saved roadmap scroll position:', savedScrollTop);
     }
 
     // ✅ CRITICAL: Completely clear the DOM and cleanup drag-drop before rendering
@@ -330,7 +330,7 @@ export class KanbanBoardView extends ItemView {
         const newRoadmapContent = this.contentEl.querySelector('.roadmap-content') as HTMLElement;
         if (newRoadmapContent) {
           newRoadmapContent.scrollTop = savedScrollTop;
-          console.log('📜 Restored roadmap scroll position:', savedScrollTop);
+          console.debug('📜 Restored roadmap scroll position:', savedScrollTop);
         }
       });
     }
@@ -339,13 +339,11 @@ export class KanbanBoardView extends ItemView {
   }
 
   private buildToolbar(): HTMLElement {
-    console.log('🔧 buildToolbar() for board:', this.boardService.getBoard().id);  // ✅ Debug
+    console.debug('🔧 buildToolbar() for board:', this.boardService.getBoard().id);
 
     // Capture the current view instance to ensure callbacks are bound correctly
     const self = this;
 
-    // ✅ CRITICAL FIX: Pass callbacks that always use the current boardService,
-    // not a captured reference that might become stale
     const toolbarBuilder = new ToolbarBuilder(
       this.app,
       this.boardService,
@@ -404,7 +402,7 @@ export class KanbanBoardView extends ItemView {
       return;
     }
 
-    console.log('🔍 Opening card modal:', {
+    console.debug('🔍 Opening card modal:', {
       cardId: card.id,
       title: card.title,
       description: card.description,
@@ -429,7 +427,7 @@ export class KanbanBoardView extends ItemView {
     this.contentEl.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const card = target.closest('.kanban-card') as HTMLElement;
-      
+
       if (!card) return;
 
       if (e.ctrlKey || e.metaKey) {
@@ -479,7 +477,6 @@ export class KanbanBoardView extends ItemView {
       return;
     }
 
-    const { ConfirmModal } = require('../modals/UtilityModals');
     new ConfirmModal(
       this.app,
       'Delete Cards',
@@ -523,7 +520,7 @@ export class KanbanBoardView extends ItemView {
     board.columns.forEach(column => {
       markdown += `## ${column.name}\n\n`;
       const cards = board.cards.filter(c => c.columnId === column.id);
-      
+
       if (cards.length === 0) {
         markdown += `*No cards*\n\n`;
       } else {

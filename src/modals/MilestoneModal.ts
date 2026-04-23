@@ -1,5 +1,6 @@
 import { App, Modal, Setting } from 'obsidian';
 import { Milestone } from '../models/types';
+import { ColorPickerModal } from './UtilityModals';
 
 interface MilestoneData {
   name: string;
@@ -76,7 +77,6 @@ export class MilestoneModal extends Modal {
       .addButton(btn => {
         btn.setButtonText('Choose Color');
         btn.onClick(() => {
-          const { ColorPickerModal } = require('./UtilityModals');
           new ColorPickerModal(
             this.app,
             this.formData.color,

@@ -2,6 +2,8 @@ import { setIcon, Notice } from 'obsidian';
 import { KanbanCard } from '../../models/types';
 import { createElement } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
+import { QuickAddCardModal } from '../../modals/UtilityModals';
+import * as frappeGanttModule from 'frappe-gantt';
 
 // Import Frappe Gantt CSS
 import 'frappe-gantt/dist/frappe-gantt.css';
@@ -32,10 +34,9 @@ export class GanttViewRenderer implements IViewRenderer {
       // Try to load Frappe Gantt
       let FrappeGantt: any = null;
       try {
-        const ganttModule = require('frappe-gantt');
-        // Handle both CommonJS and ES module exports
-        FrappeGantt = ganttModule.default || ganttModule;
-        console.log('Frappe Gantt loaded successfully');
+        const ganttMod = frappeGanttModule as any;
+        FrappeGantt = ganttMod.default || ganttMod;
+        console.debug('Frappe Gantt loaded successfully');
       } catch (e) {
         console.warn('Frappe Gantt not available, using fallback:', e);
         this.renderFallback(container, filteredCards, context);
@@ -62,59 +63,47 @@ export class GanttViewRenderer implements IViewRenderer {
   ): void {
     const ganttContainer = container.createDiv({ cls: 'gantt-container-frappe' });
 
-    // Prepara i task con date corrette e dipendenze
     const tasks = cards.map(card => {
-      // Determina le date di inizio e fine
       let start: Date;
       let end: Date;
 
-      // Se esiste startDate, usalo, altrimenti usa dueDate come start
       if ((card as any).startDate) {
         start = new Date((card as any).startDate);
       } else if (card.dueDate) {
-        // Se c'è solo dueDate, usa oggi come start
         start = new Date();
       } else {
-        // Default: oggi
         start = new Date();
       }
 
-      // Se esiste dueDate, usalo come end, altrimenti calcola +7 giorni
       if (card.dueDate) {
         end = new Date(card.dueDate);
       } else {
         end = new Date(start);
-        end.setDate(end.getDate() + 7); // Default: 7 giorni dopo start
+        end.setDate(end.getDate() + 7);
       }
 
-      // Normalizza le date a mezzanotte locale (rimuovi ore/minuti/secondi)
       start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
       end = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
-      // Assicurati che end sia dopo start
       if (end < start) {
         console.warn(`Card "${card.title}": end date is before start date, swapping`);
         [start, end] = [end, start];
       }
 
-      // Se end è uguale a start, aggiungi 1 giorno (Frappe Gantt richiede almeno 1 giorno di durata)
       if (end.getTime() === start.getTime()) {
-        console.log(`Card "${card.title}": start and end are same, adding 1 day to end`);
+        console.debug(`Card "${card.title}": start and end are same, adding 1 day to end`);
         end = new Date(start);
         end.setDate(end.getDate() + 1);
       }
 
-      // Calcola progress dalla checklist
       const progress = card.checklist.length > 0
         ? Math.round((card.checklist.filter(i => i.completed).length / card.checklist.length) * 100)
         : 0;
 
-      // Gestisci le dipendenze - converti array di ID in stringa separata da virgole
       const dependencies = card.dependencies && card.dependencies.length > 0
         ? card.dependencies.join(', ')
         : '';
 
-      // Truncate long titles to prevent overflow
       const maxTitleLength = 25;
       const displayTitle = card.title.length > maxTitleLength
         ? card.title.substring(0, maxTitleLength) + '...'
@@ -130,45 +119,37 @@ export class GanttViewRenderer implements IViewRenderer {
         custom_class: this.getCustomClass(card)
       };
 
-      console.log(`Task: ${task.name} | Start: ${task.start} | End: ${task.end} | Progress: ${task.progress}% | Dependencies: ${dependencies || 'none'}`);
+      console.debug(`Task: ${task.name} | Start: ${task.start} | End: ${task.end} | Progress: ${task.progress}% | Dependencies: ${dependencies || 'none'}`);
 
       return task;
     });
 
-    console.log('Gantt tasks prepared:', tasks.length, 'tasks');
+    console.debug('Gantt tasks prepared:', tasks.length, 'tasks');
 
     try {
-      // Destroy previous instance
       if (this.ganttInstance) {
         this.ganttInstance = null;
       }
 
-      // Create wrapper per il gantt con SVG container
       this.ganttWrapper = ganttContainer.createDiv({ cls: 'gantt-wrapper' });
 
-      // Inizializza Frappe Gantt con configurazione ottimizzata (ClickUp style)
       this.ganttInstance = new FrappeGantt(this.ganttWrapper, tasks, {
-        // Layout settings - ClickUp style
         header_height: 50,
         column_width: 30,
         step: 24,
         bar_height: 32,
         bar_corner_radius: 6,
-        arrow_curve: 14, // Curved arrows like Vue example
+        arrow_curve: 14,
         padding: 20,
 
-        // View configuration
         view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month', 'Year'],
         view_mode: this.currentViewMode,
 
-        // Date formatting
         date_format: 'YYYY-MM-DD',
 
-        // Popup configuration - usa 'click' per popolare il popup solo al click
         popup_trigger: 'click',
         language: 'en',
 
-        // Custom popup HTML - ClickUp style
         custom_popup_html: (task: any) => {
           const card = context.boardService.getCard(task.id);
           if (!card) return '<div class="gantt-popup-wrapper">Task not found</div>';
@@ -178,12 +159,10 @@ export class GanttViewRenderer implements IViewRenderer {
           const endDate = new Date(task._end);
           const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
-          // Priority badge
           const priorityBadge = card.priority !== 'none'
             ? `<span class="popup-priority priority-${card.priority}">${card.priority.toUpperCase()}</span>`
             : '';
 
-          // Dependencies info
           const depsInfo = card.dependencies && card.dependencies.length > 0
             ? `<div class="popup-dependencies"><strong>Dependencies:</strong> ${card.dependencies.length} task${card.dependencies.length > 1 ? 's' : ''}</div>`
             : '';
@@ -214,16 +193,14 @@ export class GanttViewRenderer implements IViewRenderer {
           `;
         },
 
-        // Event handlers
         on_click: (task: any) => {
-          console.log('Task clicked:', task);
+          console.debug('Task clicked:', task);
           context.onCardClick(task.id);
         },
 
         on_date_change: (task: any, start: Date, end: Date) => {
-          console.log('Date changed:', task.id, start, end);
+          console.debug('Date changed:', task.id, start, end);
 
-          // Normalizza le date
           const startISO = new Date(start.getFullYear(), start.getMonth(), start.getDate()).toISOString();
           const endISO = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59).toISOString();
 
@@ -236,7 +213,7 @@ export class GanttViewRenderer implements IViewRenderer {
         },
 
         on_progress_change: (task: any, progress: number) => {
-          console.log('Progress changed:', task.id, progress);
+          console.debug('Progress changed:', task.id, progress);
 
           const card = context.boardService.getCard(task.id);
           if (card && card.checklist.length > 0) {
@@ -252,14 +229,13 @@ export class GanttViewRenderer implements IViewRenderer {
         },
 
         on_view_change: (mode: string) => {
-          console.log('View mode changed:', mode);
+          console.debug('View mode changed:', mode);
           this.currentViewMode = mode;
         }
       });
 
-      console.log('Gantt initialized successfully with', tasks.length, 'tasks');
+      console.debug('Gantt initialized successfully with', tasks.length, 'tasks');
 
-      // Setup popup visibility handling
       this.setupPopupVisibility();
 
     } catch (error) {
@@ -275,31 +251,25 @@ export class GanttViewRenderer implements IViewRenderer {
   }
 
   private getCustomClass(card: KanbanCard): string {
-    // Priority based classes (highest priority)
     if (card.blocked) return 'bar-blocked';
     if (card.completedAt) return 'bar-completed';
 
-    // Priority classes
     if (card.priority === 'critical') return 'bar-critical';
     if (card.priority === 'high') return 'bar-high';
     if (card.priority === 'medium') return 'bar-medium';
     if (card.priority === 'low') return 'bar-low';
 
-    // Assignee based classes (for color variety like Vue example)
     if (card.assignee && card.assignee.length > 0) {
-      // Create a deterministic hash from assignee name to assign consistent colors
       const assigneeName = card.assignee[0].toLowerCase();
       const hash = Array.from(assigneeName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const colorIndex = hash % 6; // 6 different assignee colors
+      const colorIndex = hash % 6;
       return `bar-assignee-${colorIndex}`;
     }
 
-    // Task type based classes
     if (card.taskType === 'bug') return 'bar-bug';
     if (card.taskType === 'feature') return 'bar-feature';
     if (card.taskType === 'epic') return 'bar-epic';
 
-    // Default
     return 'bar-default';
   }
 
@@ -311,7 +281,6 @@ export class GanttViewRenderer implements IViewRenderer {
 
     const rightSection = toolbar.createDiv({ cls: 'toolbar-right' });
 
-    // View mode buttons con icone e layout migliorato
     const viewModes = [
       { mode: 'Quarter Day', label: 'Quarter', icon: 'clock' },
       { mode: 'Half Day', label: 'Half Day', icon: 'sunrise' },
@@ -337,7 +306,6 @@ export class GanttViewRenderer implements IViewRenderer {
             this.ganttInstance.change_view_mode(mode);
             this.currentViewMode = mode;
 
-            // Update button states
             viewModeContainer.querySelectorAll('.view-mode-btn').forEach(b => b.removeClass('active'));
             btn.addClass('active');
           } catch (error) {
@@ -348,7 +316,6 @@ export class GanttViewRenderer implements IViewRenderer {
       });
     });
 
-    // Aggiungi pulsante Today per tornare alla data corrente
     const todayBtn = rightSection.createEl('button', {
       text: 'Today',
       cls: 'gantt-today-btn'
@@ -356,7 +323,6 @@ export class GanttViewRenderer implements IViewRenderer {
 
     todayBtn.addEventListener('click', () => {
       if (this.ganttInstance && this.ganttWrapper) {
-        // Scroll to today
         const todayHighlight = this.ganttWrapper.querySelector('.today-highlight');
         if (todayHighlight) {
           todayHighlight.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
@@ -369,18 +335,17 @@ export class GanttViewRenderer implements IViewRenderer {
 
   private renderFallback(container: HTMLElement, cards: KanbanCard[], context: ViewRendererContext): void {
     const fallbackContainer = container.createDiv({ cls: 'gantt-fallback' });
-    
+
     const warning = fallbackContainer.createDiv({ cls: 'gantt-warning' });
     warning.innerHTML = `
       <strong>⚠️ Frappe Gantt not available</strong><br>
       Install it with: <code>npm install frappe-gantt</code>
     `;
 
-    // Simple list view
     const list = fallbackContainer.createDiv({ cls: 'gantt-simple-list' });
     cards.forEach(card => {
       const item = list.createDiv({ cls: 'gantt-list-item' });
-      
+
       const title = item.createDiv({ cls: 'item-title' });
       title.textContent = card.title;
       title.addEventListener('click', () => context.onCardClick(card.id));
@@ -404,25 +369,14 @@ export class GanttViewRenderer implements IViewRenderer {
     emptyState.appendChild(emptyIcon);
     emptyState.appendChild(createElement('h3', {}, ['No tasks with dates']));
     emptyState.appendChild(createElement('p', {}, ['Add start and due dates to cards to see them in Gantt view.']));
-    
+
     const createBtn = createElement('button', { className: 'primary-btn' }, ['Create Task']);
     createBtn.addEventListener('click', () => {
       const board = context.boardService.getBoard();
       if (board.columns.length > 0) {
-        const { QuickAddCardModal } = require('../../modals/UtilityModals');
-        interface QuickAddCardData {
-          title: string;
-          startDate?: string;
-          dueDate?: string;
-        }
-
-        interface QuickAddCardCallback {
-          (title: string, startDate?: string, dueDate?: string): void;
-        }
-
         new QuickAddCardModal(
-          context.app, 
-          ((title: string, startDate?: string, dueDate?: string): void => {
+          context.app,
+          (title: string, startDate?: string, dueDate?: string): void => {
             context.boardService.addCard(board.columns[0].id, {
               title,
               startDate: startDate ?? new Date().toISOString(),
@@ -430,12 +384,12 @@ export class GanttViewRenderer implements IViewRenderer {
             });
             context.render();
             context.saveBoard();
-          }) as QuickAddCardCallback
+          }
         ).open();
       }
     });
     emptyState.appendChild(createBtn);
-    
+
     return emptyState;
   }
 
@@ -444,7 +398,7 @@ export class GanttViewRenderer implements IViewRenderer {
     setIcon(errorDiv.createDiv({ cls: 'error-icon' }), 'alert-triangle');
     errorDiv.createEl('h3', { text: '⚠️ Gantt Error' });
     errorDiv.createEl('p', { text: message });
-    
+
     const backBtn = errorDiv.createEl('button', { text: 'Back to Board', cls: 'primary-btn' });
     backBtn.addEventListener('click', () => context.render());
   }
@@ -452,19 +406,15 @@ export class GanttViewRenderer implements IViewRenderer {
   private setupPopupVisibility(): void {
     if (!this.ganttWrapper) return;
 
-    // Wait for popup wrapper to be created by Frappe Gantt
     const checkPopup = () => {
       const popupWrapper = this.ganttWrapper?.querySelector('.popup-wrapper') as HTMLElement;
       if (popupWrapper) {
-        // Initial state: hidden
         popupWrapper.classList.remove('is-visible');
 
-        // Observe style changes (Frappe Gantt uses inline opacity)
         const observer = new MutationObserver((mutations) => {
           for (const mutation of mutations) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
               const style = popupWrapper.getAttribute('style') || '';
-              // Check if Frappe Gantt set opacity to 1 (visible)
               if (style.includes('opacity: 1') || style.includes('opacity:1')) {
                 popupWrapper.classList.add('is-visible');
               } else if (style.includes('opacity: 0') || style.includes('opacity:0')) {
@@ -479,7 +429,6 @@ export class GanttViewRenderer implements IViewRenderer {
           attributeFilter: ['style']
         });
 
-        // Also handle click outside to close popup
         document.addEventListener('click', (e) => {
           const target = e.target as HTMLElement;
           const isClickOnBar = target.closest('.bar-wrapper') || target.closest('.bar');
@@ -491,12 +440,10 @@ export class GanttViewRenderer implements IViewRenderer {
           }
         });
       } else {
-        // Popup not yet created, check again shortly
         setTimeout(checkPopup, 100);
       }
     };
 
-    // Start checking after a short delay
     setTimeout(checkPopup, 200);
   }
 
@@ -508,7 +455,6 @@ export class GanttViewRenderer implements IViewRenderer {
     this.ganttWrapper = null;
   }
 
-  // Helper methods
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

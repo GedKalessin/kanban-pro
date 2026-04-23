@@ -267,7 +267,7 @@ export class BoardService {
 
   addCard(columnId: string, cardData: Partial<KanbanCard>): KanbanCard {
 
-    console.log('🏗️ BoardService.addCard called:', { columnId, cardData });  // ✅ Debug
+    console.debug('🏗️ BoardService.addCard called:', { columnId, cardData });  // ✅ Debug
 
     const column = this.getColumn(columnId);
 
@@ -305,7 +305,7 @@ export class BoardService {
     };
 
     this.board.cards.push(newCard);
-    console.log('✅ Card added to board.cards:', this.board.cards.length, 'total cards');  // ✅ Debug
+    console.debug('✅ Card added to board.cards:', this.board.cards.length, 'total cards');  // ✅ Debug
     this.board.updatedAt = new Date().toISOString();
     this.saveToHistory();
     return newCard;
@@ -317,7 +317,7 @@ export class BoardService {
       const card = this.board.cards[index];
       const previousCompletedState = card.completedAt;
 
-      console.log('💾 BoardService.updateCard:', {
+      console.debug('💾 BoardService.updateCard:', {
         cardId,
         updates,
         currentDescription: card.description,
@@ -337,7 +337,7 @@ export class BoardService {
         updatedAt: new Date().toISOString()
       };
 
-      console.log('✅ Card updated, new description:', this.board.cards[index].description);
+      console.debug('✅ Card updated, new description:', this.board.cards[index].description);
 
       // AUTO-MOVE LOGIC: Handle completion state changes
       if (updates.completedAt !== undefined) {
@@ -836,7 +836,7 @@ export class BoardService {
     const doneColumn = this.findDoneColumn();
 
     if (doneColumn && card.columnId !== doneColumn.id) {
-      console.log(`Auto-moving completed card ${card.id} to ${doneColumn.name}`);
+      console.debug(`Auto-moving completed card ${card.id} to ${doneColumn.name}`);
       this.moveCard(card.id, doneColumn.id, 0); // Move to top of Done column
     }
   }
@@ -846,7 +846,7 @@ export class BoardService {
     const inProgressColumn = this.findInProgressColumn();
 
     if (inProgressColumn && card.columnId !== inProgressColumn.id) {
-      console.log(`Auto-moving incompleted card ${card.id} to ${inProgressColumn.name}`);
+      console.debug(`Auto-moving incompleted card ${card.id} to ${inProgressColumn.name}`);
       this.moveCard(card.id, inProgressColumn.id, 0);
     }
   }

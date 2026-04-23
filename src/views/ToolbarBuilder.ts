@@ -2,6 +2,13 @@ import { Menu, Notice, setIcon } from 'obsidian';
 import type { App } from 'obsidian';
 import { createElement } from '../utils/helpers';
 import { BoardService } from '../services/BoardService';
+import { TextInputModal, QuickAddCardModal, StatusManagementModal } from '../modals/UtilityModals';
+import { FilterModal } from '../modals/FilterModal';
+import { TeamModal } from '../modals/TeamModal';
+import { StatusGroupsModal } from '../modals/StatusGroupsModal';
+import { AnalyticsModal } from '../modals/AnalyticsModal';
+import { AutomationsModal } from '../modals/AutomationsModal';
+import { BoardSettingsModal } from '../modals/BoardSettingsModal';
 
 type ExtendedViewType = 'board' | 'list' | 'timeline' | 'gantt' | 'roadmap';
 
@@ -140,7 +147,6 @@ export class ToolbarBuilder {
   }
 
   private showSearch(): void {
-    const { TextInputModal } = require('../modals/UtilityModals');
     new TextInputModal(
       this.app,
       'Search Cards',
@@ -154,7 +160,6 @@ export class ToolbarBuilder {
   }
 
   private showFilters(): void {
-    const { FilterModal } = require('../modals/FilterModal');
     new FilterModal(this.app, this.boardService, () => {
       this.onRender();
       this.onSave();
@@ -162,19 +167,18 @@ export class ToolbarBuilder {
   }
 
   private quickAddCard(): void {
-    console.log('🎯 TOOLBAR quickAddCard called');  // ✅ Debug
+    console.debug('🎯 TOOLBAR quickAddCard called');
     const board = this.boardService.getBoard();
-    console.log('📊 Board ID:', board.id, 'Total cards:', board.cards.length);  // ✅ Debug
+    console.debug('📊 Board ID:', board.id, 'Total cards:', board.cards.length);
 
     if (board.columns.length === 0) {
       new Notice('⚠️ Create a column first', 2000);
       return;
     }
 
-    const { QuickAddCardModal } = require('../modals/UtilityModals');
     new QuickAddCardModal(this.app, (title: string, startDate?: string, dueDate?: string) => {
-      console.log('✨ TOOLBAR Card creation callback:', { title, boardId: board.id });  // ✅ Debug
-      console.log('📊 Board cards BEFORE add:', board.cards.length);  // ✅ Debug
+      console.debug('✨ TOOLBAR Card creation callback:', { title, boardId: board.id });
+      console.debug('📊 Board cards BEFORE add:', board.cards.length);
 
       const newCard = this.boardService.addCard(board.columns[0].id, {
         title,
@@ -182,13 +186,13 @@ export class ToolbarBuilder {
         dueDate: dueDate ?? null
       });
 
-      console.log('✅ TOOLBAR Card created:', newCard.id, 'Total cards now:', board.cards.length);  // ✅ Debug
+      console.debug('✅ TOOLBAR Card created:', newCard.id, 'Total cards now:', board.cards.length);
 
       this.onRender();
-      console.log('🔄 TOOLBAR Render called');  // ✅ Debug
+      console.debug('🔄 TOOLBAR Render called');
 
       this.onSave();
-      console.log('💾 TOOLBAR Save called');  // ✅ Debug
+      console.debug('💾 TOOLBAR Save called');
     }).open();
   }
 
@@ -197,7 +201,6 @@ export class ToolbarBuilder {
 
     menu.addItem(item => {
       item.setTitle('Manage Team').setIcon('users').onClick(() => {
-        const { TeamModal } = require('../modals/TeamModal');
         new TeamModal(this.app, this.boardService, () => {
           this.onSave();
           this.onRender();
@@ -209,7 +212,6 @@ export class ToolbarBuilder {
 
     menu.addItem(item => {
       item.setTitle('Edit Status Groups').setIcon('layers').onClick(() => {
-        const { StatusGroupsModal } = require('../modals/StatusGroupsModal');
         new StatusGroupsModal(this.app, this.boardService, () => {
           this.onSave();
           this.onRender();
@@ -308,7 +310,6 @@ export class ToolbarBuilder {
   }
 
   private editBoardName(): void {
-    const { TextInputModal } = require('../modals/UtilityModals');
     const board = this.boardService.getBoard();
     new TextInputModal(
       this.app,
@@ -331,7 +332,6 @@ export class ToolbarBuilder {
         .setTitle('Edit Statuses')
         .setIcon('settings')
         .onClick(() => {
-          const { StatusManagementModal } = require('../modals/UtilityModals');
           new StatusManagementModal(this.app, this.boardService, () => {
             this.onRender();
             this.onSave();
@@ -368,7 +368,6 @@ export class ToolbarBuilder {
   }
 
   private addSwimLane(): void {
-    const { TextInputModal } = require('../modals/UtilityModals');
     new TextInputModal(
       this.app,
       'Add Swim Lane',
@@ -399,26 +398,22 @@ export class ToolbarBuilder {
   }
 
   private showFilterModal(): void {
-    const { FilterModal } = require('../modals/FilterModal');
     new FilterModal(this.app, this.boardService, () => {
       this.onRender();
     }).open();
   }
 
   private showAnalyticsModal(): void {
-    const { AnalyticsModal } = require('../modals/AnalyticsModal');
     new AnalyticsModal(this.app, this.boardService).open();
   }
 
   private showAutomationsModal(): void {
-    const { AutomationsModal } = require('../modals/AutomationsModal');
     new AutomationsModal(this.app, this.boardService, () => {
       this.onSave();
     }).open();
   }
 
   private showSettingsModal(): void {
-    const { BoardSettingsModal } = require('../modals/BoardSettingsModal');
     new BoardSettingsModal(
       this.app,
       this.boardService,

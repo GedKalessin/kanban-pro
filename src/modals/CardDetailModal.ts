@@ -2,6 +2,14 @@ import { App, Modal, Setting, Notice, setIcon, MarkdownRenderer } from 'obsidian
 import { KanbanCard, Priority, TaskType, PRIORITY_COLORS, TASK_TYPE_ICONS } from '../models/types';
 import { BoardService } from '../services/BoardService';
 import { formatDisplayDate, generateId } from '../utils/helpers';
+import {
+  DatePickerModal,
+  ColorPickerModal,
+  SuggesterModal,
+  ConfirmModal,
+  MultiSelectModal,
+  TextInputModal
+} from './UtilityModals';
 
 export class CardDetailModal extends Modal {
   private card: KanbanCard;
@@ -76,7 +84,7 @@ export class CardDetailModal extends Modal {
     const currentCard = this.boardService.getCard(this.card.id);
     const descriptionValue = currentCard?.description || this.card.description || '';
 
-    console.log('🔍 Rendering description field:', {
+    console.debug('🔍 Rendering description field:', {
       cardId: this.card.id,
       descriptionValue,
       cardDescriptionDirect: this.card.description,
@@ -93,7 +101,7 @@ export class CardDetailModal extends Modal {
 
     // Save on blur (when user clicks away)
     descTextarea.addEventListener('blur', () => {
-      console.log('💾 Saving description on blur:', descTextarea.value);
+      console.debug('💾 Saving description on blur:', descTextarea.value);
       this.boardService.updateCard(this.card.id, { description: descTextarea.value });
       this.card = this.boardService.getCard(this.card.id)!;
       this.onUpdate();
@@ -104,7 +112,7 @@ export class CardDetailModal extends Modal {
     descTextarea.addEventListener('input', () => {
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
-        console.log('💾 Auto-saving description:', descTextarea.value);
+        console.debug('💾 Auto-saving description:', descTextarea.value);
         this.boardService.updateCard(this.card.id, { description: descTextarea.value });
         this.card = this.boardService.getCard(this.card.id)!;
         this.onUpdate();
@@ -193,7 +201,6 @@ export class CardDetailModal extends Modal {
         .addButton(btn => {
         btn.setButtonText(this.card.startDate ? formatDisplayDate(this.card.startDate) : 'Set start date');
         btn.onClick(() => {
-            const { DatePickerModal } = require('./UtilityModals');
             new DatePickerModal(
                           this.app,
                           this.card.startDate || null,
@@ -218,7 +225,6 @@ export class CardDetailModal extends Modal {
       .addButton(btn => {
         btn.setButtonText(this.card.dueDate ? formatDisplayDate(this.card.dueDate) : 'Set date');
         btn.onClick(() => {
-          const { DatePickerModal } = require('./UtilityModals');
           new DatePickerModal(
             this.app,
             this.card.dueDate,
@@ -268,7 +274,6 @@ export class CardDetailModal extends Modal {
       .addButton(btn => {
         btn.setButtonText('Choose');
         btn.onClick(() => {
-          const { ColorPickerModal } = require('./UtilityModals');
           new ColorPickerModal(
             this.app,
             this.card.color || '#6366f1',
@@ -461,7 +466,7 @@ export class CardDetailModal extends Modal {
           this.boardService.updateCard(this.card.id, { linkedNotes: updatedNotes });
           this.card.linkedNotes = updatedNotes;
           this.onUpdate();
-          this.renderLinkedNotes(); // Re-render immediato
+          this.renderLinkedNotes();
         });
       });
     } else {
@@ -484,7 +489,6 @@ export class CardDetailModal extends Modal {
       value: file.path
     }));
 
-    const { SuggesterModal } = require('./UtilityModals');
     new SuggesterModal(
       this.app,
       items,
@@ -497,7 +501,7 @@ export class CardDetailModal extends Modal {
           this.card.linkedNotes.push(item.value);
           this.boardService.updateCard(this.card.id, { linkedNotes: this.card.linkedNotes });
           this.onUpdate();
-          this.renderLinkedNotes(); // Re-render immediato
+          this.renderLinkedNotes();
         } else {
           new Notice('⚠️ Note already linked', 2000);
         }
@@ -511,8 +515,6 @@ export class CardDetailModal extends Modal {
     const teamMembers = this.boardService.getTeamMembers();
 
     if (teamMembers.length === 0) {
-      // No team members defined: prompt to add some first
-      const { ConfirmModal } = require('./UtilityModals');
       new ConfirmModal(
         this.app,
         'No Team Members',
@@ -531,7 +533,6 @@ export class CardDetailModal extends Modal {
       selected: this.card.assignee.includes(m.name)
     }));
 
-    const { MultiSelectModal } = require('./UtilityModals');
     new MultiSelectModal(
       this.app,
       'Assign Team Members',
@@ -550,7 +551,6 @@ export class CardDetailModal extends Modal {
   }
 
   private editTags(): void {
-    const { TextInputModal } = require('./UtilityModals');
     new TextInputModal(
       this.app,
       'Edit Tags',
@@ -588,7 +588,6 @@ export class CardDetailModal extends Modal {
   private editDependencies(): void {
     const board = this.boardService.getBoard();
 
-    // Ottieni tutte le card tranne questa
     const availableCards = board.cards
       .filter(c => c.id !== this.card.id)
       .map(c => ({
@@ -602,8 +601,6 @@ export class CardDetailModal extends Modal {
       return;
     }
 
-    // Usa un modal multi-select
-    const { MultiSelectModal } = require('./UtilityModals');
     new MultiSelectModal(
       this.app,
       'Select Dependencies',
@@ -628,7 +625,6 @@ export class CardDetailModal extends Modal {
     // Delete Card
     const deleteBtn = footer.createEl('button', { cls: 'danger-btn', text: 'Delete Card' });
     deleteBtn.addEventListener('click', () => {
-      const { ConfirmModal } = require('./UtilityModals');
       new ConfirmModal(
         this.app,
         'Delete Card',

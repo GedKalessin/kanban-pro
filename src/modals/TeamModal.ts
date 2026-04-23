@@ -1,6 +1,7 @@
 import { App, Modal, Setting, Notice, setIcon } from 'obsidian';
 import { TeamMember } from '../models/types';
 import { BoardService } from '../services/BoardService';
+import { ConfirmModal } from './UtilityModals';
 
 // ============================================
 // TEAM MODAL - Manage board team members
@@ -105,7 +106,6 @@ export class TeamModal extends Modal {
   }
 
   private confirmRemove(member: TeamMember): void {
-    const { ConfirmModal } = require('./UtilityModals');
     new ConfirmModal(
       this.app,
       'Remove Team Member',

@@ -3,6 +3,7 @@ import { KanbanColumn, KanbanCard } from '../../models/types';
 import { createElement } from '../../utils/helpers';
 import { ViewRendererContext } from './IViewRenderer';
 import { CardRenderer } from './CardRenderer';
+import { TextInputModal, QuickAddCardModal, ColorPickerModal, ConfirmModal } from '../../modals/UtilityModals';
 
 export class ColumnRenderer {
   private context: ViewRendererContext;
@@ -16,12 +17,12 @@ export class ColumnRenderer {
   render(column: KanbanColumn, cards: KanbanCard[], swimLaneId?: string, selectedCards: Set<string> = new Set()): HTMLElement {
     const board = this.context.boardService.getBoard();
 
-    console.log('🎨 ColumnRenderer.render() - Column:', column.name, 'ID:', column.id, 'Board ID:', board.id);  // ✅ Debug
+    console.debug('🎨 ColumnRenderer.render() - Column:', column.name, 'ID:', column.id, 'Board ID:', board.id);
 
     const columnEl = createElement('div', {
       className: `kanban-column ${column.collapsed ? 'collapsed' : ''}`,
       'data-column-id': column.id,
-      'data-board-id': board.id,  // ✅ Add board ID for validation
+      'data-board-id': board.id,
       'data-swim-lane-id': swimLaneId || ''
     });
 
@@ -92,9 +93,9 @@ export class ColumnRenderer {
     setIcon(addCardBtn, 'plus');
     addCardBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      console.log('➕ Add card button clicked for column:', column.name);  // ✅ Debug
+      console.debug('➕ Add card button clicked for column:', column.name);
 
-      // ✅ CRITICAL: Validate that we're still on the same board
+      // Validate that we're still on the same board
       const currentBoard = this.context.boardService.getBoard();
       const columnElement = (e.target as HTMLElement).closest('.kanban-column') as HTMLElement;
       const elementBoardId = columnElement?.dataset.boardId;
@@ -122,10 +123,10 @@ export class ColumnRenderer {
     content.dataset.columnId = column.id;
     content.dataset.swimLaneId = swimLaneId || '';
 
-    console.log(`Rendering ${cards.length} cards for column ${column.name}`);  // ✅ Debug
+    console.debug(`Rendering ${cards.length} cards for column ${column.name}`);
 
     [...cards].sort((a, b) => a.order - b.order).forEach(card => {
-      console.log('Rendering card:', card.title);  // ✅ Debug
+      console.debug('Rendering card:', card.title);
       content.appendChild(this.cardRenderer.render(card, selectedCards));
     });
 
@@ -134,7 +135,6 @@ export class ColumnRenderer {
   }
 
   private editColumnName(column: KanbanColumn): void {
-    const { TextInputModal } = require('../../modals/UtilityModals');
     new TextInputModal(
       this.context.app,
       'Rename Column',
@@ -149,50 +149,44 @@ export class ColumnRenderer {
   }
 
   private quickAddCard(columnId: string, swimLaneId?: string): void {
-    console.log('🎯 quickAddCard called for column:', columnId, 'swimLaneId:', swimLaneId);  // ✅ Debug
+    console.debug('🎯 quickAddCard called for column:', columnId, 'swimLaneId:', swimLaneId);
 
     const board = this.context.boardService.getBoard();
-    console.log('📊 Current board ID:', board.id);  // ✅ Debug
-    console.log('📊 Current board columns:', board.columns.map(c => ({ id: c.id, name: c.name })));  // ✅ Debug
+    console.debug('📊 Current board ID:', board.id);
+    console.debug('📊 Current board columns:', board.columns.map(c => ({ id: c.id, name: c.name })));
 
-    // ✅ CRITICAL: Verify the column exists in the current board
     const column = this.context.boardService.getColumn(columnId);
     if (!column) {
-      console.error('❌ Column not found in current board:', columnId);  // ✅ Debug
-      console.error('❌ Available columns:', board.columns.map(c => c.id));  // ✅ Debug
+      console.error('❌ Column not found in current board:', columnId);
+      console.error('❌ Available columns:', board.columns.map(c => c.id));
       return;
     }
 
-    const { QuickAddCardModal } = require('../../modals/UtilityModals');
-
-    console.log('📦 QuickAddCardModal loaded:', QuickAddCardModal);  // ✅ Debug
+    console.debug('📦 Opening QuickAddCardModal');
 
     new QuickAddCardModal(
-    this.context.app,
-    (title: string, startDate?: string, dueDate?: string): void => {
-
-        console.log('✨ Card creation callback triggered:', { title, startDate, dueDate, columnId, swimLaneId });  // ✅ Debug
-        console.log('📊 Board cards BEFORE add:', this.context.boardService.getBoard().cards.length);  // ✅ Debug
+      this.context.app,
+      (title: string, startDate?: string, dueDate?: string): void => {
+        console.debug('✨ Card creation callback triggered:', { title, startDate, dueDate, columnId, swimLaneId });
+        console.debug('📊 Board cards BEFORE add:', this.context.boardService.getBoard().cards.length);
 
         const newCard = this.context.boardService.addCard(columnId, {
-        title,
-        swimLaneId,
-        startDate: startDate ?? null,
-        dueDate: dueDate ?? null
+          title,
+          swimLaneId,
+          startDate: startDate ?? null,
+          dueDate: dueDate ?? null
         });
 
-        console.log('✅ Card created:', newCard);  // ✅ Debug
-        console.log('📊 Board cards AFTER add:', this.context.boardService.getBoard().cards.length);  // ✅ Debug
-        console.log('📋 All cards:', this.context.boardService.getBoard().cards.map(c => ({ id: c.id, title: c.title, columnId: c.columnId })));  // ✅ Debug
+        console.debug('✅ Card created:', newCard);
+        console.debug('📊 Board cards AFTER add:', this.context.boardService.getBoard().cards.length);
+        console.debug('📋 All cards:', this.context.boardService.getBoard().cards.map(c => ({ id: c.id, title: c.title, columnId: c.columnId })));
 
         this.context.render();
-
-        console.log('🔄 Render completed');  // ✅ Debug
+        console.debug('🔄 Render completed');
 
         this.context.saveBoard();
-
-        console.log('💾 Save completed');  // ✅ Debug
-    }
+        console.debug('💾 Save completed');
+      }
     ).open();
   }
 
@@ -223,34 +217,24 @@ export class ColumnRenderer {
   }
 
   private changeColumnColor(column: KanbanColumn): void {
-    const { ColorPickerModal } = require('../../modals/UtilityModals');
-    interface ColorPickerCallback {
-        (color: string): void;
-    }
-
     new ColorPickerModal(
-        this.context.app,
-        column.color,
-        (color: string): void => {
-            this.context.boardService.updateColumn(column.id, { color });
-            this.context.render();
-            this.context.saveBoard();
-        }
+      this.context.app,
+      column.color,
+      (color: string) => {
+        this.context.boardService.updateColumn(column.id, { color });
+        this.context.render();
+        this.context.saveBoard();
+      }
     ).open();
   }
 
   private setWipLimit(column: KanbanColumn): void {
-    const { TextInputModal } = require('../../modals/UtilityModals');
-    interface WipLimitCallback {
-      (value: string): void;
-    }
-
     new TextInputModal(
       this.context.app,
       'Set WIP Limit',
       'Maximum cards in this column',
       column.wipLimit?.toString() || '',
-      (value: string): void => {
+      (value: string) => {
         const limit: number = parseInt(value);
         this.context.boardService.updateColumn(column.id, { wipLimit: isNaN(limit) ? null : limit });
         this.context.render();
@@ -260,7 +244,6 @@ export class ColumnRenderer {
   }
 
   private deleteColumn(column: KanbanColumn): void {
-    const { ConfirmModal } = require('../../modals/UtilityModals');
     new ConfirmModal(
       this.context.app,
       'Delete Column',

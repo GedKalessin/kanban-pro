@@ -1,5 +1,6 @@
 import { App } from 'obsidian';
 import { BoardService } from '../services/BoardService';
+import { MemberDetailModal } from '../modals/TeamModal';
 
 /**
  * Creates an avatar HTMLElement for a team member.
@@ -29,7 +30,6 @@ export function createMemberAvatar(
     avatar.addEventListener('click', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      const { MemberDetailModal } = require('../modals/TeamModal');
       new MemberDetailModal(app, member, boardService, onUpdate).open();
     });
   }

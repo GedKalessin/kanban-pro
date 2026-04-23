@@ -1,8 +1,9 @@
-import { setIcon } from 'obsidian';
+import { setIcon, Menu } from 'obsidian';
 import { SwimLane, KanbanColumn, KanbanCard } from '../../models/types';
 import { createElement } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
 import { ColumnRenderer } from './ColumnRenderer';
+import { TextInputModal, ColorPickerModal, ConfirmModal } from '../../modals/UtilityModals';
 
 export class BoardViewRenderer implements IViewRenderer {
   private columnRenderer!: ColumnRenderer;
@@ -12,11 +13,10 @@ export class BoardViewRenderer implements IViewRenderer {
     this.columnRenderer = new ColumnRenderer(context);
     const board = context.boardService.getBoard();
 
-    // ✅ DEBUG CRITICO - AGGIUNGI QUESTO
-    console.log('🎨🎨🎨 BoardViewRenderer.render() START 🎨🎨🎨');
-    console.log('📊 Board ID:', board.id);
-    console.log('📊 Total cards in board.cards:', board.cards.length);
-    console.log('📋 All board cards:', board.cards.map(c => ({
+    console.debug('🎨🎨🎨 BoardViewRenderer.render() START 🎨🎨🎨');
+    console.debug('📊 Board ID:', board.id);
+    console.debug('📊 Total cards in board.cards:', board.cards.length);
+    console.debug('📋 All board cards:', board.cards.map(c => ({
       id: c.id,
       title: c.title,
       columnId: c.columnId
@@ -24,8 +24,8 @@ export class BoardViewRenderer implements IViewRenderer {
 
     const filteredCards = context.boardService.getFilteredCards();
 
-    console.log('🔍 Filtered cards count:', filteredCards.length);
-    console.log('📋 Filtered cards:', filteredCards.map(c => ({
+    console.debug('🔍 Filtered cards count:', filteredCards.length);
+    console.debug('📋 Filtered cards:', filteredCards.map(c => ({
       id: c.id,
       title: c.title,
       columnId: c.columnId
@@ -36,14 +36,14 @@ export class BoardViewRenderer implements IViewRenderer {
     container.addClass('kanban-board');
 
     if (board.settings.enableSwimLanes && board.swimLanes.length > 0) {
-      console.log('🏊 Using SWIM LANES mode');
+      console.debug('🏊 Using SWIM LANES mode');
       this.renderWithSwimLanes(container, context, columns, filteredCards);
     } else {
-      console.log('🎯 Using SIMPLE BOARD mode');
+      console.debug('🎯 Using SIMPLE BOARD mode');
       this.renderSimpleBoard(container, context, columns, filteredCards);
     }
 
-    console.log('🎨🎨🎨 BoardViewRenderer.render() END 🎨🎨🎨');
+    console.debug('🎨🎨🎨 BoardViewRenderer.render() END 🎨🎨🎨');
   }
 
   private renderWithSwimLanes(
@@ -148,15 +148,15 @@ export class BoardViewRenderer implements IViewRenderer {
   ): void {
     const columnsContainer = createElement('div', { className: 'columns-container' });
 
-    console.log('🏗️ renderSimpleBoard - START');
-    console.log('📊 Total filteredCards:', filteredCards.length);
-    console.log('📋 FilteredCards details:', filteredCards.map(c => ({ id: c.id, title: c.title, columnId: c.columnId })));
+    console.debug('🏗️ renderSimpleBoard - START');
+    console.debug('📊 Total filteredCards:', filteredCards.length);
+    console.debug('📋 FilteredCards details:', filteredCards.map(c => ({ id: c.id, title: c.title, columnId: c.columnId })));
 
     columns.forEach(column => {
       const columnCards = filteredCards.filter(c => c.columnId === column.id);
 
-      console.log(`📊 Column "${column.name}" (${column.id}): ${columnCards.length} cards`);
-      console.log('🔍 Column cards:', columnCards.map(c => ({ id: c.id, title: c.title })));
+      console.debug(`📊 Column "${column.name}" (${column.id}): ${columnCards.length} cards`);
+      console.debug('🔍 Column cards:', columnCards.map(c => ({ id: c.id, title: c.title })));
 
       columnsContainer.appendChild(this.columnRenderer.render(column, columnCards, undefined, this.selectedCards));
     });
@@ -165,7 +165,7 @@ export class BoardViewRenderer implements IViewRenderer {
     columnsContainer.appendChild(addColumnBtn);
 
     container.appendChild(columnsContainer);
-    console.log('🏗️ renderSimpleBoard - END');
+    console.debug('🏗️ renderSimpleBoard - END');
   }
 
   private createAddColumnButton(context: ViewRendererContext): HTMLElement {
@@ -179,40 +179,20 @@ export class BoardViewRenderer implements IViewRenderer {
   }
 
   private addColumn(context: ViewRendererContext): void {
-    const { TextInputModal: TextInputModalClass } = require('../../modals/UtilityModals');
-    interface TextInputModalCallback {
-        (value: string): void;
-    }
-
-    interface TextInputModalConstructor {
-        new (
-            app: any,
-            title: string,
-            placeholder: string,
-            value: string,
-            onSubmit: TextInputModalCallback
-        ): {
-            open(): void;
-        };
-    }
-
-    const TextInputModal = TextInputModalClass as TextInputModalConstructor;
-
     new TextInputModal(
-        context.app,
-        'Add Column',
-        'Column name',
-        '',
-        (value: string) => {
-            context.boardService.addColumn(value);
-            context.render();
-            context.saveBoard();
-        }
+      context.app,
+      'Add Column',
+      'Column name',
+      '',
+      (value: string) => {
+        context.boardService.addColumn(value);
+        context.render();
+        context.saveBoard();
+      }
     ).open();
   }
 
   private showSwimLaneMenu(lane: SwimLane, event: MouseEvent, context: ViewRendererContext): void {
-    const { Menu } = require('obsidian');
     const menu = new Menu();
 
     menu.addItem((item: any) =>
@@ -233,24 +213,6 @@ export class BoardViewRenderer implements IViewRenderer {
   }
 
   private renameLane(lane: SwimLane, context: ViewRendererContext): void {
-    const { TextInputModal } = require('../../modals/UtilityModals');
-    interface TextInputModalCallback {
-        (value: string): void;
-    }
-
-    interface TextInputModalConstructor {
-        new (
-            app: any,
-            title: string,
-            placeholder: string,
-            value: string,
-            onSubmit: TextInputModalCallback
-        ): {
-            open(): void;
-        };
-    }
-
-
     new TextInputModal(
       context.app,
       'Rename Swim Lane',
@@ -265,33 +227,15 @@ export class BoardViewRenderer implements IViewRenderer {
   }
 
   private changeLaneColor(lane: SwimLane, context: ViewRendererContext): void {
-    const { ColorPickerModal } = require('../../modals/UtilityModals');
-    interface ColorPickerCallback {
-      (color: string): void;
-    }
-
-    interface ColorPickerModalConstructor {
-      new (
-        app: any,
-        initialColor: string,
-        onSubmit: ColorPickerCallback
-      ): {
-        open(): void;
-      };
-    }
-
-    const ColorPickerModalClass = ColorPickerModal as ColorPickerModalConstructor;
-
-    new ColorPickerModalClass(context.app, lane.color, (color: string) => {
+    new ColorPickerModal(context.app, lane.color, (color: string) => {
       context.boardService.updateSwimLane(lane.id, { color });
       context.render();
       context.saveBoard();
     }).open();
   }
 
-private deleteLane(lane: SwimLane, context: ViewRendererContext): void {
-  const { ConfirmModal } = require('../../modals/UtilityModals');
-  new ConfirmModal(
+  private deleteLane(lane: SwimLane, context: ViewRendererContext): void {
+    new ConfirmModal(
       context.app,
       'Delete Swim Lane',
       `Delete "${lane.name}"? Cards will be moved to Unassigned.`,

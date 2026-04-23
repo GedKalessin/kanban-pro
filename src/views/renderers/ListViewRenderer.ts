@@ -8,6 +8,7 @@ import { KanbanCard, Priority, PRIORITY_COLORS } from '../../models/types';
 import { createElement, formatDisplayDate } from '../../utils/helpers';
 import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
+import { ConfirmModal } from '../../modals/UtilityModals';
 
 export class ListViewRenderer implements IViewRenderer {
   private sortBy: 'dueDate' | 'priority' | 'column' | 'created' = 'column';
@@ -426,7 +427,6 @@ export class ListViewRenderer implements IViewRenderer {
 
     menu.addItem(item => {
       item.setTitle('Delete').setIcon('trash-2').onClick(() => {
-        const { ConfirmModal } = require('../../modals/UtilityModals');
         new ConfirmModal(
           context.app,
           'Delete Card',

@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
+import { App, PluginSettingTab, Setting, Notice, Modal } from 'obsidian';
 import KanbanProPlugin from './main';
 
 // ============================================
@@ -422,8 +422,6 @@ export class KanbanSettingsTab extends PluginSettingTab {
 // ============================================
 // CONFIRM RESET MODAL
 // ============================================
-
-import { Modal } from 'obsidian';
 
 class ConfirmResetModal extends Modal {
   private onConfirm: (confirmed: boolean) => void;

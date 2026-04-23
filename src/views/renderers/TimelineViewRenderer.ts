@@ -3,6 +3,7 @@ import { KanbanCard, PRIORITY_COLORS } from '../../models/types';
 import { createElement } from '../../utils/helpers';
 import { createMemberAvatar } from '../../utils/memberAvatarHelper';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
+import { QuickAddCardModal } from '../../modals/UtilityModals';
 
 interface TimelineConfig {
   viewMode: 'day' | 'week' | 'month';
@@ -107,7 +108,6 @@ export class TimelineViewRenderer implements IViewRenderer {
     createBtn.addEventListener('click', () => {
       const board = context.boardService.getBoard();
       if (board.columns.length > 0) {
-        const { QuickAddCardModal } = require('../../modals/UtilityModals');
         new QuickAddCardModal(context.app, (title: string, startDate: string | undefined, dueDate: string | undefined) => {
           context.boardService.addCard(board.columns[0].id, {
             title,

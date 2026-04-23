@@ -1,12 +1,9 @@
-// ============================================
-// FIX DEFINITIVO: src/views/renderers/RoadmapViewRenderer.ts
-// Versione ULTRA-ROBUSTA che NON SI SPACCA MAI
-// ============================================
-
 import { Menu, Notice, setIcon } from 'obsidian';
 import { Milestone, KanbanCard } from '../../models/types';
 import { createElement } from '../../utils/helpers';
 import { IViewRenderer, ViewRendererContext } from './IViewRenderer';
+import { MilestoneModal } from '../../modals/MilestoneModal';
+import { SuggesterModal, ConfirmModal } from '../../modals/UtilityModals';
 
 export class RoadmapViewRenderer implements IViewRenderer {
   private draggedCard: HTMLElement | null = null;
@@ -16,12 +13,12 @@ export class RoadmapViewRenderer implements IViewRenderer {
   render(container: HTMLElement, context: ViewRendererContext): void {
     // Prevent concurrent renders - exit if already rendering
     if (this.isRendering) {
-      console.log('⏭️ Skipping render - already in progress');
+      console.debug('⏭️ Skipping render - already in progress');
       return;
     }
 
     this.isRendering = true;
-    console.log('🚀 RoadmapViewRenderer.render() START');
+    console.debug('🚀 RoadmapViewRenderer.render() START');
 
     try {
       // STEP 1: Validate inputs
@@ -42,21 +39,21 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       // STEP 3: Get board e verifica
       const board = context.boardService.getBoard();
-      console.log('📋 Board loaded:', board);
+      console.debug('📋 Board loaded:', board);
 
       // STEP 4: Assicurati che milestones array esista
       if (!board.milestones) {
-        console.log('⚠️ Initializing milestones array');
+        console.debug('⚠️ Initializing milestones array');
         board.milestones = [];
       }
 
-      console.log('📊 Milestones count:', board.milestones.length);
+      console.debug('📊 Milestones count:', board.milestones.length);
 
       // STEP 5: Render toolbar
       try {
         const toolbar = this.renderToolbar(context);
         container.appendChild(toolbar);
-        console.log('✅ Toolbar rendered');
+        console.debug('✅ Toolbar rendered');
       } catch (error) {
         console.error('❌ Error rendering toolbar:', error);
         container.createDiv({ text: 'Error loading toolbar', cls: 'error-message' });
@@ -64,10 +61,10 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       // STEP 6: Check if empty
       if (board.milestones.length === 0) {
-        console.log('📭 No milestones, showing empty state');
+        console.debug('📭 No milestones, showing empty state');
         const emptyState = this.renderEmptyState(context);
         container.appendChild(emptyState);
-        console.log('🏁 RoadmapViewRenderer.render() END (empty state)');
+        console.debug('🏁 RoadmapViewRenderer.render() END (empty state)');
         return; // EXIT EARLY
       }
 
@@ -79,7 +76,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
           const orderB = typeof b.order === 'number' ? b.order : 0;
           return orderA - orderB;
         });
-        console.log('✅ Milestones sorted:', sortedMilestones.length);
+        console.debug('✅ Milestones sorted:', sortedMilestones.length);
       } catch (error) {
         console.error('❌ Error sorting milestones:', error);
         sortedMilestones = [...board.milestones];
@@ -87,19 +84,18 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       // STEP 8: Create roadmap content container
       const roadmapContent = createElement('div', { className: 'roadmap-content' });
-      console.log('✅ Roadmap content container created');
+      console.debug('✅ Roadmap content container created');
 
       // STEP 9: Render each milestone with error handling
       sortedMilestones.forEach((milestone, index) => {
         try {
-          console.log(`📌 Rendering milestone ${index}:`, milestone.name);
+          console.debug(`📌 Rendering milestone ${index}:`, milestone.name);
           const milestoneEl = this.renderMilestone(milestone, context);
           roadmapContent.appendChild(milestoneEl);
-          console.log(`✅ Milestone ${index} rendered successfully`);
+          console.debug(`✅ Milestone ${index} rendered successfully`);
         } catch (error) {
           console.error(`❌ Error rendering milestone ${index}:`, error);
           console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
-          // Crea un elemento di errore invece di crashare
           const errorEl = roadmapContent.createDiv({ cls: 'milestone-error' });
           errorEl.textContent = `⚠️ Error loading milestone: ${milestone.name}`;
         }
@@ -107,34 +103,32 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       // STEP 10: Append to container
       container.appendChild(roadmapContent);
-      console.log('✅ Roadmap content appended to container');
+      console.debug('✅ Roadmap content appended to container');
 
       // STEP 11: Render unassigned cards section
       try {
         const unassignedSection = this.renderUnassignedCards(context);
         container.appendChild(unassignedSection);
-        console.log('✅ Unassigned cards section rendered');
+        console.debug('✅ Unassigned cards section rendered');
       } catch (error) {
         console.error('❌ Error rendering unassigned cards:', error);
       }
 
       // STEP 12: Setup drag and drop DOPO che tutto è nel DOM
-      // Use requestAnimationFrame for smoother rendering
       requestAnimationFrame(() => {
         try {
           this.setupMilestoneDragDrop(container, context);
-          console.log('✅ Drag and drop setup complete');
+          console.debug('✅ Drag and drop setup complete');
         } catch (error) {
           console.error('❌ Error setting up drag and drop:', error);
           console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
         }
       });
 
-      console.log('🏁 RoadmapViewRenderer.render() completed successfully');
+      console.debug('🏁 RoadmapViewRenderer.render() completed successfully');
 
     } catch (error) {
       console.error('CRITICAL ERROR in RoadmapViewRenderer.render():', error);
-      // Fallback UI in caso di errore totale
       container.empty();
       const errorDiv = container.createDiv({ cls: 'critical-error' });
       errorDiv.innerHTML = `
@@ -147,14 +141,13 @@ export class RoadmapViewRenderer implements IViewRenderer {
       const backBtn = errorDiv.querySelector('button');
       if (backBtn) {
         backBtn.addEventListener('click', () => {
-          // Torna alla board view
           context.render();
         });
       }
     } finally {
       // Always reset the rendering flag
       this.isRendering = false;
-      console.log('🔓 Render lock released');
+      console.debug('🔓 Render lock released');
     }
   }
 
@@ -178,23 +171,20 @@ export class RoadmapViewRenderer implements IViewRenderer {
   }
 
   private renderMilestone(milestone: Milestone, context: ViewRendererContext): HTMLElement {
-    console.log('renderMilestone called for:', milestone.name);
-    
+    console.debug('renderMilestone called for:', milestone.name);
+
     try {
       const board = context.boardService.getBoard();
-      
-      // Validate milestone structure
+
       if (!milestone.id || !milestone.name) {
         throw new Error('Invalid milestone structure');
       }
 
-      // Ensure cardIds is an array
       if (!Array.isArray(milestone.cardIds)) {
         console.warn('milestone.cardIds is not an array, initializing');
         milestone.cardIds = [];
       }
 
-      // Filter only valid cards
       const validCardIds = milestone.cardIds.filter(id => {
         const exists = board.cards.some(c => c.id === id);
         if (!exists) {
@@ -203,7 +193,6 @@ export class RoadmapViewRenderer implements IViewRenderer {
         return exists;
       });
 
-      // Update milestone if cards were removed
       if (validCardIds.length !== milestone.cardIds.length) {
         milestone.cardIds = validCardIds;
       }
@@ -215,7 +204,6 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       const color = milestone.color || '#6366f1';
 
-      // Create milestone element
       const milestoneEl = createElement('div', {
         className: `roadmap-milestone ${milestone.completed ? 'completed' : ''}`,
         'data-milestone-id': milestone.id
@@ -228,7 +216,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
       header.style.backgroundColor = `${color}15`;
 
       const headerLeft = createElement('div', { className: 'header-left' });
-      
+
       const iconWrapper = createElement('div', { className: 'milestone-icon-wrapper' });
       iconWrapper.style.backgroundColor = color;
       const icon = createElement('span', { className: 'milestone-icon' });
@@ -256,7 +244,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
       header.appendChild(headerLeft);
 
       const headerRight = createElement('div', { className: 'header-right' });
-      
+
       const progressBadge = createElement('span', { className: 'progress-badge' });
       progressBadge.textContent = `${completedCards}/${totalCards}`;
       progressBadge.style.backgroundColor = color;
@@ -290,17 +278,17 @@ export class RoadmapViewRenderer implements IViewRenderer {
       progressFill.style.backgroundColor = color;
       progressBar.appendChild(progressFill);
       progressSection.appendChild(progressBar);
-      progressSection.appendChild(createElement('span', { className: 'progress-text' }, 
+      progressSection.appendChild(createElement('span', { className: 'progress-text' },
         [`${Math.round(progress)}% complete`]
       ));
       milestoneEl.appendChild(progressSection);
 
       // Cards section
-      const cardsSection = createElement('div', { 
+      const cardsSection = createElement('div', {
         className: 'milestone-cards',
-        'data-milestone-id': milestone.id 
+        'data-milestone-id': milestone.id
       });
-      
+
       milestoneCards.forEach(card => {
         try {
           const cardEl = this.renderMilestoneCard(card, milestone, context);
@@ -325,12 +313,11 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
       milestoneEl.appendChild(cardsSection);
 
-      console.log('Milestone element created successfully');
+      console.debug('Milestone element created successfully');
       return milestoneEl;
 
     } catch (error) {
       console.error('Error in renderMilestone:', error);
-      // Return error element instead of throwing
       const errorEl = createElement('div', { className: 'milestone-error' });
       errorEl.textContent = `⚠️ Error rendering milestone: ${milestone.name || 'Unknown'}`;
       return errorEl;
@@ -387,7 +374,6 @@ export class RoadmapViewRenderer implements IViewRenderer {
   private renderUnassignedCards(context: ViewRendererContext): HTMLElement {
     const board = context.boardService.getBoard();
 
-    // Get all card IDs that are assigned to milestones
     const assignedCardIds = new Set<string>();
     if (board.milestones) {
       board.milestones.forEach(milestone => {
@@ -397,10 +383,8 @@ export class RoadmapViewRenderer implements IViewRenderer {
       });
     }
 
-    // Get unassigned cards
     const unassignedCards = board.cards.filter(card => !assignedCardIds.has(card.id));
 
-    // Create unassigned cards section
     const section = createElement('div', { className: 'unassigned-cards-section' });
 
     const header = createElement('div', { className: 'unassigned-header' });
@@ -417,7 +401,6 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
     section.appendChild(header);
 
-    // Cards container
     const cardsContainer = createElement('div', {
       className: 'unassigned-cards-container',
       'data-milestone-id': 'unassigned'
@@ -477,13 +460,12 @@ export class RoadmapViewRenderer implements IViewRenderer {
   }
 
   private setupMilestoneDragDrop(container: HTMLElement, context: ViewRendererContext): void {
-    console.log('Setting up milestone drag and drop');
+    console.debug('Setting up milestone drag and drop');
 
     let draggedCardId: string | null = null;
 
     container.addEventListener('dragstart', (e: DragEvent) => {
       const target = e.target as HTMLElement;
-      // Support both milestone-card and unassigned-card
       if (!target.classList.contains('milestone-card') && !target.classList.contains('unassigned-card')) return;
 
       draggedCardId = target.dataset.cardId || null;
@@ -493,18 +475,17 @@ export class RoadmapViewRenderer implements IViewRenderer {
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', draggedCardId || '');
       }
-      console.log('Drag started:', draggedCardId);
+      console.debug('Drag started:', draggedCardId);
     });
 
     container.addEventListener('dragend', (e: DragEvent) => {
       const target = e.target as HTMLElement;
-      // Support both milestone-card and unassigned-card
       if (!target.classList.contains('milestone-card') && !target.classList.contains('unassigned-card')) return;
 
       target.classList.remove('dragging');
       container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
       draggedCardId = null;
-      console.log('Drag ended');
+      console.debug('Drag ended');
     });
 
     container.addEventListener('dragover', (e: DragEvent) => {
@@ -541,18 +522,15 @@ export class RoadmapViewRenderer implements IViewRenderer {
         const board = context.boardService.getBoard();
 
         if (milestoneCards) {
-          // Dropped onto a milestone
           const toMilestoneId = milestoneCards.dataset.milestoneId;
           if (!toMilestoneId) return;
 
-          console.log('Dropping card', draggedCardId, 'to milestone', toMilestoneId);
+          console.debug('Dropping card', draggedCardId, 'to milestone', toMilestoneId);
 
-          // Remove from all milestones
           board.milestones.forEach(m => {
             m.cardIds = m.cardIds.filter(id => id !== draggedCardId);
           });
 
-          // Add to target milestone
           const targetMilestone = board.milestones.find(m => m.id === toMilestoneId);
           if (targetMilestone && !targetMilestone.cardIds.includes(draggedCardId)) {
             targetMilestone.cardIds.push(draggedCardId);
@@ -562,8 +540,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
           new Notice('✓ Card moved to milestone', 1500);
 
         } else if (unassignedContainer) {
-          // Dropped onto unassigned section - remove from all milestones
-          console.log('Dropping card', draggedCardId, 'to unassigned');
+          console.debug('Dropping card', draggedCardId, 'to unassigned');
 
           board.milestones.forEach(m => {
             m.cardIds = m.cardIds.filter(id => id !== draggedCardId);
@@ -583,67 +560,56 @@ export class RoadmapViewRenderer implements IViewRenderer {
   }
 
   private createMilestone(context: ViewRendererContext): void {
-    const { MilestoneModal } = require('../../modals/MilestoneModal');
-    interface MilestoneData {
-        name: string;
-        description: string;
-        dueDate: string | null;
-        color: string;
-    }
+    new MilestoneModal(context.app, null, (data) => {
+      try {
+        console.debug('🎯 createMilestone callback START');
+        console.debug('📊 Received milestone data:', data);
 
-    new MilestoneModal(context.app, null, (data: MilestoneData) => {
-        try {
-            console.log('🎯 createMilestone callback START');
-            console.log('📊 Received milestone data:', data);
+        const board = context.boardService.getBoard();
+        console.debug('📊 Current board:', board.id, 'Milestones count:', board.milestones?.length || 0);
 
-            const board = context.boardService.getBoard();
-            console.log('📊 Current board:', board.id, 'Milestones count:', board.milestones?.length || 0);
-
-            // Ensure milestones array exists
-            if (!board.milestones) {
-                console.log('⚠️ Initializing milestones array');
-                board.milestones = [];
-            }
-
-            const milestone: Milestone = {
-                id: `milestone-${Date.now()}`,
-                name: data.name,
-                description: data.description,
-                dueDate: data.dueDate ?? null,
-                color: data.color,
-                completed: false,
-                order: board.milestones.length,
-                cardIds: []
-            };
-
-            console.log('✅ Milestone object created:', milestone);
-
-            board.milestones.push(milestone);
-            console.log('✅ Milestone pushed to board. New count:', board.milestones.length);
-
-            // Modal already has 150ms delay before calling this callback
-            // No need for additional timeout - render immediately
-            try {
-                console.log('🔄 Calling context.render()...');
-                context.render();
-                console.log('✅ context.render() completed');
-
-                console.log('💾 Calling context.saveBoard()...');
-                context.saveBoard();
-                console.log('✅ context.saveBoard() completed');
-
-                new Notice('✓ Milestone created', 1500);
-                console.log('🎯 createMilestone callback END');
-            } catch (renderError) {
-                console.error('❌ Error during render/save:', renderError);
-                console.error('❌ Error stack:', renderError instanceof Error ? renderError.stack : 'No stack');
-                new Notice('⚠️ Milestone created but render failed. Try refreshing the view.', 3000);
-            }
-        } catch (error: unknown) {
-            console.error('❌ Error in createMilestone callback:', error);
-            console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
-            new Notice('⚠️ Error creating milestone', 2000);
+        if (!board.milestones) {
+          console.debug('⚠️ Initializing milestones array');
+          board.milestones = [];
         }
+
+        const milestone: Milestone = {
+          id: `milestone-${Date.now()}`,
+          name: data.name,
+          description: data.description,
+          dueDate: data.dueDate ?? null,
+          color: data.color,
+          completed: false,
+          order: board.milestones.length,
+          cardIds: []
+        };
+
+        console.debug('✅ Milestone object created:', milestone);
+
+        board.milestones.push(milestone);
+        console.debug('✅ Milestone pushed to board. New count:', board.milestones.length);
+
+        try {
+          console.debug('🔄 Calling context.render()...');
+          context.render();
+          console.debug('✅ context.render() completed');
+
+          console.debug('💾 Calling context.saveBoard()...');
+          context.saveBoard();
+          console.debug('✅ context.saveBoard() completed');
+
+          new Notice('✓ Milestone created', 1500);
+          console.debug('🎯 createMilestone callback END');
+        } catch (renderError) {
+          console.error('❌ Error during render/save:', renderError);
+          console.error('❌ Error stack:', renderError instanceof Error ? renderError.stack : 'No stack');
+          new Notice('⚠️ Milestone created but render failed. Try refreshing the view.', 3000);
+        }
+      } catch (error: unknown) {
+        console.error('❌ Error in createMilestone callback:', error);
+        console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
+        new Notice('⚠️ Error creating milestone', 2000);
+      }
     }).open();
   }
 
@@ -656,18 +622,12 @@ export class RoadmapViewRenderer implements IViewRenderer {
       return;
     }
 
-    const { SuggesterModal } = require('../../modals/UtilityModals');
     const items = availableCards.map(c => ({ display: c.title, value: c.id }));
-
-    interface SuggesterItem {
-      display: string;
-      value: string;
-    }
 
     new SuggesterModal(
       context.app,
       items,
-      (item: SuggesterItem) => {
+      (item: { display: string; value: string }) => {
         milestone.cardIds.push(item.value);
         context.render();
         context.saveBoard();
@@ -690,30 +650,21 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
     menu.addItem(item => {
       item.setTitle('Edit').setIcon('pencil').onClick(() => {
-        const { MilestoneModal } = require('../../modals/MilestoneModal');
-        interface MilestoneEditData {
-            name: string;
-            description: string;
-            dueDate: string | null;
-            color: string;
-        }
+        new MilestoneModal(context.app, milestone, (data) => {
+          milestone.name = data.name;
+          milestone.description = data.description;
+          milestone.dueDate = data.dueDate ?? null;
+          milestone.color = data.color;
 
-        new MilestoneModal(context.app, milestone, (data: MilestoneEditData) => {
-            milestone.name = data.name;
-            milestone.description = data.description;
-            milestone.dueDate = data.dueDate ?? null;
-            milestone.color = data.color;
-
-            // Modal already has 150ms delay, render immediately
-            try {
-                context.render();
-                context.saveBoard();
-                new Notice('✓ Milestone updated', 1500);
-            } catch (error) {
-                console.error('Error updating milestone:', error);
-                console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
-                new Notice('⚠️ Milestone updated but render failed', 2000);
-            }
+          try {
+            context.render();
+            context.saveBoard();
+            new Notice('✓ Milestone updated', 1500);
+          } catch (error) {
+            console.error('Error updating milestone:', error);
+            console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+            new Notice('⚠️ Milestone updated but render failed', 2000);
+          }
         }).open();
       });
     });
@@ -732,7 +683,6 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
     menu.addItem(item => {
       item.setTitle('Delete').setIcon('trash-2').onClick(() => {
-        const { ConfirmModal } = require('../../modals/UtilityModals');
         new ConfirmModal(
           context.app,
           'Delete Milestone',
@@ -761,11 +711,11 @@ export class RoadmapViewRenderer implements IViewRenderer {
     emptyState.appendChild(emptyIcon);
     emptyState.appendChild(createElement('h3', {}, ['No Milestones']));
     emptyState.appendChild(createElement('p', {}, ['Create milestones to organize your roadmap and track progress.']));
-    
+
     const createBtn = createElement('button', { className: 'primary-btn' }, ['Create Milestone']);
     createBtn.addEventListener('click', () => this.createMilestone(context));
     emptyState.appendChild(createBtn);
-    
+
     return emptyState;
   }
 
