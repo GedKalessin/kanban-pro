@@ -401,7 +401,7 @@ export class CardDetailModal extends Modal {
     const input = addRow.createEl('input', {
       type: 'text',
       cls: 'subtask-add-input',
-      attr: { placeholder: 'Add a subtask… (Enter to save)' }
+      attr: { placeholder: 'Add a subtask… (enter to save)' }
     });
 
     let isSaved = false;

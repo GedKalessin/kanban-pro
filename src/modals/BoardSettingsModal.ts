@@ -35,7 +35,7 @@ export class BoardSettingsModal extends Modal {
           .setValue(board.description)
           .onChange(value => {
             this.boardService.updateBoard({ description: value });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -50,7 +50,7 @@ export class BoardSettingsModal extends Modal {
         dropdown.onChange(value => {
           settings.defaultView = value as ViewType;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -66,7 +66,7 @@ export class BoardSettingsModal extends Modal {
           .onChange(value => {
             settings.enableWipLimits = value;
             this.boardService.updateBoard({ settings });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -79,7 +79,7 @@ export class BoardSettingsModal extends Modal {
           .onChange(value => {
             settings.enableSwimLanes = value;
             this.boardService.updateBoard({ settings });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -92,7 +92,7 @@ export class BoardSettingsModal extends Modal {
           .onChange(value => {
             settings.enableTimeTracking = value;
             this.boardService.updateBoard({ settings });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -105,7 +105,7 @@ export class BoardSettingsModal extends Modal {
           .onChange(value => {
             settings.enableAutomations = value;
             this.boardService.updateBoard({ settings });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -118,7 +118,7 @@ export class BoardSettingsModal extends Modal {
           .onChange(value => {
             settings.showCardNumbers = value;
             this.boardService.updateBoard({ settings });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -133,7 +133,7 @@ export class BoardSettingsModal extends Modal {
         toggle.setValue(displayOptions.showAssignee).onChange(value => {
           displayOptions.showAssignee = value;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -143,7 +143,7 @@ export class BoardSettingsModal extends Modal {
         toggle.setValue(displayOptions.showDueDate).onChange(value => {
           displayOptions.showDueDate = value;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -153,7 +153,7 @@ export class BoardSettingsModal extends Modal {
         toggle.setValue(displayOptions.showTags).onChange(value => {
           displayOptions.showTags = value;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -163,7 +163,7 @@ export class BoardSettingsModal extends Modal {
         toggle.setValue(displayOptions.showPriority).onChange(value => {
           displayOptions.showPriority = value;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -173,7 +173,7 @@ export class BoardSettingsModal extends Modal {
         toggle.setValue(displayOptions.showChecklist).onChange(value => {
           displayOptions.showChecklist = value;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -184,7 +184,7 @@ export class BoardSettingsModal extends Modal {
         toggle.setValue(displayOptions.compactMode).onChange(value => {
           displayOptions.compactMode = value;
           this.boardService.updateBoard({ settings });
-          this.onUpdate();
+          void this.onUpdate();
         });
       });
 
@@ -200,7 +200,7 @@ export class BoardSettingsModal extends Modal {
           .onChange(value => {
             settings.autoArchiveCompleted = value;
             this.boardService.updateBoard({ settings });
-            this.onUpdate();
+            void this.onUpdate();
           });
       });
 
@@ -214,7 +214,7 @@ export class BoardSettingsModal extends Modal {
             if (!isNaN(days) && days > 0) {
               settings.autoArchiveDays = days;
               this.boardService.updateBoard({ settings });
-              this.onUpdate();
+              void this.onUpdate();
             }
           });
       });

@@ -89,7 +89,7 @@ class ColorPickerModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-color-picker-modal');
 
-    contentEl.createEl('h2', { text: '🎨 Choose color' });
+    contentEl.createEl('h2', { text: '🎨 choose color' });
 
     // Color Preview
     const previewContainer = contentEl.createDiv({ cls: 'color-preview-container' });
@@ -99,6 +99,7 @@ class ColorPickerModal extends Modal {
     // Hex Input
     new Setting(contentEl)
       .setName('Hex color')
+      .setDesc('hex color code for the avatar')
       .addText(text => {
         text
           .setValue(this.color)
@@ -352,12 +353,12 @@ class QuickAddCardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-quick-add-modal');
 
-    contentEl.createEl('h2', { text: '✨ Quick add card' });
+    contentEl.createEl('h2', { text: '✨ quick add card' });
 
     // Title
     new Setting(contentEl)
       .setName('Title')
-      .setDesc('Card title (required)')
+      .setDesc('card title (required)')
       .addText(text => {
         text
           .setPlaceholder('Enter card title')
@@ -376,7 +377,7 @@ class QuickAddCardModal extends Modal {
     // Start Date
     new Setting(contentEl)
       .setName('Start date')
-      .setDesc('When work begins (optional)')
+      .setDesc('when work begins (optional)')
       .addText(text => {
         text.inputEl.type = 'date';
         text.inputEl.addEventListener('change', (e) => {
@@ -388,7 +389,7 @@ class QuickAddCardModal extends Modal {
     // Due Date
     new Setting(contentEl)
       .setName('Due date')
-      .setDesc('When work should be done (optional)')
+      .setDesc('when work should be done (optional)')
       .addText(text => {
         text.inputEl.type = 'date';
         text.inputEl.addEventListener('change', (e) => {
@@ -535,7 +536,7 @@ class StatusManagementModal extends Modal {
     const header = contentEl.createDiv({ cls: 'modal-header-premium' });
     const headerTop = header.createDiv({ cls: 'header-top' });
 
-    headerTop.createEl('h2', { text: '⚙️ Edit statuses' });
+    headerTop.createEl('h2', { text: '⚙️ edit statuses' });
 
     const closeBtn = headerTop.createEl('button', { cls: 'modal-close-btn' });
     setIcon(closeBtn, 'x');
@@ -556,22 +557,22 @@ class StatusManagementModal extends Modal {
 
     // Save Template Section
     const templateSection = contentEl.createDiv({ cls: 'template-section' });
-    templateSection.createEl('h3', { text: '💾 Save as template' });
+    templateSection.createEl('h3', { text: '💾 save as template' });
     templateSection.createEl('p', {
-      text: 'Save your current board structure as a reusable template',
+      text: 'save your current board structure as a reusable template',
       cls: 'section-description'
     });
 
     const saveTemplateBtn = templateSection.createEl('button', { cls: 'add-button' });
     setIcon(saveTemplateBtn, 'save');
-    saveTemplateBtn.createSpan({ text: 'Save current board as template' });
+    saveTemplateBtn.createSpan({ text: 'save current board as template' });
     saveTemplateBtn.addEventListener('click', () => this.showSaveTemplateModal());
 
     // Saved Templates List
     const board = this.boardService.getBoard();
     if (board.savedTemplates && board.savedTemplates.length > 0) {
       const templatesHeader = templateSection.createDiv({ cls: 'templates-header' });
-      templatesHeader.createEl('h4', { text: 'Saved templates' });
+      templatesHeader.createEl('h4', { text: 'saved templates' });
 
       const templatesList = templateSection.createDiv({ cls: 'saved-templates-list' });
       board.savedTemplates.forEach(template => {
@@ -584,10 +585,10 @@ class StatusManagementModal extends Modal {
     // Footer Buttons
     const footer = contentEl.createDiv({ cls: 'button-container' });
 
-    const cancelBtn = footer.createEl('button', { text: 'Cancel', cls: 'cancel-btn' });
+    const cancelBtn = footer.createEl('button', { text: 'cancel', cls: 'cancel-btn' });
     cancelBtn.addEventListener('click', () => this.close());
 
-    const saveBtn = footer.createEl('button', { text: 'Save changes', cls: 'submit-btn' });
+    const saveBtn = footer.createEl('button', { text: 'save changes', cls: 'submit-btn' });
     saveBtn.addEventListener('click', () => this.save());
   }
 
@@ -825,7 +826,7 @@ class SaveTemplateModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-save-template-modal');
 
-    contentEl.createEl('h2', { text: '💾 Save board as template' });
+    contentEl.createEl('h2', { text: '💾 save board as template' });
 
     new Setting(contentEl)
       .setName('Template name')

@@ -15,7 +15,7 @@ export class AutomationsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-automations-modal');
 
-    contentEl.createEl('h2', { text: '⚡ Automations' });
+    contentEl.createEl('h2', { text: '⚡ automations' });
 
     const board = this.boardService.getBoard();
 
@@ -28,7 +28,7 @@ export class AutomationsModal extends Modal {
     // Add Automation Button
     const addBtn = contentEl.createEl('button', { text: '+ add automation', cls: 'primary-btn full-width-btn' });
     addBtn.addEventListener('click', () => {
-      new Notice('⚠️ automation creation - Coming soon!', 2000);
+      new Notice('⚠️ automation creation - coming soon!', 2000);
     });
   }
 

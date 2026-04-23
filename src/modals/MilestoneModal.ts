@@ -39,7 +39,7 @@ export class MilestoneModal extends Modal {
       .addText(text => {
         text
           .setValue(this.formData.name)
-          .setPlaceholder('Q1 Release')
+          .setPlaceholder('Q1 release')
           .onChange(value => {
             this.formData.name = value;
           });

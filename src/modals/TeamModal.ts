@@ -179,7 +179,7 @@ class MemberFormModal extends Modal {
     // Name
     new Setting(contentEl)
       .setName('Name *')
-      .setDesc('Full name of the team member')
+      .setDesc('full name of the team member')
       .addText(text => {
         text.setValue(this.nameVal).setPlaceholder('e.g. alice johnson');
         text.inputEl.focus();
@@ -192,7 +192,7 @@ class MemberFormModal extends Modal {
     // Role
     new Setting(contentEl)
       .setName('Role')
-      .setDesc('Job title or role in the project')
+      .setDesc('job title or role in the project')
       .addText(text => {
         text.setValue(this.roleVal).setPlaceholder('e.g. frontend developer');
         text.onChange(v => { this.roleVal = v; });
@@ -201,7 +201,7 @@ class MemberFormModal extends Modal {
     // Email
     new Setting(contentEl)
       .setName('Email')
-      .setDesc('Contact email address')
+      .setDesc('contact email address')
       .addText(text => {
         text.setValue(this.emailVal).setPlaceholder('e.g. alice@example.com');
         text.onChange(v => { this.emailVal = v; });
@@ -341,10 +341,10 @@ export class MemberDetailModal extends Modal {
     // Action buttons
     const btnRow = contentEl.createDiv({ cls: 'member-detail-actions' });
 
-    const closeBtn = btnRow.createEl('button', { text: 'Close', cls: 'cancel-btn' });
+    const closeBtn = btnRow.createEl('button', { text: 'close', cls: 'cancel-btn' });
     closeBtn.addEventListener('click', () => this.close());
 
-    const editBtn = btnRow.createEl('button', { text: '✏️ Edit', cls: 'submit-btn' });
+    const editBtn = btnRow.createEl('button', { text: '✏️ edit', cls: 'submit-btn' });
     editBtn.addEventListener('click', () => {
       new MemberFormModal(this.app, this.member, (data) => {
         this.boardService.updateTeamMember(this.member.id, data);

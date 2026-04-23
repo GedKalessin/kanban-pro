@@ -268,8 +268,8 @@ export class GanttViewRenderer implements IViewRenderer {
       console.error('Frappe Gantt initialization error:', error);
       ganttContainer.empty();
       const errorMsg = ganttContainer.createDiv({ cls: 'gantt-error' });
-      errorMsg.createEl('h3', { text: '⚠️ Error loading Gantt chart' });
-      errorMsg.createEl('p', { text: 'Using fallback view...' });
+      errorMsg.createEl('h3', { text: '⚠️ error loading gantt chart' });
+      errorMsg.createEl('p', { text: 'using fallback view...' });
       setTimeout(() => this.renderFallback(container, cards, context), 100);
     }
   }

@@ -492,7 +492,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     const errorIcon = errorDiv.createDiv({ cls: 'error-icon' });
     setIcon(errorIcon, 'alert-triangle');
 
-    errorDiv.createEl('h3', { text: '⚠️ View error' });
+    errorDiv.createEl('h3', { text: '⚠️ view error' });
     errorDiv.createEl('p', { text: message });
 
     const backBtn = errorDiv.createEl('button', {

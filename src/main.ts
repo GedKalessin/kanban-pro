@@ -27,26 +27,26 @@ export default class KanbanProPlugin extends Plugin {
     this.registerExtensions(['kanban'], KANBAN_VIEW_TYPE);
 
     // Add ribbon icon
-    this.addRibbonIcon('layout-grid', 'Create Kanban from template', () => {
+    this.addRibbonIcon('layout-grid', 'Create kanban from template', () => {
       this.showTemplateModal();
     });
 
     // Add commands
     this.addCommand({
       id: 'create-kanban-board',
-      name: 'Create new Kanban board',
+      name: 'Create new kanban board',
       callback: () => this.showNewBoardModal()
     });
 
     this.addCommand({
       id: 'open-kanban-board',
-      name: 'Open Kanban board',
+      name: 'Open kanban board',
       callback: () => this.showOpenBoardModal()
     });
 
     this.addCommand({
       id: 'create-kanban-from-template',
-      name: 'Create Kanban from template',
+      name: 'Create kanban from template',
       callback: () => this.showTemplateModal()
     });
 
@@ -100,7 +100,7 @@ export default class KanbanProPlugin extends Plugin {
         new Notice(`✅ created board "${name}" from template`, 3000);
       } catch (error) {
         console.error('Failed to create board from template:', error);
-        new Notice('❌ failed to create board', 3000);
+        new Notice('❌ failed to create board from template', 3000);
       }
     });
     modal.open();
@@ -109,7 +109,7 @@ export default class KanbanProPlugin extends Plugin {
   private showOpenBoardModal() {
     const boards = this.getAllKanbanBoards();
     if (boards.length === 0) {
-      new Notice('No Kanban boards found. Create one first!', 3000);
+      new Notice('No kanban boards found. create one first!', 3000);
       return;
     }
 
@@ -173,7 +173,7 @@ export default class KanbanProPlugin extends Plugin {
     );
 
     if (existingLeaf) {
-      this.app.workspace.revealLeaf(existingLeaf);
+      void this.app.workspace.revealLeaf(existingLeaf);
       return;
     }
 
@@ -182,7 +182,7 @@ export default class KanbanProPlugin extends Plugin {
       type: KANBAN_VIEW_TYPE,
       state: { file: file.path }
     });
-    this.app.workspace.revealLeaf(leaf);
+    void this.app.workspace.revealLeaf(leaf);
   }
 
   // ==================== AUTO-SAVE ====================
@@ -194,12 +194,10 @@ export default class KanbanProPlugin extends Plugin {
     }
 
     if (this.settings.autoSave && this.settings.autoSaveInterval > 0) {
-      const interval = window.setInterval(async () => {
-        try {
-          await this.updateBoardFile(filePath, view.getBoard());
-        } catch (error) {
+      const interval = window.setInterval(() => {
+        void this.updateBoardFile(filePath, view.getBoard()).catch(error => {
           console.error('Auto-save failed:', error);
-        }
+        });
       }, this.settings.autoSaveInterval * 1000);
 
       this.autoSaveIntervals.set(filePath, interval);
@@ -212,11 +210,11 @@ export default class KanbanProPlugin extends Plugin {
 // ============================================
 
 class CreateBoardModal extends Modal {
-  private onSubmit: (name: string, folderPath: string) => void;
+  private onSubmit: (name: string, folderPath: string) => Promise<void>;
   private name: string = '';
   private folderPath: string = '';
 
-  constructor(app: App, onSubmit: (name: string, folderPath: string) => void) {
+  constructor(app: App, onSubmit: (name: string, folderPath: string) => Promise<void>) {
     super(app);
     this.onSubmit = onSubmit;
   }
@@ -246,7 +244,7 @@ class CreateBoardModal extends Modal {
 
     new Setting(contentEl)
       .setName('Folder')
-      .setDesc('Optional: Choose a folder for the board')
+      .setDesc('Optional: choose a folder for the board')
       .addText(text => {
         text
           .setPlaceholder('Boards/')
@@ -265,7 +263,7 @@ class CreateBoardModal extends Modal {
 
   private submit() {
     if (this.name.trim()) {
-      this.onSubmit(this.name.trim(), this.folderPath.trim());
+      void this.onSubmit(this.name.trim(), this.folderPath.trim());
       this.close();
     } else {
       new Notice('⚠️ please enter a board name', 2000);
@@ -279,12 +277,12 @@ class CreateBoardModal extends Modal {
 }
 
 class TemplateSelectionModal extends Modal {
-  private onSubmit: (templateId: string, name: string, folderPath: string) => void;
+  private onSubmit: (templateId: string, name: string, folderPath: string) => Promise<void>;
   private selectedTemplate: string = 'basic';
   private name: string = '';
   private folderPath: string = '';
 
-  constructor(app: App, onSubmit: (templateId: string, name: string, folderPath: string) => void) {
+  constructor(app: App, onSubmit: (templateId: string, name: string, folderPath: string) => Promise<void>) {
     super(app);
     this.onSubmit = onSubmit;
   }
@@ -348,7 +346,7 @@ class TemplateSelectionModal extends Modal {
 
   private submit() {
     if (this.name.trim()) {
-      this.onSubmit(this.selectedTemplate, this.name.trim(), this.folderPath.trim());
+      void this.onSubmit(this.selectedTemplate, this.name.trim(), this.folderPath.trim());
       this.close();
     } else {
       new Notice('⚠️ please enter a board name', 2000);
@@ -363,9 +361,9 @@ class TemplateSelectionModal extends Modal {
 
 class OpenBoardModal extends Modal {
   private boards: TFile[];
-  private onSubmit: (filePath: string) => void;
+  private onSubmit: (filePath: string) => Promise<void>;
 
-  constructor(app: App, boards: TFile[], onSubmit: (filePath: string) => void) {
+  constructor(app: App, boards: TFile[], onSubmit: (filePath: string) => Promise<void>) {
     super(app);
     this.boards = boards;
     this.onSubmit = onSubmit;
@@ -375,7 +373,7 @@ class OpenBoardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-open-board-modal');
 
-    contentEl.createEl('h2', { text: '📋 Open Kanban board' });
+    contentEl.createEl('h2', { text: '📋 open kanban board' });
 
     const boardsList = contentEl.createDiv({ cls: 'boards-list' });
 
@@ -390,7 +388,7 @@ class OpenBoardModal extends Modal {
       infoEl.createEl('div', { text: board.path, cls: 'board-path' });
 
       boardItem.addEventListener('click', () => {
-        this.onSubmit(board.path);
+        void this.onSubmit(board.path);
         this.close();
       });
     });

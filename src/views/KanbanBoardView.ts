@@ -247,7 +247,7 @@ export class KanbanBoardView extends ItemView {
       }
     } catch (error) {
       console.error('Kanban Pro: Error loading file:', error);
-      new Notice('⚠️ Failed to load Kanban board', 3000);
+      new Notice('⚠️ failed to load kanban board', 3000);
       this.render();
     }
   }
@@ -291,7 +291,7 @@ export class KanbanBoardView extends ItemView {
       }
     } catch (error) {
       console.error('Kanban Pro: Error saving board:', error);
-      new Notice('⚠️ Failed to save board', 3000);
+      new Notice('⚠️ failed to save kanban board', 3000);
     }
   }
 
@@ -380,8 +380,8 @@ export class KanbanBoardView extends ItemView {
       console.error('Kanban Pro: Error rendering view:', error);
       container.empty();
       const errorDiv = container.createDiv({ cls: 'view-error' });
-      errorDiv.createEl('h3', { text: '⚠️ Error rendering view' });
-      errorDiv.createEl('p', { text: 'Switch to another view or check the console for details.' });
+      errorDiv.createEl('h3', { text: '⚠️ error rendering view' });
+      errorDiv.createEl('p', { text: 'switch to another view or check the console for details.' });
 
       // Non bloccare la navigazione - l'utente può ancora cambiare view
     }
@@ -399,11 +399,11 @@ export class KanbanBoardView extends ItemView {
   private openCardModal(cardId: string): void {
     const card = this.boardService.getCard(cardId);
     if (!card) {
-      new Notice('⚠️ Card not found', 2000);
+      new Notice('⚠️ card not found', 2000);
       return;
     }
 
-    console.debug('🔍 Opening card modal:', {
+    console.debug('🔍 opening card modal:', {
       cardId: card.id,
       title: card.title,
       description: card.description,
@@ -457,7 +457,7 @@ export class KanbanBoardView extends ItemView {
 
   private bulkMoveCards(toColumnId: string): void {
     if (this.selectedCards.size === 0) {
-      new Notice('⚠️ No cards selected', 2000);
+      new Notice('⚠️ no cards selected', 2000);
       return;
     }
 
@@ -469,12 +469,12 @@ export class KanbanBoardView extends ItemView {
     this.selectedCards.clear();
     this.render();
     void this.saveBoard();
-    new Notice(`✅ Moved ${cards.length} card(s)`, 2000);
+    new Notice(`✅ moved ${cards.length} card(s)`, 2000);
   }
 
   private bulkDeleteCards(): void {
     if (this.selectedCards.size === 0) {
-      new Notice('⚠️ No cards selected', 2000);
+      new Notice('⚠️ no cards selected', 2000);
       return;
     }
 
@@ -491,7 +491,7 @@ export class KanbanBoardView extends ItemView {
         this.selectedCards.clear();
         this.render();
         void this.saveBoard();
-        new Notice(`🗑️ Deleted ${cards.length} card(s)`, 2000);
+        new Notice(`🗑️ deleted ${cards.length} card(s)`, 2000);
       },
       'Delete',
       'Cancel',

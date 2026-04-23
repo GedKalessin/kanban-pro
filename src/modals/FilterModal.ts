@@ -24,7 +24,7 @@ export class FilterModal extends Modal {
     // Assignees
     new Setting(contentEl)
       .setName('Assignees')
-      .setDesc('Filter by assignees (comma-separated)')
+      .setDesc('filter by assignees (comma-separated)')
       .addText(text => {
         text
           .setValue(filters.assignees.join(', '))
@@ -39,7 +39,7 @@ export class FilterModal extends Modal {
     // Priorities
     new Setting(contentEl)
       .setName('Priorities')
-      .setDesc('Select priorities to show')
+      .setDesc('select priorities to show')
       .addDropdown(dropdown => {
         dropdown.addOption('', 'All priorities');
         const priorities: Priority[] = ['low', 'medium', 'high', 'critical'];
@@ -80,7 +80,7 @@ export class FilterModal extends Modal {
     // Tags
     new Setting(contentEl)
       .setName('Tags')
-      .setDesc('Filter by tags (comma-separated)')
+      .setDesc('filter by tags (comma-separated)')
       .addText(text => {
         text
           .setValue(filters.tags.join(', '))

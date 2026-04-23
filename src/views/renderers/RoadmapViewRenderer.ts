@@ -635,7 +635,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     milestone.cardIds = milestone.cardIds.filter(id => id !== cardId);
     context.render();
     void context.saveBoard();
-    new Notice('✓ Card removed', 1500);
+    new Notice('✓ card removed', 1500);
   }
 
   private showMilestoneMenu(milestone: Milestone, e: MouseEvent, context: ViewRendererContext): void {
@@ -685,7 +685,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
             board.milestones = board.milestones.filter(m => m.id !== milestone.id);
             context.render();
             void context.saveBoard();
-            new Notice('✓ Milestone deleted', 1500);
+            new Notice('✓ milestone deleted', 1500);
           },
           'Delete',
           'Cancel',
