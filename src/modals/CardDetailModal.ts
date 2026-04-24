@@ -108,7 +108,7 @@ export class CardDetailModal extends Modal {
     });
 
     // Also save on input with debouncing for auto-save
-    let saveTimeout: NodeJS.Timeout;
+    let saveTimeout: number;
     descTextarea.addEventListener('input', () => {
       activeWindow.clearTimeout(saveTimeout);
       saveTimeout = activeWindow.setTimeout(() => {
@@ -360,7 +360,7 @@ export class CardDetailModal extends Modal {
       });
       textEl.textContent = item.text;
 
-      let saveTimeout: NodeJS.Timeout;
+      let saveTimeout: number;
       textEl.addEventListener('input', () => {
         activeWindow.clearTimeout(saveTimeout);
         saveTimeout = activeWindow.setTimeout(() => {
