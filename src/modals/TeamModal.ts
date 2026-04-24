@@ -201,9 +201,9 @@ class MemberFormModal extends Modal {
     // Email
     new Setting(contentEl)
       .setName('Email')
-      .setDesc('Contact email address')
+      .setDesc('contact email address')
       .addText(text => {
-        text.setValue(this.emailVal).setPlaceholder('e.g. alice@example.com');
+        text.setValue(this.emailVal).setPlaceholder('alice@example.com');
         text.onChange(v => { this.emailVal = v; });
       });
 
