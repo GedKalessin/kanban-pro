@@ -203,7 +203,7 @@ class MemberFormModal extends Modal {
       .setName('Email')
       .setDesc('Contact email address')
       .addText(text => {
-        text.setValue(this.emailVal).setPlaceholder('alice@example.com');
+        text.setValue(this.emailVal).setPlaceholder('Alice@example.com');
         text.onChange(v => { this.emailVal = v; });
       });
 
