@@ -25,7 +25,7 @@ export class TeamModal extends Modal {
 
     // Header
     const header = contentEl.createDiv({ cls: 'team-modal-header' });
-    header.createEl('h2', { text: '👥 team members' });
+    header.createEl('h2', { text: 'Team members' });
     header.createEl('p', {
       text: 'Manage your board team. Only listed members can be assigned to tasks.',
       cls: 'team-modal-desc'
