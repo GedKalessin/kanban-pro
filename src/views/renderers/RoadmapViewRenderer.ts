@@ -148,7 +148,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
 
     const addBtn = createElement('button', { className: 'add-milestone-btn' });
     setIcon(addBtn, 'plus');
-    addBtn.appendChild(document.createTextNode(' New milestone'));
+    addBtn.appendChild(activeDocument.createTextNode(' New milestone'));
     addBtn.addEventListener('click', () => {
       try {
         this.createMilestone(context);
@@ -225,9 +225,9 @@ export class RoadmapViewRenderer implements IViewRenderer {
         setIcon(calIcon, 'calendar');
         dueDate.appendChild(calIcon);
         try {
-          dueDate.appendChild(document.createTextNode(new Date(milestone.dueDate).toLocaleDateString()));
+          dueDate.appendChild(activeDocument.createTextNode(new Date(milestone.dueDate).toLocaleDateString()));
         } catch {
-          dueDate.appendChild(document.createTextNode(milestone.dueDate));
+          dueDate.appendChild(activeDocument.createTextNode(milestone.dueDate));
         }
         titleSection.appendChild(dueDate);
       }
@@ -385,7 +385,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     const icon = createElement('span', { className: 'unassigned-icon' });
     setIcon(icon, 'inbox');
     title.appendChild(icon);
-    title.appendChild(document.createTextNode(' Unassigned cards'));
+    title.appendChild(activeDocument.createTextNode(' Unassigned cards'));
     header.appendChild(title);
 
     const count = createElement('span', { className: 'unassigned-count' });

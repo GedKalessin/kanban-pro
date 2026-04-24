@@ -110,7 +110,7 @@ export class MilestoneModal extends Modal {
 
     // Increased delay to ensure modal is fully closed before rendering
     // This prevents race conditions with the view render cycle
-    setTimeout(() => {
+    activeWindow.setTimeout(() => {
       this.onSubmit(this.formData);
     }, 150);
   }

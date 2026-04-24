@@ -268,9 +268,9 @@ export class GanttViewRenderer implements IViewRenderer {
       console.error('Frappe Gantt initialization error:', error);
       ganttContainer.empty();
       const errorMsg = ganttContainer.createDiv({ cls: 'gantt-error' });
-      errorMsg.createEl('h3', { text: '⚠️ Error loading Gantt chart' });
+      errorMsg.createEl('h3', { text: '⚠️ error loading gantt chart' });
       errorMsg.createEl('p', { text: 'Using fallback view...' });
-      setTimeout(() => this.renderFallback(container, cards, context), 100);
+      activeWindow.setTimeout(() => this.renderFallback(container, cards, context), 100);
     }
   }
 
@@ -361,7 +361,7 @@ export class GanttViewRenderer implements IViewRenderer {
     const fallbackContainer = container.createDiv({ cls: 'gantt-fallback' });
 
     const warning = fallbackContainer.createDiv({ cls: 'gantt-warning' });
-    warning.createEl('strong', { text: '⚠️ Frappe Gantt not available' });
+    warning.createEl('strong', { text: '⚠️ frappe gantt not available' });
     warning.createEl('br');
     warning.appendText('Install it with: ');
     warning.createEl('code', { text: 'npm install frappe-gantt' });
@@ -420,7 +420,7 @@ export class GanttViewRenderer implements IViewRenderer {
   private renderError(container: HTMLElement, message: string, context: ViewRendererContext): void {
     const errorDiv = container.createDiv({ cls: 'view-error' });
     setIcon(errorDiv.createDiv({ cls: 'error-icon' }), 'alert-triangle');
-    errorDiv.createEl('h3', { text: '⚠️ Gantt error' });
+    errorDiv.createEl('h3', { text: '⚠️ gantt error' });
     errorDiv.createEl('p', { text: message });
 
     const backBtn = errorDiv.createEl('button', { text: 'Back to board', cls: 'primary-btn' });
@@ -453,7 +453,7 @@ export class GanttViewRenderer implements IViewRenderer {
           attributeFilter: ['style']
         });
 
-        document.addEventListener('click', (e) => {
+        activeDocument.addEventListener('click', (e) => {
           const target = e.target as HTMLElement;
           const isClickOnBar = target.closest('.bar-wrapper') || target.closest('.bar');
           const isClickOnPopup = target.closest('.popup-wrapper');
@@ -463,11 +463,11 @@ export class GanttViewRenderer implements IViewRenderer {
           }
         });
       } else {
-        setTimeout(checkPopup, 100);
+        activeWindow.setTimeout(checkPopup, 100);
       }
     };
 
-    setTimeout(checkPopup, 200);
+    activeWindow.setTimeout(checkPopup, 200);
   }
 
   cleanup(): void {
@@ -486,7 +486,7 @@ export class GanttViewRenderer implements IViewRenderer {
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement('div');
+    const div = activeDocument.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }

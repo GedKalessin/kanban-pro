@@ -616,7 +616,7 @@ export class BoardService {
       this.history = this.history.slice(0, this.historyIndex + 1);
     }
 
-    this.history.push(JSON.parse(JSON.stringify(this.board)));
+    this.history.push(JSON.parse(JSON.stringify(this.board)) as KanbanBoard);
 
     if (this.history.length > this.maxHistorySize) {
       this.history.shift();
@@ -636,14 +636,14 @@ export class BoardService {
   undo(): boolean {
     if (!this.canUndo()) return false;
     this.historyIndex--;
-    this.board = JSON.parse(JSON.stringify(this.history[this.historyIndex]));
+    this.board = JSON.parse(JSON.stringify(this.history[this.historyIndex])) as KanbanBoard;
     return true;
   }
 
   redo(): boolean {
     if (!this.canRedo()) return false;
     this.historyIndex++;
-    this.board = JSON.parse(JSON.stringify(this.history[this.historyIndex]));
+    this.board = JSON.parse(JSON.stringify(this.history[this.historyIndex])) as KanbanBoard;
     return true;
   }
 
@@ -766,7 +766,7 @@ export class BoardService {
         wipLimit: col.wipLimit,
         definition: col.definition
       })),
-      statusGroups: this.board.statusGroups ? JSON.parse(JSON.stringify(this.board.statusGroups)) : [],
+      statusGroups: this.board.statusGroups ? JSON.parse(JSON.stringify(this.board.statusGroups)) as StatusGroup[] : [],
       settings: this.board.settings
     };
 

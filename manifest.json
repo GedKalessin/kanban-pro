@@ -2,7 +2,7 @@
   "id": "kanban-pro",
   "name": "Kanban Pro",
   "version": "1.0.0",
-  "minAppVersion": "1.0.0",
+  "minAppVersion": "1.7.2",
   "description": "Advanced Kanban board with multiple views and powerful features.",
   "author": "Claudio Ricciardiello",
   "authorUrl": "https://github.com/GedKalessin",

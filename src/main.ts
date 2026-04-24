@@ -60,14 +60,14 @@ export default class KanbanProPlugin extends Plugin {
     console.debug('👋 Unloading Kanban Pro Plugin');
 
     // Clear all auto-save intervals
-    this.autoSaveIntervals.forEach(interval => clearInterval(interval));
+    this.autoSaveIntervals.forEach(interval => activeWindow.clearInterval(interval));
     this.autoSaveIntervals.clear();
   }
 
   // ==================== SETTINGS ====================
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<KanbanPluginSettings>);
   }
 
   async saveSettings() {
@@ -190,11 +190,11 @@ export default class KanbanProPlugin extends Plugin {
   setupAutoSave(filePath: string, view: KanbanBoardView) {
     // Clear existing interval if any
     if (this.autoSaveIntervals.has(filePath)) {
-      clearInterval(this.autoSaveIntervals.get(filePath));
+      activeWindow.clearInterval(this.autoSaveIntervals.get(filePath));
     }
 
     if (this.settings.autoSave && this.settings.autoSaveInterval > 0) {
-      const interval = window.setInterval(() => {
+      const interval = activeWindow.setInterval(() => {
         void this.updateBoardFile(filePath, view.getBoard()).catch(error => {
           console.error('Auto-save failed:', error);
         });
@@ -266,7 +266,7 @@ class CreateBoardModal extends Modal {
       void this.onSubmit(this.name.trim(), this.folderPath.trim());
       this.close();
     } else {
-      new Notice('⚠️ Please enter a board name', 2000);
+      new Notice('⚠️ please enter a board name', 2000);
     }
   }
 
@@ -349,7 +349,7 @@ class TemplateSelectionModal extends Modal {
       void this.onSubmit(this.selectedTemplate, this.name.trim(), this.folderPath.trim());
       this.close();
     } else {
-      new Notice('⚠️ Please enter a board name', 2000);
+      new Notice('⚠️ please enter a board name', 2000);
     }
   }
 

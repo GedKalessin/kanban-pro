@@ -110,8 +110,8 @@ export class CardDetailModal extends Modal {
     // Also save on input with debouncing for auto-save
     let saveTimeout: NodeJS.Timeout;
     descTextarea.addEventListener('input', () => {
-      clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(() => {
+      activeWindow.clearTimeout(saveTimeout);
+      saveTimeout = activeWindow.setTimeout(() => {
         console.debug('💾 Auto-saving description:', descTextarea.value);
         this.boardService.updateCard(this.card.id, { description: descTextarea.value });
         this.card = this.boardService.getCard(this.card.id)!;
@@ -362,8 +362,8 @@ export class CardDetailModal extends Modal {
 
       let saveTimeout: NodeJS.Timeout;
       textEl.addEventListener('input', () => {
-        clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(() => {
+        activeWindow.clearTimeout(saveTimeout);
+        saveTimeout = activeWindow.setTimeout(() => {
           this.boardService.updateChecklistItem(currentCard.id, item.id, { text: textEl.textContent || '' });
           this.card = this.boardService.getCard(currentCard.id)!;
           this.onUpdate();
@@ -478,7 +478,7 @@ export class CardDetailModal extends Modal {
 
     const addNoteBtn = this.linkedNotesContainerEl.createEl('button', { cls: 'add-note-btn' });
     setIcon(addNoteBtn, 'plus');
-    addNoteBtn.appendChild(document.createTextNode(' Link note'));
+    addNoteBtn.appendChild(activeDocument.createTextNode(' Link note'));
     addNoteBtn.addEventListener('click', () => this.linkNote());
   }
 
@@ -503,7 +503,7 @@ export class CardDetailModal extends Modal {
           this.onUpdate();
           this.renderLinkedNotes();
         } else {
-          new Notice('⚠️ Note already linked', 2000);
+          new Notice('⚠️ note already linked', 2000);
         }
       },
       'Search notes...',
@@ -633,7 +633,7 @@ export class CardDetailModal extends Modal {
           this.boardService.deleteCard(this.card.id);
           this.onUpdate();
           this.close();
-          new Notice('🗑️ Card deleted', 2000);
+          new Notice('🗑️ card deleted', 2000);
         },
         'Delete',
         'Cancel',

@@ -18,7 +18,7 @@ export function createMemberAvatar(
   const members = boardService.getTeamMembers();
   const member = members.find(m => m.name === memberName);
 
-  const avatar = document.createElement('div');
+  const avatar = activeDocument.createElement('div');
   avatar.className = cssClass;
   avatar.textContent = memberName.charAt(0).toUpperCase();
   avatar.title = memberName;

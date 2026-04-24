@@ -28,7 +28,7 @@ export class FilterModal extends Modal {
       .addText(text => {
         text
           .setValue(filters.assignees.join(', '))
-          .setPlaceholder('John, Jane, Bob')
+          .setPlaceholder('John, jane, bob')
           .onChange(value => {
             const assignees = value.split(',').map(a => a.trim()).filter(a => a);
             this.boardService.setFilters({ assignees });
@@ -84,7 +84,7 @@ export class FilterModal extends Modal {
       .addText(text => {
         text
           .setValue(filters.tags.join(', '))
-          .setPlaceholder('bug, feature, urgent')
+          .setPlaceholder('Bug, feature, urgent')
           .onChange(value => {
             const tags = value.split(',').map(t => t.trim()).filter(t => t);
             this.boardService.setFilters({ tags });

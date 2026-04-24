@@ -104,7 +104,7 @@ export class ToolbarBuilder {
       label.textContent = view.label;
 
       btn.addEventListener('click', () => {
-        this.onViewChange(view.id as ExtendedViewType);
+        this.onViewChange(view.id);
       });
     });
   }
@@ -388,13 +388,13 @@ export class ToolbarBuilder {
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
 
-    const link = document.createElement('a');
+    const link = activeDocument.createElement('a');
     link.href = url;
     link.download = `${board.name}.kanban.json`;
     link.click();
 
     URL.revokeObjectURL(url);
-    new Notice('✅ board exported', 2000);
+    new Notice('✅ Board exported', 2000);
   }
 
   private showFilterModal(): void {

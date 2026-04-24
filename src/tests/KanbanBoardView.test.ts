@@ -170,7 +170,7 @@ describe('Kanban Pro - Bug Fixes Verification', () => {
   describe('FIX 6: Empty Views', () => {
     it('should handle timeline view with no cards', () => {
       const board = boardService.getBoard();
-      const cardsWithDates = board.cards.filter(c => c.dueDate || (c as any).startDate);
+      const cardsWithDates = board.cards.filter(c => c.dueDate || c.startDate);
       
       expect(cardsWithDates.length).toBe(0);
       // View should render empty state without crashing
@@ -178,7 +178,7 @@ describe('Kanban Pro - Bug Fixes Verification', () => {
 
     it('should handle gantt view with no cards', () => {
       const board = boardService.getBoard();
-      const cardsWithDates = board.cards.filter(c => c.dueDate || (c as any).startDate);
+      const cardsWithDates = board.cards.filter(c => c.dueDate || c.startDate);
       
       expect(cardsWithDates.length).toBe(0);
       // View should render empty state without crashing

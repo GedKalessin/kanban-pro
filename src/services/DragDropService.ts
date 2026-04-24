@@ -64,7 +64,7 @@ export class DragDropService {
   }
 
   private createPlaceholder(height: number): HTMLElement {
-    const placeholder = document.createElement('div');
+    const placeholder = activeDocument.createElement('div');
     placeholder.className = 'kanban-card-placeholder';
     setCssProps(placeholder, { '--kp-height': `${height}px` });
     return placeholder;
@@ -121,7 +121,7 @@ export class DragDropService {
     this.draggedCardId = null;
     this.draggedCardEl = null;
 
-    const container = target.closest('.kanban-pro-container') ?? document.body;
+    const container = target.closest('.kanban-pro-container') ?? activeDocument.body;
     container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
   };
 
@@ -278,7 +278,7 @@ export class DragDropService {
       if (!this.isDraggingColumn && deltaX > 10) {
         this.isDraggingColumn = true;
         this.draggedColumn.classList.add('dragging-column');
-        document.body.classList.add('kp-grabbing');
+        activeDocument.body.classList.add('kp-grabbing');
       }
 
       if (!this.isDraggingColumn) return;
@@ -299,8 +299,8 @@ export class DragDropService {
     };
 
     const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      activeDocument.removeEventListener('mousemove', onMouseMove);
+      activeDocument.removeEventListener('mouseup', onMouseUp);
 
       if (this.isDraggingColumn && this.draggedColumn) {
         const columnId = this.draggedColumn.dataset.columnId;
@@ -320,13 +320,13 @@ export class DragDropService {
         this.draggedColumn.classList.remove('dragging-column');
       }
 
-      document.body.classList.remove('kp-grabbing');
+      activeDocument.body.classList.remove('kp-grabbing');
       this.isDraggingColumn = false;
       this.draggedColumn = null;
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    activeDocument.addEventListener('mousemove', onMouseMove);
+    activeDocument.addEventListener('mouseup', onMouseUp);
 
     e.preventDefault();
   };

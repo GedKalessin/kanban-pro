@@ -36,7 +36,7 @@ export class TeamModal extends Modal {
     this.renderList();
 
     // Add member button
-    const addBtn = contentEl.createEl('button', { cls: 'team-add-btn', text: '+ Add member' });
+    const addBtn = contentEl.createEl('button', { cls: 'team-add-btn', text: '+ add member' });
     addBtn.addEventListener('click', () => this.openAddMemberForm());
   }
 
@@ -181,7 +181,7 @@ class MemberFormModal extends Modal {
       .setName('Name *')
       .setDesc('Full name of the team member')
       .addText(text => {
-        text.setValue(this.nameVal).setPlaceholder('E.g. Alice Johnson');
+        text.setValue(this.nameVal).setPlaceholder('E.g. Alice johnson');
         text.inputEl.focus();
         text.onChange(v => { this.nameVal = v; updatePreview(); });
         text.inputEl.addEventListener('keydown', e => {
@@ -240,7 +240,7 @@ class MemberFormModal extends Modal {
   private submit(): void {
     const name = this.nameVal.trim();
     if (!name) {
-      new Notice('⚠️ Name is required', 2000);
+      new Notice('⚠️ name is required', 2000);
       return;
     }
     this.onSubmit({
@@ -344,7 +344,7 @@ export class MemberDetailModal extends Modal {
     const closeBtn = btnRow.createEl('button', { text: 'Close', cls: 'cancel-btn' });
     closeBtn.addEventListener('click', () => this.close());
 
-    const editBtn = btnRow.createEl('button', { text: '✏️ Edit', cls: 'submit-btn' });
+    const editBtn = btnRow.createEl('button', { text: '✏️ edit', cls: 'submit-btn' });
     editBtn.addEventListener('click', () => {
       new MemberFormModal(this.app, this.member, (data) => {
         this.boardService.updateTeamMember(this.member.id, data);

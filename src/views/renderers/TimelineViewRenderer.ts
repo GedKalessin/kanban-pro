@@ -85,7 +85,7 @@ export class TimelineViewRenderer implements IViewRenderer {
     // Today Button
     const todayBtn = createElement('button', { className: 'today-btn' }, ['Today']);
     todayBtn.addEventListener('click', () => {
-      setTimeout(() => {
+      activeWindow.setTimeout(() => {
         const marker = container.querySelector('.timeline-container .today-marker');
         if (marker) marker.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       }, 100);

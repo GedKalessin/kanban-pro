@@ -231,7 +231,7 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   },
   children?: (string | Node)[]
 ): HTMLElementTagNameMap[K] {
-  const element = document.createElement(tag);
+  const element = activeDocument.createElement(tag);
   
   if (options) {
     Object.entries(options).forEach(([key, value]) => {
@@ -250,7 +250,7 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   if (children) {
     children.forEach(child => {
       if (typeof child === 'string') {
-        element.appendChild(document.createTextNode(child));
+        element.appendChild(activeDocument.createTextNode(child));
       } else {
         element.appendChild(child);
       }
@@ -304,9 +304,9 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
     };
     
     if (timeout) {
-      clearTimeout(timeout);
+      activeWindow.clearTimeout(timeout);
     }
-    timeout = setTimeout(later, wait);
+    timeout = activeWindow.setTimeout(later, wait);
   };
 }
 
@@ -320,7 +320,7 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      activeWindow.setTimeout(() => inThrottle = false, limit);
     }
   };
 }
@@ -383,7 +383,7 @@ export function titleCase(text: string): string {
 }
 
 export function escapeHtml(text: string): string {
-  const div = document.createElement('div');
+  const div = activeDocument.createElement('div');
   div.textContent = text;
   return div.innerHTML;
 }
@@ -453,7 +453,7 @@ export function shuffle<T>(array: T[]): T[] {
 // ==================== OBJECT UTILITIES ====================
 
 export function deepClone<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj));
+  return JSON.parse(JSON.stringify(obj)) as T;
 }
 
 export function deepMerge<T extends object>(target: T, ...sources: Partial<T>[]): T {
@@ -556,7 +556,7 @@ export function downloadAsJson(data: unknown, filename: string): void {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = activeDocument.createElement('a');
   link.href = url;
   link.download = filename;
   link.click();

@@ -269,7 +269,7 @@ export class ListViewRenderer implements IViewRenderer {
       });
       const dateIcon = dueDateEl.createSpan({ cls: 'date-icon' });
       setIcon(dateIcon, 'calendar');
-      dueDateEl.appendChild(document.createTextNode(formatDisplayDate(card.dueDate)));
+      dueDateEl.appendChild(activeDocument.createTextNode(formatDisplayDate(card.dueDate)));
     }
 
     // Progress

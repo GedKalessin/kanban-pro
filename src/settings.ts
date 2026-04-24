@@ -134,7 +134,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
         .onChange(async (value) => {
           this.plugin.settings.compactMode = value;
           await this.plugin.saveSettings();
-          document.body.toggleClass('kanban-compact-mode', value);
+          activeDocument.body.toggleClass('kanban-compact-mode', value);
         })
       );
 
@@ -154,7 +154,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
       .setDesc('How to display dates on cards')
       .addDropdown(dropdown => dropdown
         .addOption('relative', 'Relative (today, tomorrow, etc.)')
-        .addOption('absolute', 'Absolute (Jan 1, 2024)')
+        .addOption('absolute', 'Absolute (jan 1, 2024)')
         .setValue(this.plugin.settings.dateFormat)
         .onChange(async (value: 'relative' | 'absolute') => {
           this.plugin.settings.dateFormat = value;
@@ -257,7 +257,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Enable telemetry')
-      .setDesc('Help improve Kanban Pro by sharing anonymous usage data')
+      .setDesc('Help improve kanban pro by sharing anonymous usage data')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableTelemetry)
         .onChange(async (value) => {
@@ -314,7 +314,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
     new Setting(containerEl).setHeading().setName('About');
 
     const aboutSection = containerEl.createDiv({ cls: 'kanban-about' });
-    aboutSection.createEl('p', { text: 'Kanban Pro - advanced project management for Obsidian' });
+    aboutSection.createEl('p', { text: 'Kanban pro - advanced project management for Obsidian' });
     aboutSection.createEl('p', { text: 'Version: 1.0.0' });
     
     const linksDiv = aboutSection.createDiv({ cls: 'kanban-links' });
@@ -344,12 +344,12 @@ export class KanbanSettingsTab extends PluginSettingTab {
   }
 
   private applyTheme(theme: 'auto' | 'light' | 'dark'): void {
-    document.body.removeClass('kanban-theme-light', 'kanban-theme-dark');
+    activeDocument.body.removeClass('kanban-theme-light', 'kanban-theme-dark');
     
     if (theme === 'light') {
-      document.body.addClass('kanban-theme-light');
+      activeDocument.body.addClass('kanban-theme-light');
     } else if (theme === 'dark') {
-      document.body.addClass('kanban-theme-dark');
+      activeDocument.body.addClass('kanban-theme-dark');
     }
     // 'auto' uses Obsidian's theme
   }
@@ -359,7 +359,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     
-    const link = document.createElement('a');
+    const link = activeDocument.createElement('a');
     link.href = url;
     link.download = 'kanban-pro-settings.json';
     link.click();
@@ -369,7 +369,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
   }
 
   private importSettings(): void {
-    const input = document.createElement('input');
+    const input = activeDocument.createElement('input');
     input.type = 'file';
     input.accept = 'application/json';
     
@@ -380,8 +380,8 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
         try {
           const text = await file.text();
-          const settings = JSON.parse(text);
-          
+          const settings = JSON.parse(text) as Partial<KanbanPluginSettings>;
+
           // Validate settings
           if (!this.validateSettings(settings)) {
             new Notice('❌ Invalid settings file', 3000);
@@ -437,7 +437,7 @@ class ConfirmResetModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-confirm-modal');
 
-    contentEl.createEl('h2', { text: '⚠️ Reset settings' });
+    contentEl.createEl('h2', { text: '⚠️ reset settings' });
     contentEl.createEl('p', { 
       text: 'Are you sure you want to reset all settings to their defaults? This action cannot be undone.',
       cls: 'confirm-message'
