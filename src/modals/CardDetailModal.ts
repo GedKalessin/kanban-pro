@@ -78,7 +78,7 @@ export class CardDetailModal extends Modal {
   private renderMainContent(container: HTMLElement): void {
     // Description
     const descSection = container.createDiv({ cls: 'card-section' });
-    descSection.createEl('h3', { text: '📝 Description' });
+    descSection.createEl('h3', { text: '📝 description' });
 
     // Get the current card from BoardService to ensure we have the latest data
     const currentCard = this.boardService.getCard(this.card.id);
@@ -143,7 +143,7 @@ export class CardDetailModal extends Modal {
 
     // Linked Notes
     const notesSection = container.createDiv({ cls: 'card-section' });
-    notesSection.createEl('h3', { text: '🔗 Linked notes' });
+    notesSection.createEl('h3', { text: '🔗 linked notes' });
 
     this.linkedNotesContainerEl = notesSection.createDiv({ cls: 'linked-notes-content' });
     this.renderLinkedNotes();
@@ -646,7 +646,7 @@ export class CardDetailModal extends Modal {
     duplicateBtn.addEventListener('click', () => {
       this.boardService.duplicateCard(this.card.id);
       this.onUpdate();
-      new Notice('✅ Card duplicated', 2000);
+      new Notice('✅ card duplicated', 2000);
       this.close();
     });
   }

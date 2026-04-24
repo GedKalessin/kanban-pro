@@ -394,7 +394,7 @@ export class ToolbarBuilder {
     link.click();
 
     URL.revokeObjectURL(url);
-    new Notice('✅ Board exported', 2000);
+    new Notice('✅ board exported', 2000);
   }
 
   private showFilterModal(): void {

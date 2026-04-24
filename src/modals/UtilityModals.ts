@@ -89,7 +89,7 @@ class ColorPickerModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-color-picker-modal');
 
-    contentEl.createEl('h2', { text: '🎨 Choose color' });
+    contentEl.createEl('h2', { text: '🎨 choose color' });
 
     // Color Preview
     const previewContainer = contentEl.createDiv({ cls: 'color-preview-container' });
@@ -353,7 +353,7 @@ class QuickAddCardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-quick-add-modal');
 
-    contentEl.createEl('h2', { text: '✨ Quick add card' });
+    contentEl.createEl('h2', { text: '✨ quick add card' });
 
     // Title
     new Setting(contentEl)
@@ -557,7 +557,7 @@ class StatusManagementModal extends Modal {
 
     // Save Template Section
     const templateSection = contentEl.createDiv({ cls: 'template-section' });
-    templateSection.createEl('h3', { text: '💾 Save as template' });
+    templateSection.createEl('h3', { text: '💾 save as template' });
     templateSection.createEl('p', {
       text: 'Save your current board structure as a reusable template',
       cls: 'section-description'
@@ -786,7 +786,7 @@ class StatusManagementModal extends Modal {
           board.savedTemplates = board.savedTemplates.filter(t => t.id !== templateId);
         }
         this.onOpen();
-        new Notice('✅ Template deleted', 2000);
+        new Notice('✅ template deleted', 2000);
       },
       'Delete',
       'Cancel',
@@ -799,7 +799,7 @@ class StatusManagementModal extends Modal {
     board.statusGroups = this.statusGroups;
     this.onSave();
     this.close();
-    new Notice('✅ Status configuration saved', 2000);
+    new Notice('✅ status configuration saved', 2000);
   }
 
   onClose(): void {
@@ -826,7 +826,7 @@ class SaveTemplateModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-save-template-modal');
 
-    contentEl.createEl('h2', { text: '💾 Save board as template' });
+    contentEl.createEl('h2', { text: '💾 save board as template' });
 
     new Setting(contentEl)
       .setName('Template name')

@@ -25,7 +25,7 @@ export class TeamModal extends Modal {
 
     // Header
     const header = contentEl.createDiv({ cls: 'team-modal-header' });
-    header.createEl('h2', { text: '👥 Team members' });
+    header.createEl('h2', { text: '👥 team members' });
     header.createEl('p', {
       text: 'Manage your board team. Only listed members can be assigned to tasks.',
       cls: 'team-modal-desc'
@@ -203,7 +203,7 @@ class MemberFormModal extends Modal {
       .setName('Email')
       .setDesc('Contact email address')
       .addText(text => {
-        text.setValue(this.emailVal).setPlaceholder('E.g. alice@example.com');
+        text.setValue(this.emailVal).setPlaceholder('e.g. alice@example.com');
         text.onChange(v => { this.emailVal = v; });
       });
 

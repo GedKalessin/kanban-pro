@@ -17,7 +17,7 @@ export class StatusGroupsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-status-groups-modal');
 
-    contentEl.createEl('h2', { text: '📊 Edit status groups' });
+    contentEl.createEl('h2', { text: '📊 edit status groups' });
 
     const description = contentEl.createEl('p', { cls: 'modal-description' });
     description.textContent = 'Organize your columns into status groups. This helps with analytics and workflow automation.';
