@@ -20,7 +20,7 @@ export class BoardSettingsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-board-settings-modal');
 
-    contentEl.createEl('h2', { text: '⚙️ board settings' });
+    contentEl.createEl('h2', { text: 'Board settings' });
 
     const board = this.boardService.getBoard();
     const settings = board.settings;

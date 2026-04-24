@@ -53,7 +53,7 @@ class TextInputModal extends Modal {
       this.onSubmit(this.value);
       this.close();
     } else {
-      new Notice('⚠️ please enter a value', 2000);
+      new Notice('Please enter a value', 2000);
     }
   }
 
@@ -89,7 +89,7 @@ class ColorPickerModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-color-picker-modal');
 
-    contentEl.createEl('h2', { text: '🎨 choose color' });
+    contentEl.createEl('h2', { text: 'Choose color' });
 
     // Color Preview
     const previewContainer = contentEl.createDiv({ cls: 'color-preview-container' });
@@ -353,7 +353,7 @@ class QuickAddCardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-quick-add-modal');
 
-    contentEl.createEl('h2', { text: '✨ quick add card' });
+    contentEl.createEl('h2', { text: 'Quick add card' });
 
     // Title
     new Setting(contentEl)
@@ -444,7 +444,7 @@ class QuickAddCardModal extends Modal {
 
   private submit(): void {
     if (!this.formData.title.trim()) {
-      new Notice('⚠️ please enter a title', 2000);
+      new Notice('Please enter a title', 2000);
       return;
     }
 
@@ -536,7 +536,7 @@ class StatusManagementModal extends Modal {
     const header = contentEl.createDiv({ cls: 'modal-header-premium' });
     const headerTop = header.createDiv({ cls: 'header-top' });
 
-    headerTop.createEl('h2', { text: '⚙️ edit statuses' });
+    headerTop.createEl('h2', { text: 'Edit statuses' });
 
     const closeBtn = headerTop.createEl('button', { cls: 'modal-close-btn' });
     setIcon(closeBtn, 'x');
@@ -557,7 +557,7 @@ class StatusManagementModal extends Modal {
 
     // Save Template Section
     const templateSection = contentEl.createDiv({ cls: 'template-section' });
-    templateSection.createEl('h3', { text: '💾 save as template' });
+    templateSection.createEl('h3', { text: 'Save as template' });
     templateSection.createEl('p', {
       text: 'Save your current board structure as a reusable template',
       cls: 'section-description'
@@ -677,7 +677,7 @@ class StatusManagementModal extends Modal {
     const availableColumns = board.columns.filter(col => !group.columnIds.includes(col.id));
 
     if (availableColumns.length === 0) {
-      new Notice('⚠️ all columns are already assigned', 2000);
+      new Notice('All columns are already assigned', 2000);
       return;
     }
 
@@ -726,7 +726,7 @@ class StatusManagementModal extends Modal {
 
       board.savedTemplates.push(newTemplate);
       this.onOpen();
-      new Notice(`✅ template "${templateData.name}" saved`, 2000);
+      new Notice(`Template "${templateData.name}" saved`, 2000);
     });
     modal.open();
   }
@@ -767,7 +767,7 @@ class StatusManagementModal extends Modal {
 
         this.onSave();
         this.close();
-        new Notice(`✅ template "${template.name}" applied`, 2000);
+        new Notice(`Template "${template.name}" applied`, 2000);
       },
       'Apply',
       'Cancel',
@@ -786,7 +786,7 @@ class StatusManagementModal extends Modal {
           board.savedTemplates = board.savedTemplates.filter(t => t.id !== templateId);
         }
         this.onOpen();
-        new Notice('✅ template deleted', 2000);
+        new Notice('Template deleted', 2000);
       },
       'Delete',
       'Cancel',
@@ -799,7 +799,7 @@ class StatusManagementModal extends Modal {
     board.statusGroups = this.statusGroups;
     this.onSave();
     this.close();
-    new Notice('✅ status configuration saved', 2000);
+    new Notice('Status configuration saved', 2000);
   }
 
   onClose(): void {
@@ -826,7 +826,7 @@ class SaveTemplateModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-save-template-modal');
 
-    contentEl.createEl('h2', { text: '💾 save board as template' });
+    contentEl.createEl('h2', { text: 'Save board as template' });
 
     new Setting(contentEl)
       .setName('Template name')
@@ -875,7 +875,7 @@ class SaveTemplateModal extends Modal {
       });
       this.close();
     } else {
-      new Notice('⚠️ please enter a template name', 2000);
+      new Notice('Please enter a template name', 2000);
     }
   }
 

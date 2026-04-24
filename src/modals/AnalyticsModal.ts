@@ -15,7 +15,7 @@ export class AnalyticsModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-analytics-modal');
 
-    contentEl.createEl('h2', { text: '📊 board analytics' });
+    contentEl.createEl('h2', { text: 'Board analytics' });
 
     const analytics = this.boardService.getAnalytics();
 

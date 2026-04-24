@@ -304,7 +304,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
             this.plugin.settings = { ...DEFAULT_SETTINGS };
             await this.plugin.saveSettings();
             this.display();
-            new Notice('✅ settings reset to defaults', 3000);
+            new Notice('Settings reset to defaults', 3000);
           }
         })
       );
@@ -319,25 +319,25 @@ export class KanbanSettingsTab extends PluginSettingTab {
     
     const linksDiv = aboutSection.createDiv({ cls: 'kanban-links' });
     linksDiv.createEl('a', {
-      text: '📖 documentation',
+      text: 'Documentation',
       href: '#',
       cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
     linksDiv.createEl('a', {
-      text: '🐛 report bug',
+      text: 'Report bug',
       href: '#',
       cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
     linksDiv.createEl('a', {
-      text: '💡 request feature',
+      text: 'Request feature',
       href: '#',
       cls: 'external-link'
     });
     linksDiv.createSpan({ text: ' • ' });
     linksDiv.createEl('a', {
-      text: '☕ support development',
+      text: 'Support development',
       href: '#',
       cls: 'external-link'
     });
@@ -365,7 +365,7 @@ export class KanbanSettingsTab extends PluginSettingTab {
     link.click();
     
     URL.revokeObjectURL(url);
-    new Notice('✅ settings exported successfully', 3000);
+    new Notice('Settings exported successfully', 3000);
   }
 
   private importSettings(): void {
@@ -384,17 +384,17 @@ export class KanbanSettingsTab extends PluginSettingTab {
 
           // Validate settings
           if (!this.validateSettings(settings)) {
-            new Notice('❌ invalid settings file', 3000);
+            new Notice('Invalid settings file', 3000);
             return;
           }
 
           this.plugin.settings = { ...DEFAULT_SETTINGS, ...settings };
           await this.plugin.saveSettings();
           this.display();
-          new Notice('✅ settings imported successfully', 3000);
+          new Notice('Settings imported successfully', 3000);
         } catch (error) {
           console.error('Failed to import settings:', error);
-          new Notice('❌ failed to import settings', 3000);
+          new Notice('Failed to import settings', 3000);
         }
       })();
     });
@@ -437,7 +437,7 @@ class ConfirmResetModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-confirm-modal');
 
-    contentEl.createEl('h2', { text: '⚠️ reset settings' });
+    contentEl.createEl('h2', { text: 'Reset settings' });
     contentEl.createEl('p', { 
       text: 'Are you sure you want to reset all settings to their defaults? This action cannot be undone.',
       cls: 'confirm-message'

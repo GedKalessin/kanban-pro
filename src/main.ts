@@ -82,10 +82,10 @@ export default class KanbanProPlugin extends Plugin {
         const board = this.createEmptyBoard(name);
         const filePath = await this.saveBoardToFile(board, name, folderPath);
         await this.openKanbanBoardByPath(filePath);
-        new Notice(`✅ created board "${name}"`, 3000);
+        new Notice(`Created board "${name}"`, 3000);
       } catch (error) {
         console.error('Failed to create board:', error);
-        new Notice('❌ failed to create board', 3000);
+        new Notice('Failed to create board', 3000);
       }
     });
     modal.open();
@@ -97,10 +97,10 @@ export default class KanbanProPlugin extends Plugin {
         const board = this.createBoardFromTemplate(templateId, name);
         const filePath = await this.saveBoardToFile(board, name, folderPath);
         await this.openKanbanBoardByPath(filePath);
-        new Notice(`✅ created board "${name}" from template`, 3000);
+        new Notice(`Created board "${name}" from template`, 3000);
       } catch (error) {
         console.error('Failed to create board from template:', error);
-        new Notice('❌ failed to create board from template', 3000);
+        new Notice('Failed to create board from template', 3000);
       }
     });
     modal.open();
@@ -223,7 +223,7 @@ class CreateBoardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-create-board-modal');
 
-    contentEl.createEl('h2', { text: '✨ create new kanban board' });
+    contentEl.createEl('h2', { text: 'Create new kanban board' });
 
     new Setting(contentEl)
       .setName('Board name')
@@ -266,7 +266,7 @@ class CreateBoardModal extends Modal {
       void this.onSubmit(this.name.trim(), this.folderPath.trim());
       this.close();
     } else {
-      new Notice('⚠️ please enter a board name', 2000);
+      new Notice('Please enter a board name', 2000);
     }
   }
 
@@ -291,7 +291,7 @@ class TemplateSelectionModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-template-modal');
 
-    contentEl.createEl('h2', { text: '🎨 choose a template' });
+    contentEl.createEl('h2', { text: 'Choose a template' });
 
     const templatesGrid = contentEl.createDiv({ cls: 'template-grid' });
 
@@ -349,7 +349,7 @@ class TemplateSelectionModal extends Modal {
       void this.onSubmit(this.selectedTemplate, this.name.trim(), this.folderPath.trim());
       this.close();
     } else {
-      new Notice('⚠️ please enter a board name', 2000);
+      new Notice('Please enter a board name', 2000);
     }
   }
 
@@ -373,7 +373,7 @@ class OpenBoardModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-open-board-modal');
 
-    contentEl.createEl('h2', { text: '📋 open kanban board' });
+    contentEl.createEl('h2', { text: 'Open kanban board' });
 
     const boardsList = contentEl.createDiv({ cls: 'boards-list' });
 

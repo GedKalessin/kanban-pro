@@ -16,7 +16,7 @@ export class FilterModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-filter-modal');
 
-    contentEl.createEl('h2', { text: '🔍 filters' });
+    contentEl.createEl('h2', { text: 'Filters' });
 
     const board = this.boardService.getBoard();
     const filters = board.filters;
@@ -158,7 +158,7 @@ export class FilterModal extends Modal {
       this.boardService.clearFilters();
       this.onUpdate();
       this.close();
-      new Notice('🧹 filters cleared', 2000);
+      new Notice('Filters cleared', 2000);
     });
 
     const closeBtn = buttonContainer.createEl('button', { text: 'Close', cls: 'primary-btn' });

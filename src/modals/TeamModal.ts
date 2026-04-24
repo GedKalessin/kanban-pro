@@ -93,7 +93,7 @@ export class TeamModal extends Modal {
       this.boardService.addTeamMember(data);
       this.onUpdate();
       this.renderList();
-      new Notice(`✅ ${data.name} added to the team`, 2000);
+      new Notice(`${data.name} added to the team`, 2000);
     }).open();
   }
 
@@ -115,7 +115,7 @@ export class TeamModal extends Modal {
         this.boardService.removeTeamMember(member.id);
         this.onUpdate();
         this.renderList();
-        new Notice(`🗑️ ${member.name} removed`, 2000);
+        new Notice(`${member.name} removed`, 2000);
       },
       'Remove',
       'Cancel',
@@ -163,7 +163,7 @@ class MemberFormModal extends Modal {
     const { contentEl } = this;
     contentEl.addClass('kanban-member-form-modal');
 
-    contentEl.createEl('h2', { text: this.member ? '✏️ Edit member' : '➕ Add member' });
+    contentEl.createEl('h2', { text: this.member ? 'Edit member' : 'Add member' });
 
     // Preview avatar
     const previewRow = contentEl.createDiv({ cls: 'member-form-preview' });
@@ -240,7 +240,7 @@ class MemberFormModal extends Modal {
   private submit(): void {
     const name = this.nameVal.trim();
     if (!name) {
-      new Notice('⚠️ name is required', 2000);
+      new Notice('Name is required', 2000);
       return;
     }
     this.onSubmit({
@@ -321,7 +321,7 @@ export class MemberDetailModal extends Modal {
     const assignedCards = board.cards.filter(c => c.assignee.includes(this.member.name));
     if (assignedCards.length > 0) {
       const cardsSection = contentEl.createDiv({ cls: 'member-detail-cards' });
-      cardsSection.createEl('h3', { text: `📋 Assigned tasks (${assignedCards.length})` });
+      cardsSection.createEl('h3', { text: `Assigned tasks (${assignedCards.length})` });
       const cardsList = cardsSection.createDiv({ cls: 'member-detail-cards-list' });
       assignedCards.slice(0, 5).forEach(card => {
         const cardRow = cardsList.createDiv({ cls: 'member-detail-card-row' });
@@ -354,7 +354,7 @@ export class MemberDetailModal extends Modal {
           this.member = updated;
           this.render();
         }
-        new Notice(`✅ ${data.name} updated`, 2000);
+        new Notice(`${data.name} updated`, 2000);
       }).open();
     });
   }

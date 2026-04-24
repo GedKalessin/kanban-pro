@@ -97,7 +97,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
           console.error(`❌ Error rendering milestone ${index}:`, error);
           console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
           const errorEl = roadmapContent.createDiv({ cls: 'milestone-error' });
-          errorEl.textContent = `⚠️ error loading milestone: ${milestone.name}`;
+          errorEl.textContent = `Error loading milestone: ${milestone.name}`;
         }
       });
 
@@ -131,7 +131,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
       console.error('CRITICAL ERROR in RoadmapViewRenderer.render():', error);
       container.empty();
       const errorDiv = container.createDiv({ cls: 'critical-error' });
-      errorDiv.createEl('h3', { text: '⚠️ error loading roadmap' });
+      errorDiv.createEl('h3', { text: 'Error loading roadmap' });
       errorDiv.createEl('p', { text: 'An error occurred while loading the roadmap view.' });
       errorDiv.createEl('p', { text: 'Check console for details.', cls: 'error-detail' });
       const backBtn = errorDiv.createEl('button', { text: 'Back to board', cls: 'primary-btn' });
@@ -154,7 +154,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
         this.createMilestone(context);
       } catch (error) {
         console.error('Error creating milestone:', error);
-        new Notice('⚠️ error creating milestone', 2000);
+        new Notice('Error creating milestone', 2000);
       }
     });
 
@@ -299,7 +299,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
           this.addCardToMilestone(milestone, context);
         } catch (error) {
           console.error('Error adding card to milestone:', error);
-          new Notice('⚠️ error adding card to milestone', 2000);
+          new Notice('Error adding card to milestone', 2000);
         }
       });
       cardsSection.appendChild(addCardBtn);
@@ -312,7 +312,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     } catch (error) {
       console.error('Error in renderMilestone:', error);
       const errorEl = createElement('div', { className: 'milestone-error' });
-      errorEl.textContent = `⚠️ error rendering milestone: ${milestone.name || 'Unknown'}`;
+      errorEl.textContent = `Error rendering milestone: ${milestone.name || 'Unknown'}`;
       return errorEl;
     }
   }
@@ -355,7 +355,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
         this.removeCardFromMilestone(card.id, milestone, context);
       } catch (error) {
         console.error('Error removing card:', error);
-        new Notice('⚠️ error removing card', 2000);
+        new Notice('Error removing card', 2000);
       }
     });
     cardContent.appendChild(removeBtn);
@@ -530,7 +530,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
           }
 
           milestoneCards.classList.remove('drag-over');
-          new Notice('✓ card moved to milestone', 1500);
+          new Notice('Card moved to milestone', 1500);
 
         } else if (unassignedContainer) {
           console.debug('Dropping card', draggedCardId, 'to unassigned');
@@ -540,14 +540,14 @@ export class RoadmapViewRenderer implements IViewRenderer {
           });
 
           unassignedContainer.classList.remove('drag-over');
-          new Notice('✓ card unassigned from milestone', 1500);
+          new Notice('Card unassigned from milestone', 1500);
         }
 
         context.render();
         void context.saveBoard();
       } catch (error) {
         console.error('Error dropping card:', error);
-        new Notice('⚠️ error moving card', 2000);
+        new Notice('Error moving card', 2000);
       }
     });
   }
@@ -591,17 +591,17 @@ export class RoadmapViewRenderer implements IViewRenderer {
           void context.saveBoard();
           console.debug('✅ context.saveBoard() completed');
 
-          new Notice('✓ milestone created', 1500);
+          new Notice('Milestone created', 1500);
           console.debug('🎯 createMilestone callback END');
         } catch (renderError) {
           console.error('❌ Error during render/save:', renderError);
           console.error('❌ Error stack:', renderError instanceof Error ? renderError.stack : 'No stack');
-          new Notice('⚠️ milestone created but render failed. Try refreshing the view.', 3000);
+          new Notice('Milestone created but render failed. Try refreshing the view.', 3000);
         }
       } catch (error: unknown) {
         console.error('❌ Error in createMilestone callback:', error);
         console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
-        new Notice('⚠️ error creating milestone', 2000);
+        new Notice('Error creating milestone', 2000);
       }
     }).open();
   }
@@ -624,7 +624,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
         milestone.cardIds.push(item.value);
         context.render();
         void context.saveBoard();
-        new Notice('✓ card added', 1500);
+        new Notice('Card added', 1500);
       },
       'Select a card',
       'No cards found'
@@ -635,7 +635,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
     milestone.cardIds = milestone.cardIds.filter(id => id !== cardId);
     context.render();
     void context.saveBoard();
-    new Notice('✓ card removed', 1500);
+    new Notice('Card removed', 1500);
   }
 
   private showMilestoneMenu(milestone: Milestone, e: MouseEvent, context: ViewRendererContext): void {
@@ -652,11 +652,11 @@ export class RoadmapViewRenderer implements IViewRenderer {
           try {
             context.render();
             void context.saveBoard();
-            new Notice('✓ milestone updated', 1500);
+            new Notice('Milestone updated', 1500);
           } catch (error) {
             console.error('Error updating milestone:', error);
             console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
-            new Notice('⚠️ milestone updated but render failed', 2000);
+            new Notice('Milestone updated but render failed', 2000);
           }
         }).open();
       });
@@ -685,7 +685,7 @@ export class RoadmapViewRenderer implements IViewRenderer {
             board.milestones = board.milestones.filter(m => m.id !== milestone.id);
             context.render();
             void context.saveBoard();
-            new Notice('✓ milestone deleted', 1500);
+            new Notice('Milestone deleted', 1500);
           },
           'Delete',
           'Cancel',

@@ -172,7 +172,7 @@ export class ToolbarBuilder {
     console.debug('📊 Board ID:', board.id, 'Total cards:', board.cards.length);
 
     if (board.columns.length === 0) {
-      new Notice('⚠️ create a column first', 2000);
+      new Notice('Create a column first', 2000);
       return;
     }
 
@@ -290,14 +290,14 @@ export class ToolbarBuilder {
     });
 
     void navigator.clipboard.writeText(markdown);
-    new Notice('✓ Markdown copied to clipboard', 2000);
+    new Notice('Markdown copied to clipboard', 2000);
   }
 
   private exportJSON(): void {
     const board = this.boardService.getBoard();
     const json = JSON.stringify(board, null, 2);
     void navigator.clipboard.writeText(json);
-    new Notice('✓ JSON copied to clipboard', 2000);
+    new Notice('JSON copied to clipboard', 2000);
   }
 
   // ==================== OLD METHODS (UNUSED) ====================
@@ -377,7 +377,7 @@ export class ToolbarBuilder {
         this.boardService.addSwimLane(value);
         this.onRender();
         void this.onSave();
-        new Notice(`✅ swim lane "${value}" created`, 2000);
+        new Notice(`Swim lane "${value}" created`, 2000);
       }
     ).open();
   }
@@ -394,7 +394,7 @@ export class ToolbarBuilder {
     link.click();
 
     URL.revokeObjectURL(url);
-    new Notice('✅ board exported', 2000);
+    new Notice('Board exported', 2000);
   }
 
   private showFilterModal(): void {
