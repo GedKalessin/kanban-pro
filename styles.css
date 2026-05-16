@@ -8,7 +8,6 @@
   --kp-primary-hover: #4f46e5;
   --kp-primary-light: #818cf8;
   --kp-primary-bg: rgba(99, 102, 241, 0.1);
-
   --kp-success: #10b981;
   --kp-success-bg: rgba(16, 185, 129, 0.1);
   --kp-warning: #f59e0b;
@@ -17,7 +16,6 @@
   --kp-error-bg: rgba(239, 68, 68, 0.1);
   --kp-info: #3b82f6;
   --kp-info-bg: rgba(59, 130, 246, 0.1);
-
   /* Neutral Colors */
   --kp-bg-primary: var(--background-primary);
   --kp-bg-secondary: var(--background-secondary);
@@ -25,7 +23,6 @@
   --kp-text-primary: var(--text-normal);
   --kp-text-secondary: var(--text-muted);
   --kp-text-tertiary: var(--text-faint);
-
   /* UI Elements */
   --kp-border: var(--background-modifier-border);
   --kp-border-hover: var(--background-modifier-border-hover);
@@ -36,7 +33,6 @@
   --kp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --kp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --kp-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
   /* Spacing */
   --kp-space-xs: 4px;
   --kp-space-sm: 8px;
@@ -44,20 +40,17 @@
   --kp-space-lg: 16px;
   --kp-space-xl: 24px;
   --kp-space-2xl: 32px;
-
   /* Typography */
   --kp-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --kp-font-weight-normal: 400;
   --kp-font-weight-medium: 500;
   --kp-font-weight-semibold: 600;
   --kp-font-weight-bold: 700;
-
   /* Transitions */
   --kp-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --kp-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --kp-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 
 /* ============================================
    GLOBAL CONTAINER
@@ -86,7 +79,6 @@
   background: var(--kp-bg-primary);
 }
 
-
 /* ============================================
    TOOLBAR - ClickUp Style
    ============================================ */
@@ -95,37 +87,46 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--kp-space-md) var(--kp-space-xl);
-  background: var(--kp-bg-secondary);
-  border-bottom: 1px solid var(--kp-border);
-  gap: var(--kp-space-lg);
+  padding: 12px 20px;
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  gap: 16px;
   flex-shrink: 0;
   min-height: 60px;
-}
-
-.toolbar-left,
-.toolbar-center,
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
 }
 
 .toolbar-left {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 1 auto;
   min-width: 0;
 }
 
 .toolbar-center {
+  display: flex;
+  align-items: center;
+  gap: var(--kp-space-md);
   flex-shrink: 0;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
 }
 
 .toolbar-right {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
   justify-content: flex-end;
 }
 
 /* Board Title */
+
 .board-title {
   margin: 0;
   font-size: 18px;
@@ -138,6 +139,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 300px;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .board-title:hover {
@@ -145,6 +149,7 @@
 }
 
 /* Toolbar Buttons */
+
 .toolbar-btn {
   display: flex;
   align-items: center;
@@ -183,29 +188,32 @@
 }
 
 /* View Switcher - Modern Pills */
+
 .view-switcher {
   display: flex;
-  gap: var(--kp-space-xs);
-  background: var(--kp-bg-primary);
+  gap: 4px;
+  background: var(--background-primary);
   padding: 4px;
-  border-radius: var(--kp-radius-md);
+  border-radius: 8px;
   box-shadow: var(--kp-shadow-sm);
+  border: 1px solid var(--background-modifier-border);
 }
 
 .view-btn {
   display: flex;
   align-items: center;
-  gap: var(--kp-space-sm);
-  padding: var(--kp-space-sm) var(--kp-space-md);
+  gap: 6px;
+  padding: 6px 12px;
   border: none;
-  border-radius: var(--kp-radius-sm);
+  border-radius: 6px;
   background: transparent;
   color: var(--kp-text-secondary);
   font-size: 13px;
   font-weight: var(--kp-font-weight-medium);
   cursor: pointer;
-  transition: all var(--kp-transition-fast);
+  transition: all 0.2s;
   white-space: nowrap;
+  user-select: none;
 }
 
 .view-btn svg {
@@ -215,11 +223,11 @@
 
 .view-btn:hover {
   color: var(--kp-text-primary);
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--background-modifier-hover);
 }
 
 .view-btn.active {
-  background: var(--kp-primary);
+  background: var(--interactive-accent);
   color: white;
   box-shadow: var(--kp-shadow-sm);
 }
@@ -229,6 +237,7 @@
 }
 
 /* Search Input - Enhanced */
+
 .search-wrapper {
   display: flex;
   align-items: center;
@@ -271,7 +280,6 @@
   color: var(--kp-text-tertiary);
 }
 
-
 /* ============================================
    BOARD VIEW - Modern Kanban
    ============================================ */
@@ -297,7 +305,9 @@
 }
 
 /* Kanban Column - Sleek Cards */
+
 .kanban-column {
+  transition: opacity 0.2s;
   display: flex;
   flex-direction: column;
   min-width: 320px;
@@ -306,13 +316,14 @@
   background: var(--kp-bg-secondary);
   border-radius: var(--kp-radius-lg);
   border: 1px solid var(--kp-border);
-  transition: all var(--kp-transition-base);
   flex-shrink: 0;
 }
 
 .kanban-column.collapsed {
-  min-width: 48px;
-  max-width: 48px;
+  min-width: 60px;
+  max-width: 60px;
+  background: var(--kp-bg-secondary);
+  position: relative;
 }
 
 .kanban-column.wip-exceeded {
@@ -321,6 +332,7 @@
 }
 
 /* Column Header - Modern Design */
+
 .column-header {
   display: flex;
   align-items: center;
@@ -333,6 +345,8 @@
   background: var(--kp-bg-secondary);
   transition: background-color var(--kp-transition-fast);
   flex-shrink: 0;
+  cursor: grab;
+  user-select: none;
 }
 
 .column-header:hover {
@@ -370,6 +384,8 @@
   align-items: center;
   gap: var(--kp-space-sm);
   flex: 1;
+  cursor: grab;
+  user-select: none;
 }
 
 .color-dot {
@@ -426,6 +442,7 @@
 }
 
 /* Column Content */
+
 .column-content {
   display: flex;
   flex-direction: column;
@@ -440,11 +457,15 @@
 }
 
 .column-content.drag-over {
-  background: rgba(99, 102, 241, 0.05);
-  border-radius: var(--kp-radius-md);
+  background: var(--background-modifier-hover);
+  border-radius: 8px;
+  border: 2px dashed var(--interactive-accent);
+  min-height: 100px;
+  position: relative;
 }
 
 /* Drop Zone */
+
 .drop-zone {
   min-height: 40px;
   flex-shrink: 0;
@@ -459,11 +480,18 @@
 }
 
 @keyframes pulse {
+
+
+
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+
+
+
 }
 
 /* Card Drag Placeholder */
+
 .kanban-card-placeholder {
   background: rgba(99, 102, 241, 0.1);
   border: 2px dashed rgba(99, 102, 241, 0.4);
@@ -477,32 +505,34 @@
 }
 
 /* Smooth card reordering animation */
+
 .column-content .kanban-card {
   transition:
-    transform var(--kp-transition-base),
-    opacity var(--kp-transition-base),
-    box-shadow var(--kp-transition-base);
+  transform var(--kp-transition-base),
+  opacity var(--kp-transition-base),
+  box-shadow var(--kp-transition-base);
   /* GPU layer for smooth animations */
   transform: translateZ(0);
 }
 
 /* When dragging, other cards should animate smoothly with GPU acceleration */
+
 .column-content.drag-over .kanban-card:not(.dragging) {
   transition: transform 100ms cubic-bezier(0.2, 0, 0, 1);
   will-change: transform;
 }
-
 
 /* ============================================
    KANBAN CARD - Modern ClickUp Style
    ============================================ */
 
 .kanban-card {
+  transition: opacity 0.2s, transform 0.2s;
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+  135deg,
+  rgba(255, 255, 255, 0.12) 0%,
+  rgba(255, 255, 255, 0.05) 50%,
+  rgba(255, 255, 255, 0.02) 100%
   );
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
@@ -510,18 +540,18 @@
   border-radius: var(--kp-radius-lg);
   padding: var(--kp-space-md);
   cursor: grab;
-  transition: all var(--kp-transition-base);
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.08),
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  0 4px 16px rgba(0, 0, 0, 0.08),
+  0 2px 4px rgba(0, 0, 0, 0.04),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1),
+  inset 0 -1px 0 rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 /* Glass shine effect */
+
 .kanban-card::before {
   content: '';
   position: absolute;
@@ -530,15 +560,16 @@
   right: 0;
   height: 50%;
   background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 100%
+  180deg,
+  rgba(255, 255, 255, 0.08) 0%,
+  transparent 100%
   );
   pointer-events: none;
   border-radius: var(--kp-radius-lg) var(--kp-radius-lg) 0 0;
 }
 
 /* Accent edge glow */
+
 .kanban-card::after {
   content: '';
   position: absolute;
@@ -547,10 +578,10 @@
   bottom: 0;
   width: 3px;
   background: linear-gradient(
-    180deg,
-    var(--kp-primary-light) 0%,
-    var(--kp-primary) 50%,
-    var(--kp-primary-hover) 100%
+  180deg,
+  var(--kp-primary-light) 0%,
+  var(--kp-primary) 50%,
+  var(--kp-primary-hover) 100%
   );
   opacity: 0;
   transition: opacity var(--kp-transition-fast);
@@ -560,17 +591,17 @@
 .kanban-card:hover {
   border-color: rgba(255, 255, 255, 0.28);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 4px 8px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
-    0 0 20px rgba(99, 102, 241, 0.08);
+  0 8px 32px rgba(0, 0, 0, 0.12),
+  0 4px 8px rgba(0, 0, 0, 0.06),
+  inset 0 1px 0 rgba(255, 255, 255, 0.15),
+  inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+  0 0 20px rgba(99, 102, 241, 0.08);
   transform: translateY(-2px);
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.04) 100%
+  135deg,
+  rgba(255, 255, 255, 0.18) 0%,
+  rgba(255, 255, 255, 0.08) 50%,
+  rgba(255, 255, 255, 0.04) 100%
   );
 }
 
@@ -579,25 +610,23 @@
 }
 
 .kanban-card.dragging {
-  /* Collapse the card completely so it doesn't affect layout */
-  /* This ensures the placeholder position matches the actual drop position */
   opacity: 0;
-  height: 0 !important;
-  min-height: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
   overflow: hidden;
   pointer-events: none;
-  transition: none !important;
+  transition: none;
 }
 
 .kanban-card.selected {
   border-color: rgba(99, 102, 241, 0.5);
   box-shadow:
-    0 0 0 3px var(--kp-primary-bg),
-    0 4px 16px rgba(99, 102, 241, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  0 0 0 3px var(--kp-primary-bg),
+  0 4px 16px rgba(99, 102, 241, 0.2),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .kanban-card.selected::after {
@@ -606,15 +635,15 @@
 
 .kanban-card.blocked {
   background: linear-gradient(
-    135deg,
-    rgba(239, 68, 68, 0.15) 0%,
-    rgba(239, 68, 68, 0.08) 50%,
-    rgba(239, 68, 68, 0.04) 100%
+  135deg,
+  rgba(239, 68, 68, 0.15) 0%,
+  rgba(239, 68, 68, 0.08) 50%,
+  rgba(239, 68, 68, 0.04) 100%
   );
   border-color: rgba(239, 68, 68, 0.4);
   box-shadow:
-    0 4px 16px rgba(239, 68, 68, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  0 4px 16px rgba(239, 68, 68, 0.1),
+  inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .kanban-card.blocked::after {
@@ -626,10 +655,10 @@
 .kanban-card.completed {
   opacity: 0.7;
   background: linear-gradient(
-    135deg,
-    rgba(16, 185, 129, 0.08) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+  135deg,
+  rgba(16, 185, 129, 0.08) 0%,
+  rgba(255, 255, 255, 0.05) 50%,
+  rgba(255, 255, 255, 0.02) 100%
   );
   border-color: rgba(16, 185, 129, 0.3);
 }
@@ -641,22 +670,23 @@
 }
 
 /* Dark theme adjustments for glass effect */
+
 .theme-dark .kanban-card {
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    rgba(255, 255, 255, 0.01) 100%
+  135deg,
+  rgba(255, 255, 255, 0.08) 0%,
+  rgba(255, 255, 255, 0.03) 50%,
+  rgba(255, 255, 255, 0.01) 100%
   );
   border-color: rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .kanban-card:hover {
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+  135deg,
+  rgba(255, 255, 255, 0.12) 0%,
+  rgba(255, 255, 255, 0.05) 50%,
+  rgba(255, 255, 255, 0.02) 100%
   );
   border-color: rgba(255, 255, 255, 0.18);
 }
@@ -667,6 +697,7 @@
 }
 
 /* Card Header */
+
 .card-header {
   display: flex;
   align-items: center;
@@ -676,23 +707,28 @@
 }
 
 .task-type-icon {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
 }
 
 .priority-badge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: var(--kp-font-weight-semibold);
-  text-transform: uppercase;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-transform: capitalize;
   letter-spacing: 0.5px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+  background-color: var(--kp-priority-bg, var(--interactive-accent));
 }
 
 .blocked-badge {
@@ -703,17 +739,16 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.15) !important;
-  color: #f87171 !important;
+  background: var(--kp-error-bg);
+  color: var(--kp-error);
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
   font-size: 11px;
   font-weight: var(--kp-font-weight-semibold);
-  background: var(--kp-error-bg);
-  color: var(--kp-error);
   text-transform: uppercase;
 }
 
 /* Card Title */
+
 .card-title {
   font-size: 14px;
   font-weight: var(--kp-font-weight-semibold);
@@ -733,6 +768,7 @@
 }
 
 /* Card Tags */
+
 .card-tags {
   display: flex;
   flex-wrap: wrap;
@@ -776,6 +812,7 @@
 }
 
 /* Card Footer */
+
 .card-footer {
   display: flex;
   align-items: center;
@@ -856,36 +893,37 @@
 }
 
 /* Assignees */
+
 .assignees {
   display: flex;
   gap: 4px;
 }
 
 .assignee-avatar {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: var(--kp-color, linear-gradient(135deg, var(--kp-primary-light) 0%, var(--kp-primary) 100%));
+  background: var(--kp-color, var(--interactive-accent));
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
-  font-weight: var(--kp-font-weight-semibold);
+  font-size: 13px;
+  font-weight: 600;
   text-transform: uppercase;
-  cursor: help;
+  cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow:
-    0 2px 8px rgba(99, 102, 241, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: all var(--kp-transition-fast);
+  0 2px 8px rgba(99, 102, 241, 0.3),
+  inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s;
 }
 
 .assignee-avatar:hover {
   transform: scale(1.1);
   box-shadow:
-    0 4px 12px rgba(99, 102, 241, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  0 4px 12px rgba(99, 102, 241, 0.4),
+  inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .assignee-avatar.more {
@@ -898,6 +936,7 @@
 }
 
 /* Add Column Button */
+
 .add-column-btn {
   display: flex;
   flex-direction: column;
@@ -929,7 +968,6 @@
   align-items: center;
   justify-content: center;
 }
-
 
 /* ============================================
    SWIM LANES
@@ -995,12 +1033,11 @@
   color: var(--kp-text-primary);
 }
 
-
 /* ============================================
    LIST VIEW - Clean & Modern
    ============================================ */
-
 /* List View Container */
+
 .kanban-list-view {
   padding: 0;
   background: var(--background-primary);
@@ -1010,6 +1047,7 @@
 }
 
 /* List Toolbar */
+
 .list-toolbar {
   display: flex;
   align-items: center;
@@ -1028,8 +1066,7 @@
   gap: 8px;
 }
 
-.sort-label,
-.group-label {
+.sort-label {
   font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
@@ -1078,6 +1115,7 @@
 }
 
 /* List Container */
+
 .list-container {
   flex: 1;
   overflow-y: auto;
@@ -1086,6 +1124,7 @@
 }
 
 /* List Group */
+
 .list-group {
   margin-bottom: 24px;
   background: var(--background-secondary);
@@ -1110,27 +1149,35 @@
 }
 
 .group-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--interactive-accent);
+  width: 48px;
+  height: 48px;
+  color: white;
+  border-radius: var(--kp-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--kp-shadow-sm);
+  background-color: var(--kp-color, var(--kp-primary));
 }
 
 .group-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-normal);
+  font-size: 14px;
+  font-weight: var(--kp-font-weight-semibold);
+  color: var(--kp-text-primary);
 }
 
 .group-count {
   padding: 2px 8px;
-  background: var(--background-modifier-border);
-  border-radius: 12px;
+  background: var(--kp-bg-tertiary);
+  border-radius: var(--kp-radius-sm);
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--kp-text-tertiary);
 }
 
 /* List Table */
+
 .list-table {
   width: 100%;
   background: var(--background-primary);
@@ -1160,13 +1207,47 @@
   box-sizing: border-box;
 }
 
-.list-header-cell:nth-child(1) { flex: 0 0 30%; } /* Title */
-.list-header-cell:nth-child(2) { flex: 0 0 15%; } /* Column */
-.list-header-cell:nth-child(3) { flex: 0 0 10%; } /* Priority */
-.list-header-cell:nth-child(4) { flex: 0 0 15%; } /* Assignee */
-.list-header-cell:nth-child(5) { flex: 0 0 15%; } /* Due Date */
-.list-header-cell:nth-child(6) { flex: 0 0 10%; } /* Progress */
-.list-header-cell:nth-child(7) { flex: 0 0 5%; } /* Actions */
+.list-header-cell:nth-child(1) {
+  flex: 0 0 30%;
+}
+
+/* Title */
+
+.list-header-cell:nth-child(2) {
+  flex: 0 0 15%;
+}
+
+/* Column */
+
+.list-header-cell:nth-child(3) {
+  flex: 0 0 10%;
+}
+
+/* Priority */
+
+.list-header-cell:nth-child(4) {
+  flex: 0 0 15%;
+}
+
+/* Assignee */
+
+.list-header-cell:nth-child(5) {
+  flex: 0 0 15%;
+}
+
+/* Due Date */
+
+.list-header-cell:nth-child(6) {
+  flex: 0 0 10%;
+}
+
+/* Progress */
+
+.list-header-cell:nth-child(7) {
+  flex: 0 0 5%;
+}
+
+/* Actions */
 
 .list-body {
   display: flex;
@@ -1174,6 +1255,7 @@
 }
 
 /* List Row */
+
 .list-row {
   display: flex;
   align-items: center;
@@ -1200,6 +1282,7 @@
 }
 
 /* List Cells */
+
 .list-cell {
   padding: 0 8px;
   display: flex;
@@ -1209,13 +1292,48 @@
 }
 
 /* Apply same widths as headers using nth-child */
-.list-row .list-cell:nth-child(1) { flex: 0 0 30%; } /* Title */
-.list-row .list-cell:nth-child(2) { flex: 0 0 15%; } /* Column */
-.list-row .list-cell:nth-child(3) { flex: 0 0 10%; } /* Priority */
-.list-row .list-cell:nth-child(4) { flex: 0 0 15%; } /* Assignee */
-.list-row .list-cell:nth-child(5) { flex: 0 0 15%; } /* Due Date */
-.list-row .list-cell:nth-child(6) { flex: 0 0 10%; } /* Progress */
-.list-row .list-cell:nth-child(7) { flex: 0 0 5%; } /* Actions */
+
+.list-row .list-cell:nth-child(1) {
+  flex: 0 0 30%;
+}
+
+/* Title */
+
+.list-row .list-cell:nth-child(2) {
+  flex: 0 0 15%;
+}
+
+/* Column */
+
+.list-row .list-cell:nth-child(3) {
+  flex: 0 0 10%;
+}
+
+/* Priority */
+
+.list-row .list-cell:nth-child(4) {
+  flex: 0 0 15%;
+}
+
+/* Assignee */
+
+.list-row .list-cell:nth-child(5) {
+  flex: 0 0 15%;
+}
+
+/* Due Date */
+
+.list-row .list-cell:nth-child(6) {
+  flex: 0 0 10%;
+}
+
+/* Progress */
+
+.list-row .list-cell:nth-child(7) {
+  flex: 0 0 5%;
+}
+
+/* Actions */
 
 .cell-title {
   flex-direction: column;
@@ -1275,10 +1393,10 @@
 }
 
 .column-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--kp-radius-sm);
+  font-size: 11px;
+  font-weight: var(--kp-font-weight-semibold);
   color: white;
   white-space: nowrap;
   overflow: hidden;
@@ -1290,41 +1408,12 @@
   overflow: hidden;
 }
 
-.priority-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: white;
-  text-transform: capitalize;
-  white-space: nowrap;
-  background-color: var(--kp-priority-bg, var(--interactive-accent));
-}
-
 .cell-assignee {
   overflow: hidden;
 }
 
-.assignee-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--kp-color, var(--interactive-accent));
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.assignee-avatar:hover {
-  transform: scale(1.1);
-}
-
 /* Stacked assignees for list view */
+
 .assignees-stack {
   display: flex;
   align-items: center;
@@ -1357,7 +1446,7 @@
 
 .assignee-avatar-stacked:hover {
   transform: scale(1.15);
-  z-index: 10 !important;
+  z-index: 10;
 }
 
 .assignee-avatar-stacked.assignee-more {
@@ -1369,9 +1458,8 @@
 }
 
 /* Responsive sizing based on count */
-.assignees-count-3 .assignee-avatar-stacked,
-.assignees-count-4 .assignee-avatar-stacked,
-.assignees-count-5 .assignee-avatar-stacked {
+
+.assignees-count-3 .assignee-avatar-stacked {
   width: 24px;
   height: 24px;
   min-width: 24px;
@@ -1399,27 +1487,34 @@
 }
 
 .due-date-badge {
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: var(--background-secondary);
-  border: 1px solid var(--background-modifier-border);
-  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: var(--kp-font-weight-semibold);
   white-space: nowrap;
+  flex-shrink: 0;
+  background: var(--kp-bg-secondary);
+  border: 1px solid var(--kp-border);
+  color: var(--kp-text-secondary);
 }
 
 .due-date-badge.overdue {
-  background: var(--background-modifier-error);
-  border-color: var(--text-error);
-  color: var(--text-error);
-  font-weight: 600;
+  background: var(--kp-error-bg);
+  border-color: var(--kp-error);
+  color: var(--kp-error);
+  font-weight: var(--kp-font-weight-bold);
 }
 
 .date-icon {
   width: 14px;
   height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .cell-progress {
@@ -1477,16 +1572,29 @@
 }
 
 /* Empty State */
+
 .list-empty {
   min-height: 400px;
 }
 
 /* Responsive */
+
 @media (max-width: 1200px) {
-  .cell-title { width: 35%; }
-  .cell-column { width: 20%; }
-  .cell-assignee { display: none; }
-  .cell-progress { width: 15%; }
+  .cell-title {
+    width: 35%;
+  }
+
+  .cell-column {
+    width: 20%;
+  }
+
+  .cell-assignee {
+    display: none;
+  }
+
+  .cell-progress {
+    width: 15%;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1500,12 +1608,29 @@
     padding: 12px;
   }
 
-  .cell-title { width: 60%; }
-  .cell-column { width: 40%; }
-  .cell-priority { width: 30%; }
-  .cell-due-date { width: 40%; }
-  .cell-progress { width: 20%; }
-  .cell-actions { width: 10%; }
+  .cell-title {
+    width: 60%;
+  }
+
+  .cell-column {
+    width: 40%;
+  }
+
+  .cell-priority {
+    width: 30%;
+  }
+
+  .cell-due-date {
+    width: 40%;
+  }
+
+  .cell-progress {
+    width: 20%;
+  }
+
+  .cell-actions {
+    width: 10%;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1536,6 +1661,7 @@
 }
 
 /* Scrollbar Styling */
+
 .list-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -1552,7 +1678,6 @@
 .list-container::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
-
 
 /* ============================================
    TIMELINE VIEW - Horizontal Modern
@@ -1731,20 +1856,6 @@
   z-index: 5;
 }
 
-.group-title {
-  font-size: 14px;
-  font-weight: var(--kp-font-weight-semibold);
-  color: var(--kp-text-primary);
-}
-
-.group-count {
-  font-size: 12px;
-  color: var(--kp-text-tertiary);
-  background: var(--kp-bg-tertiary);
-  padding: 2px 8px;
-  border-radius: var(--kp-radius-sm);
-}
-
 .timeline-row {
   display: flex;
   border-bottom: 1px solid var(--kp-border);
@@ -1775,21 +1886,22 @@
 }
 
 .mini-avatar {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--kp-primary);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
-  font-weight: var(--kp-font-weight-semibold);
+  font-size: 12px;
+  font-weight: var(--kp-font-weight-bold);
   text-transform: uppercase;
   flex-shrink: 0;
 }
 
 /* Stacked assignees for timeline view */
+
 .assignees-stack-mini {
   display: flex;
   align-items: center;
@@ -1824,7 +1936,7 @@
 
 .assignee-avatar-mini:hover {
   transform: scale(1.15);
-  z-index: 10 !important;
+  z-index: 10;
 }
 
 .assignee-avatar-mini.assignee-more {
@@ -1836,6 +1948,7 @@
 }
 
 /* Responsive sizing based on count for timeline mini avatars */
+
 .assignees-count-3 .assignee-avatar-mini,
 .assignees-count-4 .assignee-avatar-mini,
 .assignees-count-5 .assignee-avatar-mini {
@@ -1882,7 +1995,9 @@
 }
 
 /* Timeline Bar - Modern */
+
 .timeline-bar {
+  transition: all var(--kp-transition-fast);
   position: absolute;
   top: 12px;
   left: var(--kp-bar-left, 0);
@@ -1894,7 +2009,6 @@
   align-items: center;
   padding: 0 var(--kp-space-sm);
   cursor: pointer;
-  transition: all var(--kp-transition-fast);
   box-shadow: var(--kp-shadow-sm);
   overflow: hidden;
 }
@@ -1908,11 +2022,11 @@
 .timeline-bar.blocked {
   opacity: 0.6;
   background: repeating-linear-gradient(
-    45deg,
-    currentColor,
-    currentColor 10px,
-    transparent 10px,
-    transparent 20px
+  45deg,
+  currentColor,
+  currentColor 10px,
+  transparent 10px,
+  transparent 20px
   );
 }
 
@@ -1967,7 +2081,6 @@
   opacity: 1;
 }
 
-
 /* ============================================
    GANTT VIEW - Professional
    ============================================ */
@@ -1977,16 +2090,23 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  width: 100%;
+  padding: var(--kp-space-lg);
+  background: var(--kp-bg-primary);
 }
 
 .gantt-toolbar {
   display: flex;
   align-items: center;
   gap: var(--kp-space-lg);
-  padding: var(--kp-space-md) var(--kp-space-xl);
+  padding: var(--kp-space-md) var(--kp-space-lg);
   background: var(--kp-bg-secondary);
   border-bottom: 1px solid var(--kp-border);
   flex-shrink: 0;
+  justify-content: space-between;
+  margin-bottom: var(--kp-space-lg);
+  border-radius: var(--kp-radius-md);
+  border: 1px solid var(--kp-border);
 }
 
 .zoom-controls {
@@ -2087,13 +2207,17 @@
 .gantt-sidebar-header {
   display: flex;
   align-items: center;
-  padding: var(--kp-space-md) var(--kp-space-lg);
+  padding: 16px;
   border-bottom: 2px solid var(--kp-border);
   font-size: 13px;
-  font-weight: var(--kp-font-weight-semibold);
+  font-weight: 600;
   color: var(--kp-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  min-width: 200px;
+  max-width: 200px;
+  border-right: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
 }
 
 .gantt-task-list {
@@ -2107,12 +2231,13 @@
   align-items: center;
   gap: var(--kp-space-md);
   padding: 0 var(--kp-space-lg);
-  border-bottom: 1px solid var(--kp-border);
-  transition: background-color var(--kp-transition-fast);
+  border-bottom: 1px solid var(--background-modifier-border);
+  transition: background-color 0.2s;
+  min-height: 50px;
 }
 
 .gantt-task-row:hover {
-  background: var(--kp-bg-tertiary);
+  background: var(--background-modifier-hover);
 }
 
 .task-info {
@@ -2155,8 +2280,8 @@
 .gantt-header {
   position: sticky;
   top: 0;
-  background: var(--kp-bg-secondary);
-  border-bottom: 2px solid var(--kp-border);
+  background: var(--background-secondary);
+  border-bottom: 2px solid var(--background-modifier-border);
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -2240,28 +2365,38 @@
 }
 
 .gantt-bar {
+  transition: all 0.2s;
   position: absolute;
-  border-radius: var(--kp-radius-sm);
+  border-radius: 4px;
   cursor: pointer;
-  transition: all var(--kp-transition-fast);
-  box-shadow: var(--kp-shadow-sm);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  height: 30px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gantt-bar:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--kp-shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   z-index: 3;
 }
 
 .gantt-bar.blocked {
   opacity: 0.5;
   background: repeating-linear-gradient(
-    45deg,
-    currentColor,
-    currentColor 8px,
-    transparent 8px,
-    transparent 16px
+  45deg,
+  currentColor,
+  currentColor 8px,
+  transparent 8px,
+  transparent 16px
   );
 }
 
@@ -2289,7 +2424,6 @@
   line-height: 28px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
-
 
 /* ============================================
    ROADMAP VIEW - Milestone Cards
@@ -2326,6 +2460,7 @@
 }
 
 /* Responsive: stack vertically on smaller screens */
+
 @media (max-width: 900px) {
   .kanban-roadmap-view {
     grid-template-columns: 1fr;
@@ -2354,18 +2489,24 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--kp-space-xl);
+  padding: var(--kp-space-lg) var(--kp-space-xl);
+  border-bottom: 1px solid var(--kp-border);
+  background: var(--kp-bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .toolbar-title {
   margin: 0;
-  font-size: 20px;
-  font-weight: var(--kp-font-weight-bold);
+  font-size: 18px;
+  font-weight: var(--kp-font-weight-semibold);
   color: var(--kp-text-primary);
 }
 
 .toolbar-actions {
   display: flex;
-  gap: var(--kp-space-md);
+  gap: 8px;
 }
 
 .add-milestone-btn {
@@ -2386,6 +2527,7 @@
 .add-milestone-btn:hover {
   background: var(--kp-primary-hover);
   box-shadow: var(--kp-shadow-md);
+  transform: translateY(-1px);
 }
 
 .milestones-container {
@@ -2395,25 +2537,28 @@
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  padding: var(--kp-space-xl);
 }
 
 .milestone-card {
+  transition: all var(--kp-transition-base);
   background: var(--kp-bg-secondary);
   border: 2px solid var(--kp-border);
   border-left: 4px solid var(--milestone-color, var(--kp-primary));
   border-radius: var(--kp-radius-lg);
-  transition: all var(--kp-transition-base);
   box-shadow: var(--kp-shadow-sm);
+  overflow: hidden;
 }
 
 .milestone-card:hover {
-  box-shadow: var(--kp-shadow-md);
+  box-shadow: var(--kp-shadow-lg);
   transform: translateY(-2px);
 }
 
 .milestone-card.completed {
   opacity: 0.7;
   background: var(--kp-success-bg);
+  border-color: var(--kp-success);
 }
 
 .milestone-header {
@@ -2422,21 +2567,24 @@
   justify-content: space-between;
   padding: var(--kp-space-lg) var(--kp-space-xl);
   border-bottom: 1px solid var(--kp-border);
+  gap: var(--kp-space-md);
+  background: var(--kp-color-alpha, var(--kp-bg-primary));
 }
 
 .status-icon {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--milestone-color, var(--kp-primary));
+  color: var(--kp-text-tertiary);
   cursor: pointer;
-  transition: transform var(--kp-transition-fast);
+  transition: all var(--kp-transition-fast);
 }
 
 .status-icon:hover {
   transform: scale(1.1);
+  color: var(--kp-success);
 }
 
 .milestone-title {
@@ -2455,6 +2603,7 @@
 .progress-section {
   padding: var(--kp-space-lg) var(--kp-space-xl);
   background: var(--kp-bg-primary);
+  border-bottom: 1px solid var(--kp-border);
 }
 
 .progress-info {
@@ -2470,7 +2619,7 @@
 }
 
 .progress-percent {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--kp-font-weight-bold);
   color: var(--kp-primary);
 }
@@ -2478,23 +2627,31 @@
 .progress-bar {
   height: 8px;
   background: var(--kp-bg-tertiary);
-  border-radius: var(--kp-radius-sm);
+  border-radius: var(--kp-radius-full);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--kp-primary), var(--kp-primary-light));
-  border-radius: var(--kp-radius-sm);
-  transition: width var(--kp-transition-slow);
+  background: var(--kp-color, linear-gradient(90deg, var(--kp-primary), var(--kp-success)));
+  border-radius: var(--kp-radius-full);
+  transition: width var(--kp-transition-base);
+  width: var(--kp-width, 0%);
 }
 
 .cards-section {
   padding: var(--kp-space-lg) var(--kp-space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--kp-space-lg);
+  cursor: default;
 }
 
 .column-group {
   margin-bottom: var(--kp-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--kp-space-sm);
 }
 
 .column-group:last-child {
@@ -2505,9 +2662,9 @@
   display: flex;
   align-items: center;
   gap: var(--kp-space-sm);
-  padding: var(--kp-space-sm) 0;
+  padding: var(--kp-space-xs) 0;
   margin-bottom: var(--kp-space-sm);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: var(--kp-font-weight-semibold);
   color: var(--kp-text-secondary);
   text-transform: uppercase;
@@ -2517,35 +2674,39 @@
 .cards-list {
   display: flex;
   flex-direction: column;
-  gap: var(--kp-space-sm);
+  gap: var(--kp-space-xs);
 }
 
 .roadmap-card-item {
-  background: var(--kp-bg-secondary);
+  cursor: grab;
+  background: var(--kp-bg-primary);
   border: 1px solid var(--kp-border);
   border-radius: var(--kp-radius-md);
   padding: var(--kp-space-md);
   transition: all var(--kp-transition-fast);
-  cursor: grab;
+  display: flex;
+  align-items: center;
 }
 
 .roadmap-card-item:hover {
-  border-color: var(--kp-border-hover);
+  border-color: var(--kp-primary);
   box-shadow: var(--kp-shadow-sm);
   transform: translateX(4px);
+  background: var(--kp-bg-tertiary);
 }
 
 .roadmap-card-item.completed {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .roadmap-card-item.blocked {
   background: var(--kp-error-bg);
   border-color: var(--kp-error);
+  border-left: 3px solid var(--kp-error);
 }
 
 .roadmap-card-item.dragging {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: grabbing;
 }
 
@@ -2554,12 +2715,13 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--kp-space-md);
+  width: 100%;
 }
 
 .card-left {
   display: flex;
   align-items: center;
-  gap: var(--kp-space-md);
+  gap: var(--kp-space-sm);
   flex: 1;
   min-width: 0;
 }
@@ -2574,7 +2736,8 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: all var(--kp-transition-fast);
+  transition: color var(--kp-transition-fast);
+  flex-shrink: 0;
 }
 
 .completion-checkbox:hover {
@@ -2585,13 +2748,14 @@
 .card-badges {
   display: flex;
   align-items: center;
-  gap: var(--kp-space-xs);
+  gap: var(--kp-space-sm);
+  flex-shrink: 0;
 }
 
 .card-right {
   display: flex;
   align-items: center;
-  gap: var(--kp-space-md);
+  gap: var(--kp-space-sm);
 }
 
 .associations-indicator {
@@ -2633,27 +2797,41 @@
   color: var(--kp-text-tertiary);
   cursor: pointer;
   transition: all var(--kp-transition-fast);
+  margin: var(--kp-space-md) var(--kp-space-xl);
+  border: 2px dashed var(--kp-border);
+  border-radius: var(--kp-radius-lg);
+  flex-direction: column;
+  user-select: none;
 }
 
-.milestone-drop-zone:hover,
-.milestone-drop-zone.drag-over {
+.milestone-drop-zone:hover {
   background: var(--kp-primary-bg);
   border-color: var(--kp-primary);
   color: var(--kp-primary);
+  cursor: pointer;
 }
 
 .drop-icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 /* Unassigned section base - max-width only applies in stacked layout */
+
 .unassigned-cards-section {
   max-width: 1200px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--kp-space-xl);
+  background: var(--kp-bg-secondary);
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-lg);
+  overflow: hidden;
+  transition: all var(--kp-transition-fast);
 }
 
 .section-header {
@@ -2662,7 +2840,9 @@
   justify-content: space-between;
   padding: var(--kp-space-md) 0;
   margin-bottom: var(--kp-space-md);
-  border-bottom: 2px solid var(--kp-border);
+  border-bottom: 1px solid var(--kp-border);
+  gap: var(--kp-space-sm);
+  padding-bottom: var(--kp-space-md);
 }
 
 .section-header h4 {
@@ -2675,53 +2855,46 @@
 .unassigned-cards-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--kp-space-md);
+  gap: var(--kp-space-sm);
 }
 
 .unassigned-card-item {
+  cursor: grab;
   display: flex;
   align-items: center;
-  gap: var(--kp-space-md);
+  gap: var(--kp-space-sm);
   padding: var(--kp-space-md);
-  background: var(--kp-bg-secondary);
+  background: var(--kp-bg-primary);
   border: 1px solid var(--kp-border);
   border-radius: var(--kp-radius-md);
-  cursor: grab;
   transition: all var(--kp-transition-fast);
 }
 
 .unassigned-card-item:hover {
-  border-color: var(--kp-border-hover);
+  border-color: var(--kp-primary);
   box-shadow: var(--kp-shadow-sm);
+  background: var(--kp-bg-tertiary);
 }
 
 .unassigned-card-item.dragging {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: grabbing;
-}
-
-.column-badge {
-  padding: 3px 8px;
-  font-size: 11px;
-  font-weight: var(--kp-font-weight-semibold);
-  border-radius: var(--kp-radius-sm);
-  color: white;
-  white-space: nowrap;
 }
 
 .show-more {
   padding: var(--kp-space-md);
   text-align: center;
-  color: var(--kp-text-secondary);
+  color: var(--kp-text-tertiary);
   font-size: 13px;
   cursor: pointer;
   transition: color var(--kp-transition-fast);
+  grid-column: 1 / -1;
+  font-style: italic;
 }
 
 .show-more:hover {
   color: var(--kp-primary);
 }
-
 
 /* ============================================
    EMPTY STATES
@@ -2767,7 +2940,7 @@
 }
 
 .primary-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--kp-space-sm);
   padding: var(--kp-space-md) var(--kp-space-xl);
@@ -2786,7 +2959,6 @@
   box-shadow: var(--kp-shadow-md);
   transform: translateY(-1px);
 }
-
 
 /* ============================================
    MODALS - Modern Design
@@ -2807,7 +2979,6 @@
   border-bottom: none;
 }
 
-
 /* ============================================
    RESPONSIVE
    ============================================ */
@@ -2819,7 +2990,7 @@
   }
 
   .timeline-row-sidebar,
-  .timeline-sidebar-spacer {
+    .timeline-sidebar-spacer {
     width: 220px;
   }
 
@@ -2830,7 +3001,7 @@
 
 @media (max-width: 768px) {
   .toolbar-left,
-  .toolbar-right {
+    .toolbar-right {
     flex: 0 0 auto;
   }
 
@@ -2848,7 +3019,6 @@
   }
 }
 
-
 /* ============================================
    UTILITIES
    ============================================ */
@@ -2863,6 +3033,7 @@
 }
 
 /* Smooth scrollbars */
+
 .kanban-board::-webkit-scrollbar,
 .column-content::-webkit-scrollbar,
 .timeline-container::-webkit-scrollbar,
@@ -2894,13 +3065,11 @@
 }
 
 /* Aggiungi queste regole al file styles.css esistente */
-
-
 /* ============================================
    FIXES - Template Selection & Column Issues
    ============================================ */
-
 /* Template Selection - Better Visual Feedback */
+
 .template-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -2951,6 +3120,9 @@
 }
 
 @keyframes checkmark-pop {
+
+
+
   0% {
     transform: scale(0);
     opacity: 0;
@@ -2962,13 +3134,23 @@
     transform: scale(1);
     opacity: 1;
   }
+
+
+
 }
 
 .template-icon {
-  font-size: 32px;
+  font-size: 20px;
   margin-bottom: var(--kp-space-sm);
-  display: block;
+  display: flex;
   text-align: center;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: var(--kp-primary-bg);
+  border-radius: var(--kp-radius-md);
+  flex-shrink: 0;
 }
 
 .template-card h3 {
@@ -2985,40 +3167,6 @@
   color: var(--kp-text-secondary);
   text-align: center;
   line-height: 1.4;
-}
-
-/* Board Title - Better Responsive Handling */
-.board-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: var(--kp-font-weight-semibold);
-  color: var(--kp-text-primary);
-  cursor: pointer;
-  padding: var(--kp-space-xs) var(--kp-space-md);
-  border-radius: var(--kp-radius-sm);
-  transition: background-color var(--kp-transition-fast);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 300px;
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-.board-title:hover {
-  background: var(--kp-bg-tertiary);
-}
-
-
-/* ============================================
-   COLLAPSED COLUMN - IMPROVED DESIGN
-   ============================================ */
-
-.kanban-column.collapsed {
-  min-width: 60px;
-  max-width: 60px;
-  background: var(--kp-bg-secondary);
-  position: relative;
 }
 
 .kanban-column.collapsed .column-header {
@@ -3107,6 +3255,7 @@
 }
 
 /* Hover effect for collapsed column */
+
 .kanban-column.collapsed:hover {
   background: var(--kp-bg-tertiary);
 }
@@ -3128,6 +3277,7 @@
 }
 
 /* Color Picker Modal - Enhanced */
+
 .kanban-color-picker-modal {
   padding: var(--kp-space-xl);
   max-width: 420px;
@@ -3191,6 +3341,7 @@
 }
 
 /* Toolbar Responsive Improvements */
+
 @media (max-width: 1024px) {
   .board-title {
     max-width: 200px;
@@ -3204,12 +3355,13 @@
   }
 
   .toolbar-left,
-  .toolbar-right {
+    .toolbar-right {
     gap: var(--kp-space-sm);
   }
 }
 
 /* Modal Button Container */
+
 .modal-button-container,
 .button-container {
   display: flex;
@@ -3259,7 +3411,6 @@
   transform: translateY(-1px);
 }
 
-.danger-btn,
 .mod-warning {
   padding: var(--kp-space-sm) var(--kp-space-xl);
   border: none;
@@ -3272,59 +3423,9 @@
   transition: all var(--kp-transition-fast);
 }
 
-.danger-btn:hover,
 .mod-warning:hover {
   background: #dc2626;
   box-shadow: var(--kp-shadow-md);
-}
-
-
-/* ============================================
-   ROADMAP VIEW - Complete Styles
-   ============================================ */
-
-.roadmap-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--kp-space-lg) var(--kp-space-xl);
-  border-bottom: 1px solid var(--kp-border);
-  background: var(--kp-bg-primary);
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-.toolbar-title {
-  font-size: 18px;
-  font-weight: var(--kp-font-weight-semibold);
-  color: var(--kp-text-primary);
-}
-
-.toolbar-actions {
-  display: flex;
-  gap: var(--kp-space-md);
-}
-
-.add-milestone-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  padding: var(--kp-space-sm) var(--kp-space-lg);
-  border: none;
-  background: var(--kp-primary);
-  color: white;
-  font-size: 14px;
-  font-weight: var(--kp-font-weight-medium);
-  border-radius: var(--kp-radius-md);
-  cursor: pointer;
-  transition: all var(--kp-transition-fast);
-}
-
-.add-milestone-btn:hover {
-  background: var(--kp-primary-hover);
-  box-shadow: var(--kp-shadow-md);
-  transform: translateY(-1px);
 }
 
 .roadmap-content {
@@ -3333,13 +3434,6 @@
   gap: var(--kp-space-xl);
   overflow-y: auto;
   padding-right: var(--kp-space-md);
-}
-
-.milestones-container {
-  padding: var(--kp-space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--kp-space-xl);
 }
 
 .roadmap-milestone {
@@ -3363,37 +3457,8 @@
   border-color: var(--kp-success);
 }
 
-.milestone-card {
-  background: var(--kp-bg-secondary);
-  border: 2px solid var(--kp-border);
-  border-left: 4px solid var(--milestone-color, var(--kp-primary));
-  border-radius: var(--kp-radius-lg);
-  overflow: hidden;
-  transition: all var(--kp-transition-base);
-}
-
-.milestone-card:hover {
-  box-shadow: var(--kp-shadow-lg);
-  transform: translateY(-2px);
-}
-
-.milestone-card.completed {
-  opacity: 0.7;
-  border-color: var(--kp-success);
-}
-
 .milestone-card.completed .milestone-header {
   background: var(--kp-success-bg);
-}
-
-.milestone-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--kp-space-md);
-  padding: var(--kp-space-lg) var(--kp-space-xl);
-  background: var(--kp-color-alpha, var(--kp-bg-primary));
-  border-bottom: 1px solid var(--kp-border);
 }
 
 .milestone-header .header-left {
@@ -3434,19 +3499,13 @@
   flex: 1;
 }
 
-.milestone-title {
-  font-size: 18px;
-  font-weight: var(--kp-font-weight-semibold);
-  color: var(--kp-text-primary);
-  margin: 0;
-}
-
 .milestone-due-date {
   display: flex;
   align-items: center;
   gap: var(--kp-space-xs);
   font-size: 13px;
   color: var(--kp-text-secondary);
+  margin-top: var(--kp-space-xs);
 }
 
 .milestone-due-date .cal-icon {
@@ -3475,22 +3534,22 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--kp-text-muted);
+  color: var(--kp-text-tertiary);
   cursor: pointer;
   border-radius: var(--kp-radius-sm);
   transition: all var(--kp-transition-fast);
 }
 
 .milestone-menu-btn:hover {
-  background: var(--kp-bg-tertiary);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--kp-text-primary);
 }
 
 .milestone-description {
   padding: var(--kp-space-md) var(--kp-space-xl);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--kp-text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
   margin: 0;
   border-bottom: 1px solid var(--kp-border);
 }
@@ -3510,70 +3569,8 @@
   overflow: hidden;
 }
 
-.status-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--kp-text-tertiary);
-  cursor: pointer;
-  transition: all var(--kp-transition-fast);
-}
-
-.status-icon:hover {
-  color: var(--kp-success);
-  transform: scale(1.1);
-}
-
 .milestone-card.completed .status-icon {
   color: var(--kp-success);
-}
-
-.progress-section {
-  padding: var(--kp-space-lg) var(--kp-space-xl);
-  background: var(--kp-bg-primary);
-  border-bottom: 1px solid var(--kp-border);
-}
-
-.progress-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--kp-space-sm);
-}
-
-.progress-text {
-  font-size: 13px;
-  color: var(--kp-text-secondary);
-}
-
-.progress-percent {
-  font-size: 14px;
-  font-weight: var(--kp-font-weight-bold);
-  color: var(--kp-primary);
-}
-
-.progress-bar {
-  height: 8px;
-  background: var(--kp-bg-tertiary);
-  border-radius: var(--kp-radius-full);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  width: var(--kp-width, 0%);
-  background: var(--kp-color, linear-gradient(90deg, var(--kp-primary), var(--kp-success)));
-  border-radius: var(--kp-radius-full);
-  transition: width var(--kp-transition-base);
-}
-
-.cards-section {
-  padding: var(--kp-space-lg) var(--kp-space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--kp-space-lg);
 }
 
 .milestone-cards {
@@ -3588,17 +3585,13 @@
   background: var(--kp-bg-primary);
   border-top: 1px solid var(--kp-border);
   flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--kp-border-hover) transparent;
 }
 
 .milestone-cards.drag-over {
   background: var(--kp-primary-bg);
   border-color: var(--kp-primary);
-}
-
-/* Scrollbar styling for milestone cards */
-.milestone-cards {
-  scrollbar-width: thin;
-  scrollbar-color: var(--kp-border-hover) transparent;
 }
 
 .milestone-cards::-webkit-scrollbar {
@@ -3619,6 +3612,7 @@
 }
 
 /* Individual cards inside milestone-cards container */
+
 .milestone-cards .milestone-card {
   display: flex;
   align-items: center;
@@ -3745,20 +3739,6 @@
   background: var(--kp-primary-bg);
   border-color: var(--kp-primary);
   color: var(--kp-primary);
-}
-
-/* ============================================ */
-/* Unassigned Cards Section */
-/* ============================================ */
-
-.unassigned-cards-section {
-  display: flex;
-  flex-direction: column;
-  padding: var(--kp-space-lg);
-  background: var(--kp-bg-secondary);
-  border: 2px dashed var(--kp-border);
-  border-radius: var(--kp-radius-lg);
-  overflow: hidden;
 }
 
 .unassigned-cards-section .unassigned-cards-container {
@@ -3914,208 +3894,6 @@
   letter-spacing: 0.3px;
 }
 
-.column-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--kp-space-sm);
-}
-
-.column-header-mini {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  font-size: 12px;
-  font-weight: var(--kp-font-weight-semibold);
-  color: var(--kp-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: var(--kp-space-xs) 0;
-}
-
-.cards-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--kp-space-xs);
-}
-
-.roadmap-card-item {
-  display: flex;
-  align-items: center;
-  padding: var(--kp-space-md);
-  background: var(--kp-bg-primary);
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-md);
-  transition: all var(--kp-transition-fast);
-}
-
-.roadmap-card-item:hover {
-  background: var(--kp-bg-tertiary);
-  border-color: var(--kp-primary);
-  box-shadow: var(--kp-shadow-sm);
-}
-
-.roadmap-card-item.completed {
-  opacity: 0.6;
-}
-
-.roadmap-card-item.blocked {
-  border-left: 3px solid var(--kp-error);
-}
-
-.card-content {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-md);
-  width: 100%;
-}
-
-.card-left {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  flex: 1;
-  min-width: 0;
-}
-
-.completion-checkbox {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  cursor: pointer;
-  color: var(--kp-text-tertiary);
-  transition: color var(--kp-transition-fast);
-}
-
-.completion-checkbox:hover {
-  color: var(--kp-success);
-}
-
-.card-badges {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-}
-
-.card-right {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-}
-
-.milestone-drop-zone {
-  margin: var(--kp-space-md) var(--kp-space-xl);
-  padding: var(--kp-space-xl);
-  border: 2px dashed var(--kp-border);
-  border-radius: var(--kp-radius-lg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--kp-space-sm);
-  color: var(--kp-text-tertiary);
-  transition: all var(--kp-transition-fast);
-}
-
-.milestone-drop-zone:hover {
-  border-color: var(--kp-primary);
-  background: var(--kp-primary-bg);
-  color: var(--kp-primary);
-  cursor: pointer;
-}
-
-.drop-icon {
-  width: 24px;
-  height: 24px;
-}
-
-/* Additional unassigned section styling */
-.unassigned-cards-section {
-  padding: var(--kp-space-xl);
-  background: var(--kp-bg-secondary);
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-lg);
-  transition: all var(--kp-transition-fast);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--kp-space-md);
-}
-
-.unassigned-cards-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--kp-space-sm);
-}
-
-.unassigned-card-item {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  padding: var(--kp-space-md);
-  background: var(--kp-bg-primary);
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-md);
-  transition: all var(--kp-transition-fast);
-}
-
-.unassigned-card-item:hover {
-  background: var(--kp-bg-tertiary);
-  border-color: var(--kp-primary);
-  box-shadow: var(--kp-shadow-sm);
-}
-
-.column-badge {
-  padding: 3px 8px;
-  border-radius: var(--kp-radius-sm);
-  font-size: 11px;
-  font-weight: var(--kp-font-weight-semibold);
-  color: white;
-}
-
-.show-more {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: var(--kp-space-md);
-  color: var(--kp-text-tertiary);
-  font-size: 13px;
-  font-style: italic;
-}
-
-/* Mini Avatar */
-.mini-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--kp-primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--kp-font-weight-bold);
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.milestone-description {
-  padding: var(--kp-space-md) var(--kp-space-xl);
-  color: var(--kp-text-secondary);
-  font-size: 13px;
-  line-height: 1.5;
-  border-bottom: 1px solid var(--kp-border);
-}
-
-.milestone-due-date {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-xs);
-  font-size: 13px;
-  color: var(--kp-text-secondary);
-  margin-top: var(--kp-space-xs);
-}
-
 .milestone-due-date.overdue {
   color: var(--kp-error);
   font-weight: var(--kp-font-weight-semibold);
@@ -4131,45 +3909,10 @@
   min-width: 0;
 }
 
-.milestone-menu-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  color: var(--kp-text-tertiary);
-  cursor: pointer;
-  border-radius: var(--kp-radius-sm);
-  transition: all var(--kp-transition-fast);
-}
-
-.milestone-menu-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--kp-text-primary);
-}
-
-.roadmap-card-item.dragging,
-.unassigned-card-item.dragging {
-  opacity: 0.5;
-  cursor: grabbing;
-}
-
-.priority-badge,
-.due-date-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: var(--kp-radius-sm);
-  font-size: 11px;
-  font-weight: var(--kp-font-weight-semibold);
-}
-
 .due-date-badge .icon {
   width: 12px;
   height: 12px;
+  flex-shrink: 0;
 }
 
 .remove-card-btn {
@@ -4197,6 +3940,7 @@
 }
 
 /* Cards Selection Modal */
+
 .cards-selection-list {
   max-height: 400px;
   overflow-y: auto;
@@ -4238,7 +3982,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 /* ============================================
    CARD DETAIL MODAL - PREMIUM SINGLE COLUMN LAYOUT
@@ -4284,10 +4027,6 @@
 .task-type-selector:hover {
   background: var(--kp-bg-tertiary);
   border-color: var(--kp-primary);
-}
-
-.task-type-icon {
-  font-size: 16px;
 }
 
 .task-type-name {
@@ -4377,8 +4116,7 @@
   flex-shrink: 0;
 }
 
-.priority-icon,
-.date-icon {
+.priority-icon {
   width: 14px;
   height: 14px;
   display: flex;
@@ -4396,6 +4134,7 @@
 }
 
 /* Horizontal Tab Navigation */
+
 .modal-sidebar {
   width: 100%;
   border-bottom: 1px solid var(--kp-border);
@@ -4457,11 +4196,15 @@
 .modal-content-area {
   flex: 1;
   overflow-y: auto;
-  padding: var(--kp-space-xxl);
+  padding: 24px;
   min-width: 0;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
 }
 
 /* Content sections in two columns for better space usage */
+
 .overview-tab {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -4478,21 +4221,12 @@
 }
 
 /* Full width for description, checklist, notes tabs */
+
 .description-tab,
 .checklist-tab,
 .notes-tab,
 .activity-tab {
   max-width: 100%;
-}
-
-/* Rest of the styles remain the same but with better spacing */
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  margin-bottom: var(--kp-space-md);
-  padding-bottom: var(--kp-space-md);
-  border-bottom: 1px solid var(--kp-border);
 }
 
 .section-icon {
@@ -4513,6 +4247,7 @@
 }
 
 /* Responsive */
+
 @media (max-width: 900px) {
   .overview-tab {
     grid-template-columns: 1fr;
@@ -4552,37 +4287,14 @@
   border: 2px dashed var(--kp-primary);
 }
 
-.roadmap-card-item.dragging,
-.unassigned-card-item.dragging {
-  opacity: 0.4;
-  cursor: grabbing;
-}
-
-.milestone-drop-zone {
-  cursor: pointer;
-  user-select: none;
-}
-
-.cards-section {
-  cursor: default;
-}
-
-/* Make cards grabbable */
-.roadmap-card-item,
-.unassigned-card-item {
-  cursor: grab;
-}
-
 .roadmap-card-item:active,
 .unassigned-card-item:active {
   cursor: grabbing;
 }
 
-
 /* ============================================
    UTILITY MODALS - STYLES
    ============================================ */
-
 /* ============================================
    TEAM MODAL - STYLES
    ============================================ */
@@ -4716,6 +4428,7 @@
 }
 
 /* Member form modal */
+
 .member-form-preview {
   display: flex;
   justify-content: center;
@@ -4934,6 +4647,7 @@
 }
 
 /* Quick Dates */
+
 .quick-dates {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -4942,26 +4656,27 @@
 }
 
 .quick-date-btn {
-  padding: var(--kp-space-md);
-  border: 1px solid var(--kp-border);
-  background: var(--kp-bg-secondary);
-  color: var(--kp-text-primary);
+  padding: 6px 12px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
   font-size: 13px;
   font-weight: var(--kp-font-weight-medium);
-  border-radius: var(--kp-radius-md);
+  border-radius: 6px;
   cursor: pointer;
-  transition: all var(--kp-transition-fast);
+  transition: all 0.2s;
 }
 
 .quick-date-btn:hover {
-  background: var(--kp-primary);
+  background: var(--interactive-accent);
   color: white;
-  border-color: var(--kp-primary);
+  border-color: var(--interactive-accent);
   transform: translateY(-1px);
   box-shadow: var(--kp-shadow-sm);
 }
 
 /* Quick Add Input */
+
 .quick-add-input {
   width: 100%;
   padding: var(--kp-space-md);
@@ -4981,6 +4696,7 @@
 }
 
 /* Multi-Select Modal */
+
 .kanban-multi-select-modal .modal-description {
   color: var(--kp-text-secondary);
   margin-bottom: var(--kp-space-lg);
@@ -5026,33 +4742,11 @@
 }
 
 /* Full Width Button */
+
 .full-width-btn {
   width: 100%;
   margin-top: var(--kp-space-md);
 }
-
-/* Primary Button Style */
-.primary-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  padding: var(--kp-space-md) var(--kp-space-xl);
-  border: none;
-  background: var(--kp-primary);
-  color: white;
-  font-size: 14px;
-  font-weight: var(--kp-font-weight-medium);
-  border-radius: var(--kp-radius-md);
-  cursor: pointer;
-  transition: all var(--kp-transition-fast);
-}
-
-.primary-btn:hover {
-  background: var(--kp-primary-hover);
-  box-shadow: var(--kp-shadow-md);
-  transform: translateY(-1px);
-}
-
 
 /* ============================================
    ROADMAP - STATUS ICON (NO CHECKBOX)
@@ -5086,6 +4780,7 @@
 }
 
 /* Update card title in roadmap to have proper spacing */
+
 .roadmap-card-item .card-title {
   font-size: 14px;
   font-weight: var(--kp-font-weight-medium);
@@ -5108,15 +4803,8 @@
   opacity: 0.7;
 }
 
-/* Ensure card badges don't overflow */
-.card-badges {
-  display: flex;
-  align-items: center;
-  gap: var(--kp-space-sm);
-  flex-shrink: 0;
-}
-
 /* Make card content responsive */
+
 .roadmap-card-item .card-content {
   display: flex;
   align-items: center;
@@ -5141,40 +4829,8 @@
   flex-shrink: 0;
 }
 
-/* Priority and date badges sizing */
-.priority-badge,
-.due-date-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: var(--kp-radius-sm);
-  font-size: 11px;
-  font-weight: var(--kp-font-weight-semibold);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.due-date-badge {
-  background: var(--kp-bg-secondary);
-  border: 1px solid var(--kp-border);
-  color: var(--kp-text-secondary);
-}
-
-.due-date-badge.overdue {
-  background: var(--kp-error-bg);
-  border-color: var(--kp-error);
-  color: var(--kp-error);
-  font-weight: var(--kp-font-weight-bold);
-}
-
-.due-date-badge .icon {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-}
-
 /* Responsive adjustments for roadmap cards */
+
 @media (max-width: 768px) {
   .roadmap-card-item .card-content {
     flex-wrap: wrap;
@@ -5187,13 +4843,16 @@
   }
 }
 
-
 /* ============================================
    COLUMN DRAG & DROP
    ============================================ */
 
 .kanban-column.dragging-column {
-  opacity: 0.4;
+  opacity: 0.5;
+  cursor: grabbing;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  z-index: 1000;
 }
 
 .kanban-column.drag-over-left {
@@ -5214,10 +4873,10 @@
 }
 
 /* Visual feedback for draggable columns */
+
 .column-header[draggable="true"]:hover {
   background: var(--kp-bg-tertiary);
 }
-
 
 /* ============================================
    STATUS MANAGEMENT MODAL
@@ -5280,19 +4939,6 @@
   border-bottom: 1px solid var(--kp-border);
 }
 
-.group-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--kp-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  flex-shrink: 0;
-  box-shadow: var(--kp-shadow-sm);
-  background-color: var(--kp-color, var(--kp-primary));
-}
-
 .group-icon svg {
   width: 24px;
   height: 24px;
@@ -5319,9 +4965,15 @@
 .group-columns {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--kp-space-sm);
+  gap: 8px;
   margin-bottom: var(--kp-space-md);
   min-height: 40px;
+  flex-direction: column;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--background-primary);
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
 }
 
 .empty-columns {
@@ -5423,6 +5075,7 @@
 }
 
 /* Template Section */
+
 .template-section {
   margin-top: var(--kp-space-xl);
   padding: var(--kp-space-xl);
@@ -5479,18 +5132,6 @@
 .saved-template-item:hover {
   background: var(--kp-bg-tertiary);
   box-shadow: var(--kp-shadow-sm);
-}
-
-.template-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--kp-primary-bg);
-  border-radius: var(--kp-radius-md);
-  font-size: 20px;
-  flex-shrink: 0;
 }
 
 .template-info {
@@ -5554,6 +5195,7 @@
 }
 
 /* Save Template Modal */
+
 .kanban-save-template-modal {
   max-width: 500px;
 }
@@ -5565,7 +5207,6 @@
   color: var(--kp-text-primary);
 }
 
-
 /* ============================================
    BOARD MENU & STATUS INDICATOR
    ============================================ */
@@ -5575,6 +5216,7 @@
 }
 
 /* Status category indicators in columns */
+
 .kanban-column[data-status-category="not-started"] .column-header {
   border-top: 3px solid #94a3b8;
 }
@@ -5588,6 +5230,7 @@
 }
 
 /* Add subtle animation to status indicator */
+
 .kanban-column[data-status-category]::before {
   content: '';
   position: absolute;
@@ -5616,6 +5259,7 @@
 }
 
 /* Responsive improvements */
+
 @media (max-width: 768px) {
   .status-management-body {
     padding: var(--kp-space-lg);
@@ -5633,8 +5277,8 @@
 /* ============================================
    CHECKLIST STYLES
    ============================================ */
-
 /* Checklist Container */
+
 .checklist-container {
   display: flex;
   flex-direction: column;
@@ -5645,15 +5289,18 @@
 .checklist-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  background: var(--background-secondary);
+  gap: 11px;
+  padding: 6px 8px 6px 10px;
+  background: transparent;
   border-radius: 6px;
-  transition: all 0.2s;
+  transition: background 0.12s ease;
+  border: none;
+  position: relative;
+  group: true;
 }
 
 .checklist-item:hover {
-  background: var(--background-modifier-hover);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .checklist-item input[type="checkbox"] {
@@ -5708,6 +5355,7 @@
 }
 
 /* Section Header for Checklist */
+
 .card-section .section-header {
   display: flex;
   align-items: center;
@@ -5740,7 +5388,6 @@
   transform: scale(1.05);
 }
 
-
 /* ============================================
    SUBTASK INLINE SECTION (on Kanban card) — ClickUp style
    ============================================ */
@@ -5759,6 +5406,7 @@
 }
 
 /* Header row */
+
 .subtask-header {
   display: flex;
   align-items: center;
@@ -5784,6 +5432,7 @@
 }
 
 /* Pill-style progress badge on card */
+
 .subtask-icon {
   display: none; /* hidden — replaced by pill badge approach */
 }
@@ -5796,6 +5445,7 @@
 }
 
 /* Mini inline progress track next to count */
+
 .subtask-header .subtask-progress-track-inline {
   flex: 1;
   height: 3px;
@@ -5823,6 +5473,7 @@
 }
 
 /* Progress bar (on card) */
+
 .subtask-progress-track {
   height: 3px;
   background: rgba(255, 255, 255, 0.08);
@@ -5844,6 +5495,7 @@
 }
 
 /* Subtask list */
+
 .subtask-list {
   display: none;
   flex-direction: column;
@@ -5856,6 +5508,7 @@
 }
 
 /* Individual subtask row on card */
+
 .subtask-row {
   display: flex;
   align-items: center;
@@ -5871,6 +5524,7 @@
 }
 
 /* Custom round checkbox on card */
+
 .subtask-checkbox {
   width: 14px;
   height: 14px;
@@ -5902,6 +5556,7 @@
 }
 
 /* Subtask text on card */
+
 .subtask-text {
   font-size: 11.5px;
   color: var(--kp-text-primary);
@@ -5921,6 +5576,7 @@
 }
 
 /* "+N more" link on card */
+
 .subtask-more {
   font-size: 10.5px;
   color: var(--kp-primary-light);
@@ -5934,10 +5590,6 @@
 .subtask-more:hover {
   background: var(--kp-primary-bg);
   color: var(--kp-primary);
-}
-
-.subtask-more:hover {
-  background: var(--kp-primary-bg);
 }
 
 /* ============================================
@@ -5971,6 +5623,7 @@
 }
 
 /* Header "+ Add" button */
+
 .subtask-add-btn {
   display: flex;
   align-items: center;
@@ -5999,6 +5652,7 @@
 }
 
 /* ─── Progress bar in modal ─── */
+
 .subtask-modal-progress {
   margin-bottom: 14px;
   padding: 0 2px;
@@ -6047,24 +5701,6 @@
   background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
 }
 
-/* ─── Checklist row ─── */
-.checklist-item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 6px 8px 6px 10px;
-  background: transparent;
-  border-radius: 6px;
-  border: none;
-  transition: background 0.12s ease;
-  position: relative;
-  group: true;
-}
-
-.checklist-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
 .checklist-item.completed {
   opacity: 0.55;
 }
@@ -6078,6 +5714,7 @@
 }
 
 /* ─── Round status circle (ClickUp-style) ─── */
+
 .subtask-cb {
   width: 17px;
   height: 17px;
@@ -6129,6 +5766,7 @@
 }
 
 /* ─── Editable text ─── */
+
 .subtask-item-text {
   flex: 1;
   font-size: 13.5px;
@@ -6159,6 +5797,7 @@
 }
 
 /* ─── Delete (trash) button ─── */
+
 .subtask-delete-btn {
   width: 22px;
   height: 22px;
@@ -6178,10 +5817,11 @@
 .subtask-delete-btn:hover {
   background: rgba(239, 68, 68, 0.12);
   color: #f87171;
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 /* ─── Empty state ─── */
+
 .subtask-empty {
   display: flex;
   flex-direction: column;
@@ -6208,13 +5848,13 @@
 }
 
 /* ─── Inline add row (always visible at bottom) ─── */
+
 .subtask-add-row {
   display: flex;
   align-items: center;
   gap: 11px;
   padding: 6px 8px 6px 10px;
   border-radius: 6px;
-  border: none;
   margin-top: 4px;
   transition: background 0.12s ease;
   cursor: text;
@@ -6232,6 +5872,7 @@
 }
 
 /* The "+" circle that mimics the checkbox placeholder */
+
 .subtask-add-row-icon {
   width: 17px;
   height: 17px;
@@ -6252,6 +5893,7 @@
 }
 
 /* The icon inside the add-row circle */
+
 .subtask-add-row-icon svg {
   width: 9px;
   height: 9px;
@@ -6356,7 +5998,6 @@
   background: var(--background-modifier-hover);
 }
 
-
 /* ============================================
    Error States
    ============================================ */
@@ -6405,36 +6046,6 @@
   transform: translateY(-1px);
 }
 
-
-/* ============================================
-   Frappe Gantt Styling - Ottimizzato
-   ============================================ */
-
-/* Gantt View Container */
-.kanban-gantt-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  padding: var(--kp-space-lg);
-  overflow: hidden;
-  background: var(--kp-bg-primary);
-}
-
-/* Gantt Toolbar - Migliorato */
-.gantt-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--kp-space-lg);
-  padding: var(--kp-space-md) var(--kp-space-lg);
-  background: var(--kp-bg-secondary);
-  border-radius: var(--kp-radius-md);
-  border: 1px solid var(--kp-border);
-  gap: var(--kp-space-lg);
-  flex-shrink: 0;
-}
-
 .gantt-toolbar .toolbar-left {
   display: flex;
   align-items: center;
@@ -6455,35 +6066,36 @@
 }
 
 /* View Mode Buttons - Modern Style */
+
 .view-mode-buttons {
   display: flex;
-  gap: var(--kp-space-xs);
+  gap: 4px;
   padding: 4px;
-  background: var(--kp-bg-primary);
-  border-radius: var(--kp-radius-sm);
-  border: 1px solid var(--kp-border);
+  background: var(--background-primary);
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
 }
 
 .view-mode-btn {
-  padding: var(--kp-space-xs) var(--kp-space-md);
+  padding: 6px 12px;
   border: none;
   background: transparent;
-  color: var(--kp-text-secondary);
-  font-size: 13px;
-  font-weight: var(--kp-font-weight-medium);
-  border-radius: var(--kp-radius-sm);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all var(--kp-transition-fast);
+  transition: all 0.2s;
   white-space: nowrap;
 }
 
 .view-mode-btn:hover {
-  background: var(--kp-bg-tertiary);
-  color: var(--kp-text-primary);
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
 }
 
 .view-mode-btn.active {
-  background: var(--kp-primary);
+  background: var(--interactive-accent);
   color: white;
 }
 
@@ -6506,6 +6118,7 @@
 }
 
 /* Frappe Gantt Container */
+
 .gantt-container-frappe {
   flex: 1;
   background: var(--kp-bg-primary);
@@ -6534,9 +6147,11 @@
   width: max-content;
   min-width: 100%;
   position: relative;
+  overflow: visible;
 }
 
 /* Override Frappe Gantt Styles - Theme Integration */
+
 .gantt-container-frappe .gantt .grid-background {
   fill: none;
 }
@@ -6576,6 +6191,7 @@
 }
 
 /* Gantt Bars - Custom Classes */
+
 .gantt-container-frappe .gantt .bar {
   fill: var(--interactive-accent);
   stroke: var(--interactive-accent);
@@ -6584,6 +6200,7 @@
   rx: 4;
   ry: 4;
   opacity: 0.9;
+  overflow: hidden !important;
 }
 
 .gantt-container-frappe .gantt .bar-wrapper:hover .bar {
@@ -6629,9 +6246,11 @@
 }
 
 /* Assignee-based color classes - Like Vue example */
+
 .gantt-container-frappe .gantt .bar.bar-assignee-0 {
   fill: #FF8E76 !important;
 }
+
 .gantt-container-frappe .gantt .bar.bar-assignee-0 .bar-progress {
   fill: #D95B43 !important;
 }
@@ -6639,6 +6258,7 @@
 .gantt-container-frappe .gantt .bar.bar-assignee-1 {
   fill: #87576A !important;
 }
+
 .gantt-container-frappe .gantt .bar.bar-assignee-1 .bar-progress {
   fill: #542437 !important;
 }
@@ -6646,6 +6266,7 @@
 .gantt-container-frappe .gantt .bar.bar-assignee-2 {
   fill: #86AAAD !important;
 }
+
 .gantt-container-frappe .gantt .bar.bar-assignee-2 .bar-progress {
   fill: #53777A !important;
 }
@@ -6653,6 +6274,7 @@
 .gantt-container-frappe .gantt .bar.bar-assignee-3 {
   fill: #F35C75 !important;
 }
+
 .gantt-container-frappe .gantt .bar.bar-assignee-3 .bar-progress {
   fill: #C02942 !important;
 }
@@ -6660,6 +6282,7 @@
 .gantt-container-frappe .gantt .bar.bar-assignee-4 {
   fill: #A8E6CF !important;
 }
+
 .gantt-container-frappe .gantt .bar.bar-assignee-4 .bar-progress {
   fill: #7FCDBB !important;
 }
@@ -6667,11 +6290,13 @@
 .gantt-container-frappe .gantt .bar.bar-assignee-5 {
   fill: #FFD3B6 !important;
 }
+
 .gantt-container-frappe .gantt .bar.bar-assignee-5 .bar-progress {
   fill: #FFAAA5 !important;
 }
 
 /* Task type based classes */
+
 .gantt-container-frappe .gantt .bar.bar-feature {
   fill: #8b5cf6;
   stroke: #7c3aed;
@@ -6693,6 +6318,7 @@
 }
 
 /* Gantt Bar Labels */
+
 .gantt-container-frappe .gantt .bar-label {
   fill: white;
   font-size: 12px;
@@ -6708,16 +6334,14 @@
 }
 
 /* Hide overflow for bar wrappers to contain text within bars */
+
 .gantt-container-frappe .gantt .bar-wrapper {
   overflow: hidden !important;
   clip-path: inset(0);
 }
 
-.gantt-container-frappe .gantt .bar {
-  overflow: hidden !important;
-}
-
 /* Ensure bar labels stay within the bar bounds */
+
 .gantt-container-frappe .gantt .bar-wrapper .bar-label {
   max-width: calc(100% - 10px);
 }
@@ -6727,6 +6351,7 @@
 }
 
 /* Gantt Handles - Resize */
+
 .gantt-container-frappe .gantt .handle {
   fill: rgba(128, 128, 128, 0.5);
   cursor: ew-resize;
@@ -6741,39 +6366,38 @@
 }
 
 /* Gantt Arrows - Dependencies */
+
 .gantt-container-frappe .gantt .arrow {
   fill: none;
   stroke: var(--text-muted);
   stroke-width: 1.4;
 }
 
-/* Gantt Text Labels */
-.gantt-container-frappe .gantt .lower-text,
 .gantt-container-frappe .gantt .upper-text {
-  font-size: 12px;
+  font-size: 11px;
   text-anchor: middle;
   fill: var(--text-muted);
-}
-
-.gantt-container-frappe .gantt .upper-text {
-  fill: var(--text-muted);
   font-weight: 400;
-  font-size: 11px;
 }
 
 .gantt-container-frappe .gantt .lower-text {
+  font-size: 12px;
+  text-anchor: middle;
   fill: var(--text-normal);
 }
 
 /* Warning Message */
+
 .gantt-warning {
-  padding: var(--kp-space-md);
-  background: var(--kp-warning-bg);
+  padding: 16px;
+  background: var(--background-modifier-warning);
   color: var(--kp-warning);
-  border-radius: var(--kp-radius-sm);
+  border-radius: 6px;
   font-size: 13px;
   border-left: 3px solid var(--kp-warning);
-  margin-bottom: var(--kp-space-md);
+  margin-bottom: 20px;
+  border: 1px solid var(--text-warning);
+  text-align: center;
 }
 
 .gantt-error {
@@ -6797,6 +6421,7 @@
 }
 
 /* Custom Gantt (Fallback) */
+
 .gantt-container-custom {
   background: var(--background-primary);
   border: 1px solid var(--background-modifier-border);
@@ -6804,25 +6429,8 @@
   overflow: hidden;
 }
 
-.gantt-header {
-  background: var(--background-secondary);
-  border-bottom: 2px solid var(--background-modifier-border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
 .gantt-header-row {
   display: flex;
-}
-
-.gantt-sidebar-header {
-  min-width: 200px;
-  max-width: 200px;
-  padding: 16px;
-  font-weight: 600;
-  border-right: 1px solid var(--background-modifier-border);
-  background: var(--background-secondary);
 }
 
 .gantt-dates-header {
@@ -6848,18 +6456,6 @@
   overflow-y: auto;
 }
 
-.gantt-task-row {
-  display: flex;
-  border-bottom: 1px solid var(--background-modifier-border);
-  min-height: 50px;
-  align-items: center;
-  transition: background-color 0.2s;
-}
-
-.gantt-task-row:hover {
-  background: var(--background-modifier-hover);
-}
-
 .gantt-task-info {
   min-width: 200px;
   max-width: 200px;
@@ -6883,31 +6479,8 @@
   height: 50px;
 }
 
-.gantt-bar {
-  position: absolute;
-  height: 30px;
-  top: 10px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  color: white;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.gantt-bar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
 /* Quick Add Modal Styles */
+
 .kanban-quick-add-modal .modal-content {
   padding: 20px;
 }
@@ -6931,25 +6504,8 @@
   flex-wrap: wrap;
 }
 
-.quick-date-btn {
-  padding: 6px 12px;
-  background: var(--background-secondary);
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s;
-  color: var(--text-normal);
-}
-
-.quick-date-btn:hover {
-  background: var(--interactive-accent);
-  color: white;
-  border-color: var(--interactive-accent);
-  transform: translateY(-1px);
-}
-
 /* Timeline and Gantt Empty States */
+
 .timeline-empty,
 .gantt-empty {
   min-height: 400px;
@@ -6959,20 +6515,9 @@
   margin-top: 16px;
 }
 
-/* Column Drag State */
-.kanban-column.dragging-column {
-  opacity: 0.5;
-  cursor: grabbing;
-}
-
 .column-placeholder {
   border: 2px dashed var(--interactive-accent);
   background: var(--background-modifier-hover);
-}
-
-.column-title-wrapper {
-  cursor: grab;
-  user-select: none;
 }
 
 .column-title-wrapper:active {
@@ -6980,18 +6525,21 @@
 }
 
 /* Milestone Error States */
+
 .milestone-error {
-  padding: 20px;
+  padding: 16px;
   background: var(--background-modifier-error);
   border: 1px solid var(--text-error);
   border-radius: 8px;
   color: var(--text-error);
   margin-bottom: 16px;
   text-align: center;
+  font-weight: 500;
 }
 
 /* Card Detail Modal Improvements */
 /* Aumenta la larghezza del contenitore esterno del modal */
+
 .modal:has(.kanban-card-detail-modal) {
   max-width: 1600px !important;
   width: 95vw !important;
@@ -7042,38 +6590,31 @@
 }
 
 .modal-close-btn {
-  position: absolute !important;
-  top: 16px !important;
-  right: 16px !important;
-  width: 32px !important;
-  height: 32px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  z-index: 999 !important;
-  color: var(--text-muted) !important;
-  transition: all 0.2s !important;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 999;
+  color: var(--text-muted);
+  transition: all 0.2s;
 }
 
 .modal-close-btn:hover {
-  background: var(--background-modifier-error) !important;
-  color: var(--text-error) !important;
+  background: var(--background-modifier-error);
+  color: var(--text-error);
 }
 
 .modal-close-btn svg {
-  width: 18px !important;
-  height: 18px !important;
-}
-
-.modal-content-area {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  padding: 24px;
+  width: 18px;
+  height: 18px;
 }
 
 .content-left,
@@ -7130,17 +6671,19 @@
 
 .danger-btn {
   padding: 8px 16px;
+  border: 1px solid var(--text-error);
   background: var(--background-modifier-error);
   color: var(--text-error);
-  border: 1px solid var(--text-error);
+  font-size: 14px;
+  font-weight: 500;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
   transition: all 0.2s;
 }
 
 .danger-btn:hover {
   background: var(--text-error);
+  box-shadow: var(--kp-shadow-md);
   color: white;
 }
 
@@ -7162,13 +6705,14 @@
 }
 
 /* Responsive Design */
+
 @media (max-width: 768px) {
   .modal-content-area {
     grid-template-columns: 1fr;
   }
 
   .gantt-task-info,
-  .gantt-sidebar-header {
+    .gantt-sidebar-header {
     min-width: 150px;
     max-width: 150px;
   }
@@ -7183,6 +6727,7 @@
 }
 
 /* Loading States */
+
 .view-loading {
   display: flex;
   align-items: center;
@@ -7201,10 +6746,17 @@
 }
 
 @keyframes spin {
+
+
+
   to { transform: rotate(360deg); }
+
+
+
 }
 
 /* Tooltips */
+
 .tooltip {
   position: absolute;
   background: var(--background-primary-alt);
@@ -7224,27 +6776,20 @@
   opacity: 1;
 }
 
-/* Smooth Transitions */
-.kanban-card,
-.kanban-column,
-.milestone-card,
-.gantt-bar,
-.timeline-bar {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* Focus States */
+
 *:focus-visible {
   outline: 2px solid var(--interactive-accent);
   outline-offset: 2px;
 }
 
 /* Print Styles */
+
 @media print {
   .kanban-toolbar,
-  .modal-close-btn,
-  .modal-footer,
-  .clickable-icon {
+    .modal-close-btn,
+    .modal-footer,
+    .clickable-icon {
     display: none !important;
   }
 
@@ -7254,40 +6799,10 @@
   }
 
   .roadmap-milestone,
-  .gantt-container-custom,
-  .timeline-container {
+    .gantt-container-custom,
+    .timeline-container {
     page-break-inside: avoid;
   }
-}
-
-
-/* ============================================
-   AGGIUNGI/SOSTITUISCI in styles.css
-   Toolbar Responsivo con Nome Board Visibile
-   ============================================ */
-
-/* Kanban Toolbar - Layout Migliorato */
-.kanban-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 20px;
-  background: var(--background-secondary);
-  border-bottom: 1px solid var(--background-modifier-border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  flex-wrap: wrap;
-}
-
-/* Toolbar Left - Board Info */
-.toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  flex: 0 1 auto;
 }
 
 .board-info {
@@ -7339,44 +6854,6 @@
   flex-shrink: 0;
 }
 
-/* Toolbar Center - View Switcher */
-.toolbar-center {
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: center;
-  min-width: 0;
-}
-
-.view-switcher {
-  display: flex;
-  gap: 4px;
-  background: var(--background-primary);
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid var(--background-modifier-border);
-}
-
-.view-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.view-btn:hover {
-  background: var(--background-modifier-hover);
-}
-
-.view-btn.active {
-  background: var(--interactive-accent);
-  color: white;
-}
-
 .view-btn.active .view-icon {
   color: white;
 }
@@ -7396,19 +6873,6 @@
 
 .view-btn.active .view-label {
   color: white;
-}
-
-/* Toolbar Right - Actions */
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 1 auto;
-}
-
-.toolbar-actions {
-  display: flex;
-  gap: 8px;
 }
 
 .action-btn {
@@ -7451,6 +6915,7 @@
 }
 
 /* Responsive Design - Mobile First */
+
 @media (max-width: 900px) {
   .kanban-toolbar {
     flex-wrap: wrap;
@@ -7510,6 +6975,7 @@
 }
 
 /* Tooltip for descriptions */
+
 [data-tooltip] {
   position: relative;
 }
@@ -7524,7 +6990,6 @@
   background: var(--background-primary-alt);
   color: var(--text-normal);
   font-size: 12px;
-  white-space: nowrap;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 1000;
@@ -7533,41 +6998,8 @@
   white-space: normal;
 }
 
-
-/* ============================================
-   Frappe Gantt Styling Completo - RIMOSSO
-   Stili ora consolidati nella sezione principale sopra
-   ============================================ */
-
-
-/* ============================================
-   AGGIUNGI A: styles.css
-   Drag & Drop Visual Feedback
-   ============================================ */
-
-/* Card Dragging */
-.kanban-card {
-  cursor: grab;
-  transition: opacity 0.2s, transform 0.2s;
-}
-
 .kanban-card:active {
   cursor: grabbing;
-}
-
-.kanban-card.dragging {
-  /* Collapse - defined earlier, just ensure no override */
-  opacity: 0;
-  height: 0 !important;
-  overflow: hidden;
-}
-
-.column-content.drag-over {
-  background: var(--background-modifier-hover);
-  border: 2px dashed var(--interactive-accent);
-  border-radius: 8px;
-  min-height: 100px;
-  position: relative;
 }
 
 .column-content.drag-over::after {
@@ -7583,68 +7015,8 @@
   opacity: 0.7;
 }
 
-/* Column Dragging */
-.kanban-column {
-  transition: opacity 0.2s;
-}
-
-.kanban-column.dragging-column {
-  opacity: 0.5;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transform: scale(1.02);
-  z-index: 1000;
-}
-
-.column-header {
-  cursor: grab;
-  user-select: none;
-}
-
 .column-header:active {
   cursor: grabbing;
-}
-
-
-/* ============================================
-   AGGIUNGI A: styles.css
-   Frappe Gantt Styling Migliorato
-   ============================================ */
-
-.gantt-wrapper {
-  width: max-content;
-  min-width: 100%;
-  overflow: visible;
-}
-
-.view-mode-buttons {
-  display: flex;
-  gap: 4px;
-  background: var(--background-primary);
-  padding: 4px;
-  border-radius: 6px;
-  border: 1px solid var(--background-modifier-border);
-}
-
-.view-mode-btn {
-  padding: 6px 12px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-muted);
-  transition: all 0.2s;
-}
-
-.view-mode-btn:hover {
-  background: var(--background-modifier-hover);
-  color: var(--text-normal);
-}
-
-.view-mode-btn.active {
-  background: var(--interactive-accent);
-  color: white;
 }
 
 .gantt-popup-wrapper {
@@ -7717,8 +7089,6 @@
   font-weight: 500;
 }
 
-.gantt-popup-wrapper .popup-dates,
-.gantt-popup-wrapper .popup-progress,
 .gantt-popup-wrapper .popup-assignee,
 .gantt-popup-wrapper .popup-tags,
 .gantt-popup-wrapper .popup-dependencies {
@@ -7732,17 +7102,29 @@
 }
 
 .gantt-popup-wrapper .popup-dates {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
   background: var(--background-secondary);
   padding: 10px 12px;
   border-radius: 6px;
-  margin-bottom: 12px;
 }
 
 .gantt-popup-wrapper .popup-progress {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
   background: var(--background-secondary);
   padding: 8px 12px;
   border-radius: 6px;
-  margin-bottom: 12px;
 }
 
 .gantt-popup-wrapper strong {
@@ -7751,13 +7133,14 @@
 }
 
 /* Popup styling override for Frappe Gantt */
+
 .gantt-container-frappe .popup-wrapper {
   position: absolute !important;
   background: var(--background-primary) !important;
   border: 1px solid var(--background-modifier-border) !important;
   border-radius: 8px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25),
-              0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  0 4px 12px rgba(0, 0, 0, 0.15) !important;
   padding: 0 !important;
   min-width: 280px;
   max-width: 380px;
@@ -7770,6 +7153,7 @@
 }
 
 /* Quando il popup è visibile (Frappe Gantt lo attiva via opacity inline) */
+
 .gantt-container-frappe .popup-wrapper[style*="opacity: 1"],
 .gantt-container-frappe .popup-wrapper.is-visible {
   opacity: 1 !important;
@@ -7779,11 +7163,13 @@
 }
 
 /* Title area del popup con effetto header */
+
 .gantt-container-frappe .popup-wrapper .title {
   display: none; /* Nascondi il title default di Frappe, usiamo il nostro custom */
 }
 
 /* Pointer/freccia del popup */
+
 .gantt-container-frappe .popup-wrapper::before {
   content: '';
   position: absolute;
@@ -7799,22 +7185,25 @@
 }
 
 /* Hover effect sul popup */
+
 .gantt-container-frappe .popup-wrapper:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3),
-              0 6px 16px rgba(0, 0, 0, 0.2) !important;
+  0 6px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Ensure subtitle is hidden */
+
 .gantt-container-frappe .popup-wrapper .subtitle {
   display: none !important;
 }
 
 /* Dark theme adjustments */
+
 .theme-dark .gantt-container-frappe .popup-wrapper {
   background: var(--background-primary) !important;
   border-color: var(--background-modifier-border) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
-              0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 .theme-dark .gantt-container-frappe .popup-wrapper::before {
@@ -7851,17 +7240,9 @@
 }
 
 /* Fallback */
+
 .gantt-fallback {
   padding: 20px;
-}
-
-.gantt-warning {
-  padding: 16px;
-  background: var(--background-modifier-warning);
-  border: 1px solid var(--text-warning);
-  border-radius: 6px;
-  margin-bottom: 20px;
-  text-align: center;
 }
 
 .gantt-warning code {
@@ -7870,7 +7251,6 @@
   border-radius: 3px;
   font-family: monospace;
 }
-
 
 /* ============================================
    AGGIUNGI A: styles.css
@@ -7958,17 +7338,6 @@
   color: var(--text-error);
 }
 
-.group-columns {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 12px;
-  background: var(--background-primary);
-  border-radius: 6px;
-  border: 1px solid var(--background-modifier-border);
-}
-
 .column-checkbox {
   display: flex;
   align-items: center;
@@ -7992,18 +7361,7 @@
   font-size: 13px;
   color: var(--text-normal);
   flex: 1;
-}
-
-/* Milestone Error State */
-.milestone-error {
-  padding: 16px;
-  background: var(--background-modifier-error);
-  border: 1px solid var(--text-error);
-  border-radius: 8px;
-  color: var(--text-error);
-  margin-bottom: 16px;
-  text-align: center;
-  font-weight: 500;
+  cursor: pointer;
 }
 
 .critical-error {
@@ -8025,11 +7383,12 @@
   margin: 0 0 8px 0;
   color: var(--text-muted);
 }
+
 /* ============================================
    MILESTONE CARDS - RESPONSIVE
    ============================================ */
-
 /* Large screens - allow more cards to be visible */
+
 @media (min-width: 1400px) {
   .milestone-cards {
     max-height: 800px;
@@ -8037,18 +7396,20 @@
 }
 
 /* Tablet and smaller - reduce height for better overview */
+
 @media (max-width: 768px) {
   .milestone-cards {
     max-height: 400px;
     padding: var(--kp-space-md);
   }
-  
+
   .milestone-cards .milestone-card {
     padding: var(--kp-space-sm);
   }
 }
 
 /* Mobile - compact view */
+
 @media (max-width: 480px) {
   .milestone-cards {
     max-height: 300px;
@@ -8059,36 +7420,41 @@
 /* ============================================
    DYNAMIC CSS CUSTOM PROPERTIES UTILITIES
    ============================================ */
-
 /* Column drag cursor applied to body */
+
 .kp-grabbing,
 .kp-grabbing * {
   cursor: grabbing !important;
 }
 
 /* Card with user-assigned color accent */
+
 .kanban-card.has-card-color {
   border-left: 4px solid var(--kp-color);
 }
 
 /* Priority badge inside kanban card (overrides list-view default) */
+
 .kanban-card .priority-badge {
   background-color: var(--kp-priority-bg, transparent);
   color: var(--kp-priority-color, inherit);
 }
 
 /* Clipboard off-screen helper textarea */
+
 .clipboard-helper {
   position: fixed;
   left: -999999px;
 }
 
 /* StatusGroupsModal - add group button spacing */
+
 .kanban-status-groups-modal .primary-btn.full-width-btn {
   margin-top: 16px;
 }
 
 /* StatusGroupsModal - columns label */
+
 .group-columns-label {
   font-weight: 600;
   font-size: 13px;
@@ -8096,12 +7462,8 @@
   display: block;
 }
 
-/* StatusGroupsModal - column checkbox clickable label */
-.column-checkbox label {
-  cursor: pointer;
-}
-
 /* Analytics bar fills */
+
 .bar-fill {
   height: 8px;
   background-color: var(--kp-color, var(--kp-primary));
@@ -8111,16 +7473,19 @@
 }
 
 /* Analytics summary card accent border */
+
 .summary-card {
   border-top: 3px solid var(--kp-color, var(--kp-primary));
 }
 
 /* Analytics summary value color */
+
 .summary-value {
   color: var(--kp-color, var(--kp-primary));
 }
 
 /* Priority dot (timeline sidebar) */
+
 .priority-dot {
   width: 8px;
   height: 8px;
@@ -8130,6 +7495,7 @@
 }
 
 /* Gantt popup: force hidden when not .is-visible (overrides Frappe inline style) */
+
 .gantt-container-frappe .popup-wrapper:not(.is-visible) {
   opacity: 0 !important;
   visibility: hidden !important;
